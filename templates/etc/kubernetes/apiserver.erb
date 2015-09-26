@@ -1,0 +1,26 @@
+###
+# kubernetes system config
+#
+# The following values are used to configure the kube-apiserver
+#
+
+# The address on the local server to listen to.
+KUBE_API_ADDRESS="--address=<%= scope['kubernetes::master::kube_api_address'] %>"
+
+# The port on the local server to listen on.
+# KUBE_API_PORT="--port=<%= scope['kubernetes::master::kube_api_port'] %>"
+
+# Port minions listen on
+KUBELET_PORT="--kubelet_port=<%= scope['kubernetes::master::kubelet_port'] %>"
+
+# Comma separated list of nodes in the etcd cluster
+KUBE_ETCD_SERVERS="--etcd_servers=<%= Array(scope['kubernetes::master::kube_etcd_servers']).join(", ") %>"
+
+# Address range to use for services
+KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=<%= scope['kubernetes::master::kube_service_addresses'] %>"
+
+# default admission control policies
+KUBE_ADMISSION_CONTROL="<%= scope['kubernetes::master::kube_admission_control'] %>"
+
+# Add your own!
+KUBE_API_ARGS="<%= scope['kubernetes::master::kube_api_args'] %>"

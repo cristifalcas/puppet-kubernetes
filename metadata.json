@@ -1,0 +1,22 @@
+{
+	"name": "cristifalcas-kubernetes",
+	"version": "0.1.0",
+	"author": "Cristian Falcas",
+	"license": "Apache-2.0",
+	"operatingsystem_support": [],
+	"project_page": "https://github.com/cristifalcas/puppet-kubernetes",
+	"requirements": [],
+	"source": "git@github.com:cristifalcas/puppet-kubernetes.git",
+	"summary": "Configuring and installing kubernetes",
+	"tags": [],
+	"dependencies": [
+		{
+			"name": "puppetlabs/stdlib",
+			"version_requirement": "4.x"
+		},
+		{
+			"name": "cristifalcas/docker",
+			"version_requirement": "0.x"
+		}
+	]
+}
