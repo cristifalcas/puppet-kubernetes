@@ -16,7 +16,7 @@
 		},
 		{
 			"name": "cristifalcas/docker",
-			"version_requirement": "0.x"
+			"version_requirement": "5.x"
 		}
 	]
 }

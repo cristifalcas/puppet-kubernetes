@@ -96,12 +96,7 @@ class kubernetes::node (
   include docker
   include kubernetes
 
-  if $kubelet_configure_cbr0 and $kubelet_register_node {
-    fail('We can\'t have self registration with $kubelet_configure_cbr0 set to true')
-  }
-
-  class { 'kubernetes::node::install':
-  } ->
+  class { 'kubernetes::node::install': } ->
   Class['kubernetes'] ->
   class { 'kubernetes::node::config': } ~>
   class { 'kubernetes::node::service': }

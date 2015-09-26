@@ -13,7 +13,7 @@ class kubernetes::node::service {
     enable => $kubernetes::node::service_enable,
   }
 
-  if $kubernetes::node::configure_cbr0 {
+  if $kubernetes::node::kubelet_configure_cbr0 {
     Service['kubelet'] -> Service['docker']
   }
 }
