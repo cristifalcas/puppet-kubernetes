@@ -20,11 +20,13 @@
 #   How the controller-manager, scheduler, and proxy find the apiserver
 #
 class kubernetes (
+  $ensure           = 'installed',
   $kube_logtostderr = true,
   $kube_log_level   = 0,
   $kube_allow_priv  = false,
   $kube_master      = 'http://127.0.0.1:8080',
 ) {
+  package { 'kubernetes-client': ensure => $ensure, } ->
   file { '/etc/kubernetes/config':
     ensure  => present,
     force   => true,

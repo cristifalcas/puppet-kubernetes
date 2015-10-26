@@ -5,12 +5,12 @@
 
 # Add your own!
 KUBE_PROXY_ARGS="<% -%>
-<% if scope['kubernetes::node::kube_proxy_bind_address'] != :undef %> --bind-address=<%= scope['kubernetes::node::kube_proxy_bind_address'] %><% end -%>
-<% if scope['kubernetes::node::kube_proxy_healthz_bind_address'] != :undef %> --healthz-bind-address=<%= scope['kubernetes::node::kube_proxy_healthz_bind_address'] %><% end -%>
-<% if scope['kubernetes::node::kube_proxy_healthz_port'] != :undef %> --healthz-port=<%= scope['kubernetes::node::kube_proxy_healthz_port'] %><% end -%>
-<% if scope['kubernetes::node::kube_proxy_kubeconfig'] != :undef %> --kubeconfig=<%= scope['kubernetes::node::kube_proxy_kubeconfig'] %><% end -%>
-<% if scope['kubernetes::node::kube_proxy_master'] != :undef %> --master=<%= scope['kubernetes::node::kube_proxy_master'] %><% end -%>
-<% if scope['kubernetes::node::kube_proxy_oom_score_adj'] != :undef %> --oom-score-adj=<%= scope['kubernetes::node::kube_proxy_oom_score_adj'] %><% end -%>
-<% if scope['kubernetes::node::kube_proxy_proxy_port_range'] != :undef %> --proxy-port-range=<%= scope['kubernetes::node::kube_proxy_proxy_port_range'] %><% end -%>
-<% if scope['kubernetes::node::kube_proxy_resource_container'] != :undef %> --resource-container=<%= scope['kubernetes::node::kube_proxy_resource_container'] %><% end -%>
+<% if @kube_proxy_bind_address %> --bind-address=<%= scope['kubernetes::node::kube_proxy_bind_address'] %><% end -%>
+<% if @kube_proxy_healthz_bind_address %> --healthz-bind-address=<%= scope['kubernetes::node::kube_proxy_healthz_bind_address'] %><% end -%>
+<% if @kube_proxy_healthz_port %> --healthz-port=<%= scope['kubernetes::node::kube_proxy_healthz_port'] %><% end -%>
+<% if @kube_proxy_kubeconfig %> --kubeconfig=<%= scope['kubernetes::node::kube_proxy_kubeconfig'] %><% end -%>
+<% if @kube_proxy_master %> --master=<%= scope['kubernetes::node::api_server'] %><% end -%>
+<% if @kube_proxy_oom_score_adj %> --oom-score-adj=<%= scope['kubernetes::node::kube_proxy_oom_score_adj'] %><% end -%>
+<% if @kube_proxy_proxy_port_range %> --proxy-port-range=<%= scope['kubernetes::node::kube_proxy_proxy_port_range'] %><% end -%>
+<% if @kube_proxy_resource_container %> --resource-container=<%= scope['kubernetes::node::kube_proxy_resource_container'] %><% end -%>
 <%= scope['kubernetes::node::kube_proxy_args'] %>"

@@ -5,10 +5,10 @@
 #
 
 # The address on the local server to listen to.
-KUBE_API_ADDRESS="--address=<%= scope['kubernetes::master::kube_api_address'] %>"
+KUBE_API_ADDRESS="--insecure-bind-address=<%= scope['kubernetes::master::kube_api_address'] %>"
 
 # The port on the local server to listen on.
-# KUBE_API_PORT="--port=<%= scope['kubernetes::master::kube_api_port'] %>"
+KUBE_API_PORT="--insecure-port=<%= scope['kubernetes::master::kube_api_port'] %>"
 
 # Port minions listen on
 KUBELET_PORT="--kubelet_port=<%= scope['kubernetes::master::kubelet_port'] %>"
@@ -20,7 +20,20 @@ KUBE_ETCD_SERVERS="--etcd_servers=<%= Array(scope['kubernetes::master::kube_etcd
 KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=<%= scope['kubernetes::master::kube_service_addresses'] %>"
 
 # default admission control policies
-KUBE_ADMISSION_CONTROL="<%= scope['kubernetes::master::kube_admission_control'] %>"
+KUBE_ADMISSION_CONTROL="--admission_control=<%= Array(scope['kubernetes::master::kube_admission_control']).sort.join(',') %>"
 
 # Add your own!
-KUBE_API_ARGS="<%= scope['kubernetes::master::kube_api_args'] %>"
+KUBE_API_ARGS="<% -%>
+ --allow-privileged=<%= scope['kubernetes::master::kube_api_allow_privileged'] -%>
+ --bind-address=<%= scope['kubernetes::master::kube_api_bind_address'] -%>
+ --cluster-name=<%= scope['kubernetes::master::kube_api_cluster_name'] -%>
+ --secure-port=<%= scope['kubernetes::master::kube_api_secure_port'] -%>
+ --etcd-prefix=<%= scope['kubernetes::master::kube_api_etcd_prefix'] -%>
+<% if @kube_api_external_hostname then -%>
+ --external-hostname=<%= scope['kubernetes::master::kube_api_external_hostname'] -%>
+<% end -%>
+<% if @kube_api_advertise_address then -%>
+ --advertise-address=<%= scope['kubernetes::master::kube_api_advertise_address'] -%>
+<% end -%>
+<%= scope['kubernetes::master::kube_api_args'] -%>
+"
