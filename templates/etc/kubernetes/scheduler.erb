@@ -1,7 +1,22 @@
+# managed by puppet
 ###
 # kubernetes scheduler config
 
 # default config should be adequate
 
 # Add your own!
-KUBE_SCHEDULER_ARGS="<%= scope['kubernetes::master::kube_scheduler_args'] %>"
+KUBE_SCHEDULER_ARGS="<% -%>
+ --address=<%= scope['kubernetes::master::scheduler::address'] -%>
+ --bind-pods-burst=<%= scope['kubernetes::master::scheduler::bind_pods_burst'] -%>
+ --bind-pods-qps=<%= scope['kubernetes::master::scheduler::bind_pods_qps'] -%>
+<% if @google_json_key then -%>
+ --google-json-key=<%= scope['kubernetes::master::scheduler::google_json_key'] -%>
+<% end -%>
+<% if @kubeconfig then -%>
+ --kubeconfig=<%= scope['kubernetes::master::scheduler::kubeconfig'] -%>
+<% end -%>
+ --log-flush-frequency=<%= scope['kubernetes::master::scheduler::log_flush_frequency'] -%>
+ --master=<%= scope['kubernetes::master::scheduler::master'] -%>
+ --port=<%= scope['kubernetes::master::scheduler::port'] -%>
+<%= scope['kubernetes::master::scheduler::extra_args'] -%>
+"

@@ -4,28 +4,13 @@
 #
 # Parameters:
 #
-# [*kube_logtostderr*]
-#   logging to stderr means we get it in the systemd journal
-#   Defaults to true
+# [*ensure*]
+#   Set package version to be installed or use 'installed'/'latest'
+#   Defaults to installed
 #
-# [*kube_log_level*]
-#   journal message level, 0 is debug
-#   Defaults to 0
-#
-# [*kube_allow_priv*]
-#   Should this cluster be allowed to run privileged docker containers
-#   Defaults to false
-#
-# [*kube_master*]
-#   How the controller-manager, scheduler, and proxy find the apiserver
-#
-class kubernetes (
-  $ensure           = 'installed',
-  $kube_logtostderr = true,
-  $kube_log_level   = 0,
-  $kube_allow_priv  = false,
-  $kube_master      = 'http://127.0.0.1:8080',
-) {
+class kubernetes ($ensure = 'installed',) {
+  # /etc/kubernetes/config is managed by both master and node rpms
+  # so we take care of it here
   package { 'kubernetes-client': ensure => $ensure, } ->
   file { '/etc/kubernetes/config':
     ensure  => present,

@@ -3,13 +3,14 @@
 # Default parameter values for the kubernetes::node module
 #
 class kubernetes::node::params {
-  $ensure = 'present'
-  $service_state = running
-  $service_enable = true
-  $api_server = undef
+  $pkg_ensure = 'present'
 
   # kubelet options
+  # http://kubernetes.io/v1.1/docs/admin/kubelet.html
+  $kubelet_service_ensure = 'running'
+  $kubelet_service_enable = true
   $kubelet_address = '127.0.0.1'
+  $kubelet_api_servers = ['http://127.0.0.1:8080']
   $kubelet_port = 10250
   $kubelet_hostname = $::fqdn
   $kubelet_configure_cbr0 = undef
@@ -27,7 +28,7 @@ class kubernetes::node::params {
   $kubelet_maximum_dead_containers_per_container = 2
   $kubelet_minimum_container_ttl_duration = '1m'
   $kubelet_low_diskspace_threshold_mb = 256
-  $kubelet_cert_dir = '/var/run/kubernetes'
+  $kubelet_cert_dir = undef
   $kubelet_tls_cert_file = undef
   $kubelet_tls_private_key_file = undef
   $kubelet_cluster_dns = undef
@@ -44,12 +45,23 @@ class kubernetes::node::params {
   $kubelet_args = ''
 
   # proxy options
+  # http://kubernetes.io/v1.1/docs/admin/kube-proxy.html
+  $kube_proxy_service_ensure = 'running'
+  $kube_proxy_service_enable = true
   $kube_proxy_bind_address = '127.0.0.1'
+  $kube_proxy_cleanup_iptables = false
   $kube_proxy_healthz_bind_address = '127.0.0.1'
   $kube_proxy_healthz_port = 0
+  $kube_proxy_hostname_override = undef
+  $kube_proxy_iptables_sync_period = '30s'
   $kube_proxy_kubeconfig = undef
-  $kube_proxy_oom_score_adj = 0
+  $kube_proxy_log_flush_frequency = '5s'
+  $kube_proxy_masquerade_all = false
+  $kube_proxy_master = 'http://127.0.0.1:8080'
+  $kube_proxy_oom_score_adj = -999
+  $kube_proxy_proxy_mode = undef
   $kube_proxy_proxy_port_range = '0-0'
   $kube_proxy_resource_container = undef
+  $kube_proxy_udp_timeout = '250ms'
   $kube_proxy_args = ''
 }

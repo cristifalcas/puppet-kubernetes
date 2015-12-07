@@ -5,35 +5,88 @@
 #
 
 # The address on the local server to listen to.
-KUBE_API_ADDRESS="--insecure-bind-address=<%= scope['kubernetes::master::kube_api_address'] %>"
+KUBE_API_ADDRESS="--insecure-bind-address=<%= scope['kubernetes::master::apiserver::insecure_bind_address'] %>"
 
 # The port on the local server to listen on.
-KUBE_API_PORT="--insecure-port=<%= scope['kubernetes::master::kube_api_port'] %>"
+KUBE_API_PORT="--insecure-port=<%= scope['kubernetes::master::apiserver::insecure_port'] %>"
 
 # Port minions listen on
-KUBELET_PORT="--kubelet_port=<%= scope['kubernetes::master::kubelet_port'] %>"
+KUBELET_PORT="--kubelet_port=<%= scope['kubernetes::master::apiserver::kubelet_port'] %>"
 
+# we don't use --etcd_servers. Instead we use --etcd-config
 # Comma separated list of nodes in the etcd cluster
-KUBE_ETCD_SERVERS="--etcd_servers=<%= Array(scope['kubernetes::master::kube_etcd_servers']).join(", ") %>"
+#KUBE_ETCD_SERVERS="--etcd_servers=http://127.0.0.1:2379"
 
 # Address range to use for services
-KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=<%= scope['kubernetes::master::kube_service_addresses'] %>"
+KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=<%= scope['kubernetes::master::apiserver::service_cluster_ip_range'] %>"
 
 # default admission control policies
-KUBE_ADMISSION_CONTROL="--admission_control=<%= Array(scope['kubernetes::master::kube_admission_control']).sort.join(',') %>"
+KUBE_ADMISSION_CONTROL="--admission_control=<%= Array(scope['kubernetes::master::apiserver::admission_control']).join(',') %>"
 
 # Add your own!
 KUBE_API_ARGS="<% -%>
- --allow-privileged=<%= scope['kubernetes::master::kube_api_allow_privileged'] -%>
- --bind-address=<%= scope['kubernetes::master::kube_api_bind_address'] -%>
- --cluster-name=<%= scope['kubernetes::master::kube_api_cluster_name'] -%>
- --secure-port=<%= scope['kubernetes::master::kube_api_secure_port'] -%>
- --etcd-prefix=<%= scope['kubernetes::master::kube_api_etcd_prefix'] -%>
-<% if @kube_api_external_hostname then -%>
- --external-hostname=<%= scope['kubernetes::master::kube_api_external_hostname'] -%>
+ --etcd-config=/etc/kubernetes/etcd_config.json<% -%>
+<% if @advertise_address then -%>
+ --advertise-address=<%= scope['kubernetes::master::apiserver::advertise_address'] -%>
 <% end -%>
-<% if @kube_api_advertise_address then -%>
- --advertise-address=<%= scope['kubernetes::master::kube_api_advertise_address'] -%>
+ --allow-privileged=<%= scope['kubernetes::master::apiserver::allow_privileged'] -%>
+ --authorization-mode=<%= scope['kubernetes::master::apiserver::authorization_mode'] -%>
+ --bind-address=<%= scope['kubernetes::master::apiserver::bind_address'] -%>
+ --cert-dir=<%= scope['kubernetes::master::apiserver::cert_dir'] -%>
+<% if @client_ca_file then -%>
+ --client-ca-file=<%= scope['kubernetes::master::apiserver::client_ca_file'] -%>
 <% end -%>
-<%= scope['kubernetes::master::kube_api_args'] -%>
+ --cluster-name=<%= scope['kubernetes::master::apiserver::cluster_name'] -%>
+ --etcd-prefix=<%= scope['kubernetes::master::apiserver::etcd_prefix'] -%>
+ --event-ttl=<%= scope['kubernetes::master::apiserver::event_ttl'] -%>
+<% if @google_json_key -%>
+ --google-json-key=<%= scope['kubernetes::master::apiserver::google_json_key'] -%>
+<% end -%>
+<% if @kubelet_certificate_authority -%>
+ --kubelet-certificate-authority=<%= scope['kubernetes::master::apiserver::kubelet_certificate_authority'] -%>
+<% end -%>
+<% if @kubelet_client_certificate -%>
+ --kubelet-client-certificate=<%= scope['kubernetes::master::apiserver::kubelet_client_certificate'] -%>
+<% end -%>
+<% if @kubelet_client_key -%>
+ --kubelet-client-key=<%= scope['kubernetes::master::apiserver::kubelet_client_key'] -%>
+<% end -%>
+ --kubelet-https=<%= scope['kubernetes::master::apiserver::kubelet_https'] -%>
+ --kubelet-timeout=<%= scope['kubernetes::master::apiserver::kubelet_timeout'] -%>
+ --log-flush-frequency=<%= scope['kubernetes::master::apiserver::log_flush_frequency'] -%>
+<% if @long_running_request_regexp -%>
+ --long-running-request-regexp=<%= scope['kubernetes::master::apiserver::long_running_request_regexp'] -%>
+<% end -%>
+ --master-service-namespace=<%= scope['kubernetes::master::apiserver::master_service_namespace'] -%>
+ --max-connection-bytes-per-sec=<%= scope['kubernetes::master::apiserver::max_connection_bytes_per_sec'] -%>
+ --max-requests-inflight=<%= scope['kubernetes::master::apiserver::max_requests_inflight'] -%>
+ --min-request-timeout=<%= scope['kubernetes::master::apiserver::min_request_timeout'] -%>
+<% if @runtime_config -%>
+ --runtime-config=<%= scope['kubernetes::master::apiserver::runtime_config'] -%>
+<% end -%>
+ --secure-port=<%= scope['kubernetes::master::apiserver::secure_port'] -%>
+<% if @service_account_key_file -%>
+ --service-account-key-file=<%= scope['kubernetes::master::apiserver::service_account_key_file'] -%>
+<% end -%>
+ --service-account-lookup=<%= scope['kubernetes::master::apiserver::service_account_lookup'] -%>
+<% if @service_node_port_range -%>
+ --service-node-port-range=<%= scope['kubernetes::master::apiserver::service_node_port_range'] -%>
+<% end -%>
+<% if @ssh_keyfile -%>
+ --ssh-keyfile=<%= scope['kubernetes::master::apiserver::ssh_keyfile'] -%>
+<% end -%>
+<% if @ssh_user -%>
+ --ssh-user=<%= scope['kubernetes::master::apiserver::ssh_user'] -%>
+<% end -%>
+<% if @tls_cert_file -%>
+ --tls-cert-file=<%= scope['kubernetes::master::apiserver::tls_cert_file'] -%>
+<% end -%>
+<% if @tls_private_key_file -%>
+ --tls-private-key-file=<%= scope['kubernetes::master::apiserver::tls_private_key_file'] -%>
+<% end -%>
+<% if @token_auth_file -%>
+ --token-auth-file=<%= scope['kubernetes::master::apiserver::token_auth_file'] -%>
+<% end -%>
+ --watch-cache=<%= scope['kubernetes::master::apiserver::watch_cache'] -%>
+ <%= scope['kubernetes::master::apiserver::extra_args'] -%>
 "

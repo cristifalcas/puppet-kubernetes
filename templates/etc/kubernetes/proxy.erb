@@ -5,12 +5,19 @@
 
 # Add your own!
 KUBE_PROXY_ARGS="<% -%>
-<% if @kube_proxy_bind_address %> --bind-address=<%= scope['kubernetes::node::kube_proxy_bind_address'] %><% end -%>
-<% if @kube_proxy_healthz_bind_address %> --healthz-bind-address=<%= scope['kubernetes::node::kube_proxy_healthz_bind_address'] %><% end -%>
-<% if @kube_proxy_healthz_port %> --healthz-port=<%= scope['kubernetes::node::kube_proxy_healthz_port'] %><% end -%>
-<% if @kube_proxy_kubeconfig %> --kubeconfig=<%= scope['kubernetes::node::kube_proxy_kubeconfig'] %><% end -%>
-<% if @kube_proxy_master %> --master=<%= scope['kubernetes::node::api_server'] %><% end -%>
-<% if @kube_proxy_oom_score_adj %> --oom-score-adj=<%= scope['kubernetes::node::kube_proxy_oom_score_adj'] %><% end -%>
-<% if @kube_proxy_proxy_port_range %> --proxy-port-range=<%= scope['kubernetes::node::kube_proxy_proxy_port_range'] %><% end -%>
-<% if @kube_proxy_resource_container %> --resource-container=<%= scope['kubernetes::node::kube_proxy_resource_container'] %><% end -%>
-<%= scope['kubernetes::node::kube_proxy_args'] %>"
+ --bind-address=<%= scope['kubernetes::node::kube_proxy::bind_address'] -%>
+ --cleanup-iptables=<%= scope['kubernetes::node::kube_proxy::cleanup_iptables'] -%>
+ --healthz-bind-address=<%= scope['kubernetes::node::kube_proxy::healthz_bind_address'] -%>
+ --healthz-port=<%= scope['kubernetes::node::kube_proxy::healthz_port'] -%>
+<% if @hostname_override %> --hostname-override=<%= scope['kubernetes::node::kube_proxy::hostname_override'] %><% end -%>
+ --iptables-sync-period=<%= scope['kubernetes::node::kube_proxy::iptables_sync_period'] -%>
+<% if @kubeconfig %> --kubeconfig=<%= scope['kubernetes::node::kube_proxy::kubeconfig'] %><% end -%>
+ --log-flush-frequency=<%= scope['kubernetes::node::kube_proxy::log_flush_frequency'] -%>
+ --masquerade-all=<%= scope['kubernetes::node::kube_proxy::masquerade_all'] -%>
+ --master=<%= scope['kubernetes::node::kube_proxy::master'] -%>
+<% if @oom_score_adj %> --oom-score-adj=<%= scope['kubernetes::node::kube_proxy::oom_score_adj'] %><% end -%>
+<% if @proxy_mode %> --proxy-mode=<%= scope['kubernetes::node::kube_proxy::proxy_mode'] %><% end -%>
+ --proxy-port-range=<%= scope['kubernetes::node::kube_proxy::proxy_port_range'] -%>
+<% if @resource_container %> --resource-container=<%= scope['kubernetes::node::kube_proxy::resource_container'] %><% end -%>
+ --udp-timeout=<%= scope['kubernetes::node::kube_proxy::udp_timeout'] -%>
+<%= scope['kubernetes::node::kube_proxy::args'] %>"

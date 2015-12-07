@@ -1,0 +1,18 @@
+{
+   "cluster":{
+      "machines":[
+         <%= Array(scope['kubernetes::master::apiserver::etcd_servers']).flatten.map {|x| "\"#{x}\""} * ', ' %>
+      ]
+   },
+   "config":{
+<% if @etcd_certfile and @etcd_keyfile and @etcd_cacertfiles and not Array(@etcd_cacertfiles).flatten.empty? -%>
+      "certFile":"<%= scope['kubernetes::master::apiserver::etcd_certfile'] -%>",
+      "keyFile":"<%= scope['kubernetes::master::apiserver::etcd_keyfile'] -%>",
+      "caCertFiles":[
+         <%= Array(scope['kubernetes::master::apiserver::etcd_cacertfiles']).flatten.map {|x| "\"#{x}\""} * ', ' %>
+      ],
+<% end -%>
+      "timeout":5000000000,
+      "consistency":"WEAK"
+   }
+}

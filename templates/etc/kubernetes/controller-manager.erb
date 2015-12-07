@@ -1,7 +1,51 @@
+# managed by puppet
 ###
 # The following values are used to configure the kubernetes controller-manager
 
 # defaults from config and apiserver should be adequate
 
 # Add your own!
-KUBE_CONTROLLER_MANAGER_ARGS="<%= scope['kubernetes::master::kube_controller_manager_args'] %>"
+KUBE_CONTROLLER_MANAGER_ARGS="<% -%>
+ --address=<%= scope['kubernetes::master::controller_manager::address'] -%>
+ --allocate-node-cidrs=<%= scope['kubernetes::master::controller_manager::allocate_node_cidrs'] -%>
+<% if @cloud_config then -%>
+ --cloud-config=<%= scope['kubernetes::master::controller_manager::cloud_config'] -%>
+<% end -%>
+<% if @cluster_cidr then -%>
+ --cluster-cidr=<%= scope['kubernetes::master::controller_manager::cluster_cidr'] -%>
+<% end -%>
+ --cluster-name=<%= scope['kubernetes::master::controller_manager::cluster_name'] -%>
+ --concurrent-endpoint-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_endpoint_syncs'] -%>
+ --concurrent_rc_syncs=<%= scope['kubernetes::master::controller_manager::concurrent_rc_syncs'] -%>
+ --deleting-pods-burst=<%= scope['kubernetes::master::controller_manager::deleting_pods_burst'] -%>
+ --deleting-pods-qps=<%= scope['kubernetes::master::controller_manager::deleting_pods_qps'] -%>
+ --deployment-controller-sync-period=<%= scope['kubernetes::master::controller_manager::deployment_controller_sync_period'] -%>
+<% if @google_json_key then -%>
+ --google-json-key=<%= scope['kubernetes::master::controller_manager::google_json_key'] -%>
+<% end -%>
+ --horizontal-pod-autoscaler-sync-period=<%= scope['kubernetes::master::controller_manager::horizontal_pod_autoscaler_sync_period'] -%>
+<% if @kubeconfig then -%>
+ --kubeconfig=<%= scope['kubernetes::master::controller_manager::kubeconfig'] -%>
+<% end -%>
+ --log-flush-frequency=<%= scope['kubernetes::master::controller_manager::log_flush_frequency'] -%>
+ --master=<%= scope['kubernetes::master::controller_manager::master'] -%>
+<% if @min_resync_period then -%>
+ --min-resync-period=<%= scope['kubernetes::master::controller_manager::min_resync_period'] -%>
+<% end -%>
+ --namespace-sync-period=<%= scope['kubernetes::master::controller_manager::namespace_sync_period'] -%>
+ --node-monitor-grace-period=<%= scope['kubernetes::master::controller_manager::node_monitor_grace_period'] -%>
+ --node-monitor-period=<%= scope['kubernetes::master::controller_manager::node_monitor_period'] -%>
+ --node-startup-grace-period=<%= scope['kubernetes::master::controller_manager::node_startup_grace_period'] -%>
+ --node-sync-period=<%= scope['kubernetes::master::controller_manager::node_sync_period'] -%>
+ --pod-eviction-timeout=<%= scope['kubernetes::master::controller_manager::pod_eviction_timeout'] -%>
+ --port=<%= scope['kubernetes::master::controller_manager::port'] -%>
+<% if @root_ca_file then -%>
+ --root-ca-file=<%= scope['kubernetes::master::controller_manager::root_ca_file'] -%>
+<% end -%>
+<% if @service_account_private_key_file then -%>
+ --service-account-private-key-file=<%= scope['kubernetes::master::controller_manager::service_account_private_key_file'] -%>
+<% end -%>
+ --service-sync-period=<%= scope['kubernetes::master::controller_manager::service_sync_period'] -%>
+ --terminated-pod-gc-threshold=<%= scope['kubernetes::master::controller_manager::terminated_pod_gc_threshold'] -%>
+<%= scope['kubernetes::master::controller_manager::extra_args'] -%>
+"

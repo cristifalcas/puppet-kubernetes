@@ -1,3 +1,5 @@
+### updated by puppet
+# we just remove all configuration from here
 ###
 # kubernetes system config
 #
@@ -10,13 +12,13 @@
 #   kubelet.service
 #   kube-proxy.service
 # logging to stderr means we get it in the systemd journal
-KUBE_LOGTOSTDERR="--logtostderr=<%= scope['kubernetes::kube_logtostderr'] %>"
+KUBE_LOGTOSTDERR=""
 
 # journal message level, 0 is debug
-KUBE_LOG_LEVEL="--v=<%= scope['kubernetes::kube_log_level'] %>"
+KUBE_LOG_LEVEL=""
 
 # Should this cluster be allowed to run privileged docker containers
-KUBE_ALLOW_PRIV="--allow_privileged=<%= scope['kubernetes::kube_allow_priv'] %>"
+KUBE_ALLOW_PRIV=""
 
 # How the controller-manager, scheduler, and proxy find the apiserver
-KUBE_MASTER="--master=<%= scope['kubernetes::kube_master'] %>"
+KUBE_MASTER=""
