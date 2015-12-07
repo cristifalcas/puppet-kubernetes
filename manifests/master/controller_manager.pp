@@ -157,15 +157,15 @@ class kubernetes::master::controller_manager (
   $terminated_pod_gc_threshold           = $kubernetes::master::params::kube_controller_terminated_pod_gc_threshold,
   $extra_args                            = $kubernetes::master::params::kube_controller_args,
 ) inherits kubernetes::master::params {
-  include kubernetes
-  include kubernetes::master
+  include ::kubernetes
+  include ::kubernetes::master
   
   validate_bool($allocate_node_cidrs)
 
   File['/etc/kubernetes/config'] ~> Service['kube-controller-manager']
 
   file { '/etc/kubernetes/controller-manager':
-    ensure  => present,
+    ensure  => 'file',
     force   => true,
     content => template("${module_name}/etc/kubernetes/controller-manager.erb"),
   } ~>

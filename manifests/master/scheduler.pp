@@ -53,13 +53,13 @@ class kubernetes::master::scheduler (
   $port                = $kubernetes::master::params::kube_scheduler_port,
   $extra_args          = $kubernetes::master::params::kube_scheduler_args,
 ) inherits kubernetes::master::params {
-  include kubernetes
-  include kubernetes::master
+  include ::kubernetes
+  include ::kubernetes::master
 
   File['/etc/kubernetes/config'] ~> Service['kube-scheduler']
 
   file { '/etc/kubernetes/scheduler':
-    ensure  => present,
+    ensure  => 'file',
     force   => true,
     content => template("${module_name}/etc/kubernetes/scheduler.erb"),
   } ~>

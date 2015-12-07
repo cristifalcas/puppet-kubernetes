@@ -13,7 +13,7 @@ class kubernetes ($ensure = 'installed',) {
   # so we take care of it here
   package { 'kubernetes-client': ensure => $ensure, } ->
   file { '/etc/kubernetes/config':
-    ensure  => present,
+    ensure  => 'file',
     force   => true,
     content => template("${module_name}/etc/kubernetes/config.erb"),
   }

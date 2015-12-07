@@ -242,8 +242,8 @@ class kubernetes::master::apiserver (
   $watch_cache                   = $kubernetes::master::params::kube_api_watch_cache,
   $extra_args                    = $kubernetes::master::params::kube_api_extra_args,
 ) inherits kubernetes::master::params {
-  include kubernetes
-  include kubernetes::master
+  include ::kubernetes
+  include ::kubernetes::master
 
   File['/etc/kubernetes/config'] ~> Service['kube-apiserver']
   file { '/etc/kubernetes/etcd_config.json':

@@ -106,15 +106,15 @@ class kubernetes::node::kube_proxy (
   $udp_timeout          = $kubernetes::node::params::kube_proxy_udp_timeout,
   $args                 = $kubernetes::node::params::kube_proxy_args,
 ) inherits kubernetes::node::params {
-  include kubernetes
-  include kubernetes::node
+  include ::kubernetes
+  include ::kubernetes::node
 
   validate_bool($cleanup_iptables, $masquerade_all)
-  validate_integer([$kube_proxy_healthz_port, $kube_proxy_oom_score_adj,])
+  validate_integer([$healthz_port, $oom_score_adj,])
 
   File['/etc/kubernetes/config'] ~> Service['kube-proxy']
   file { '/etc/kubernetes/proxy':
-    ensure  => present,
+    ensure  => 'file',
     content => template("${module_name}/etc/kubernetes/proxy.erb"),
   } ~>
   service { 'kube-proxy':

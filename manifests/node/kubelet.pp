@@ -191,11 +191,11 @@ class kubernetes::node::kubelet (
   $sync_frequency                        = $kubernetes::node::params::kubelet_sync_frequency,
   $args                                  = $kubernetes::node::params::kubelet_args,
 ) inherits kubernetes::node::params {
-  include kubernetes
-  include kubernetes::node
+  include ::kubernetes
+  include ::kubernetes::node
   
-  if $kubelet_cert_dir and ($kubelet_tls_cert_file or $kubelet_tls_private_key_file) {
-    fail("You can't use both of kubelet_cert_dir and kubelet_tls_*.")
+  if $cert_dir and ($tls_cert_file or $tls_private_key_file) {
+    fail("You can't use both of cert_dir and tls_*.")
   }
 
   #  /var/lib/kubelet/kubeconfig
