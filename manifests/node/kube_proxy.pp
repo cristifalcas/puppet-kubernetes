@@ -19,7 +19,7 @@
 #
 # [*bind_address*]
 #   The IP address for the proxy server to serve on (set to 0.0.0.0 for all interfaces)
-#   Defaults to '127.0.0.1'
+#   Defaults to '0.0.0.0'
 #
 # [*cleanup_iptables*]
 #   If true cleanup iptables rules and exit.

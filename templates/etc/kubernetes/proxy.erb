@@ -20,4 +20,5 @@ KUBE_PROXY_ARGS="<% -%>
  --proxy-port-range=<%= scope['kubernetes::node::kube_proxy::proxy_port_range'] -%>
 <% if @resource_container %> --resource-container=<%= scope['kubernetes::node::kube_proxy::resource_container'] %><% end -%>
  --udp-timeout=<%= scope['kubernetes::node::kube_proxy::udp_timeout'] -%>
-<%= scope['kubernetes::node::kube_proxy::args'] %>"
+ <%= scope['kubernetes::node::kube_proxy::args'] -%>
+"

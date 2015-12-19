@@ -9,7 +9,7 @@ class kubernetes::node::params {
   # http://kubernetes.io/v1.1/docs/admin/kubelet.html
   $kubelet_service_ensure = 'running'
   $kubelet_service_enable = true
-  $kubelet_address = '127.0.0.1'
+  $kubelet_address = '0.0.0.0'
   $kubelet_api_servers = ['http://127.0.0.1:8080']
   $kubelet_port = 10250
   $kubelet_hostname = $::fqdn

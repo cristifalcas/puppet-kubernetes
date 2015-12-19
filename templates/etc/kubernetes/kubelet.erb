@@ -11,7 +11,7 @@ KUBELET_PORT="--port=<%= scope['kubernetes::node::kubelet::port'] %>"
 KUBELET_HOSTNAME="--hostname_override=<%= scope['kubernetes::node::kubelet::hostname'] %>"
 
 # location of the api-server
-KUBELET_API_SERVER="--api_servers=<%= Array(scope['kubernetes::node::kubelet::api_servers']) %>"
+KUBELET_API_SERVER="--api_servers=<%= Array(scope['kubernetes::node::kubelet::api_servers']).join(',') %>"
 
 # Add your own!
 KUBELET_ARGS="<% -%>
@@ -42,13 +42,13 @@ KUBELET_ARGS="<% -%>
  --minimum-container-ttl-duration=<%= scope['kubernetes::node::kubelet::minimum_container_ttl_duration'] -%>
  --low-diskspace-threshold-mb=<%= scope['kubernetes::node::kubelet::low_diskspace_threshold_mb'] -%>
 <% if @cert_dir -%>
- --cert-dir="<%= scope['kubernetes::node::kubelet::cert_dir'] -%>"<% -%>
+ --cert-dir=<%= scope['kubernetes::node::kubelet::cert_dir'] -%>
 <% end -%>
 <% if @tls_cert_file -%>
- --tls-cert-file="<%= scope['kubernetes::node::kubelet::tls_cert_file'] -%>"<% -%>
+ --tls-cert-file=<%= scope['kubernetes::node::kubelet::tls_cert_file'] -%>
 <% end -%>
 <% if @tls_private_key_file -%>
- --tls-private-key-file="<%= scope['kubernetes::node::kubelet::tls_private_key_file'] -%>"<% -%>
+ --tls-private-key-file=<%= scope['kubernetes::node::kubelet::tls_private_key_file'] -%>
 <% end -%>
 <% if @cluster_dns -%>
  --cluster-dns=<%= scope['kubernetes::node::kubelet::cluster_dns'] -%>
@@ -63,19 +63,19 @@ KUBELET_ARGS="<% -%>
  --http-check-frequency=<%= scope['kubernetes::node::kubelet::http_check_frequency'] -%>
 <% end -%>
 <% if @manifest_url -%>
- --manifest-url="<%= scope['kubernetes::node::kubelet::manifest_url'] -%>"<% -%>
+ --manifest-url=<%= scope['kubernetes::node::kubelet::manifest_url'] -%>
 <% end -%>
 <% if @master_service_namespace -%>
  --master-service-namespace=<%= scope['kubernetes::node::kubelet::master_service_namespace'] -%>
 <% end -%>
 <% if @pod_infra_container_image -%>
- --pod-infra-container-image="<%= scope['kubernetes::node::kubelet::pod_infra_container_image'] -%>"<% -%>
+ --pod-infra-container-image=<%= scope['kubernetes::node::kubelet::pod_infra_container_image'] -%>
 <% end -%>
 <% if @read_only_port -%>
  --read-only-port=<%= scope['kubernetes::node::kubelet::read_only_port'] -%>
 <% end -%>
 <% if @root_dir -%>
- --root-dir="<%= scope['kubernetes::node::kubelet::root_dir'] -%>"<% -%>
+ --root-dir=<%= scope['kubernetes::node::kubelet::root_dir'] -%>
 <% end -%>
 <% if @streaming_connection_idle_timeout -%>
  --streaming-connection-idle-timeout=<%= scope['kubernetes::node::kubelet::streaming_connection_idle_timeout'] -%>
