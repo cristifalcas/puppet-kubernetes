@@ -96,7 +96,7 @@ class kubernetes::master::params {
   $kube_scheduler_bind_pods_qps = 50
   $kube_scheduler_google_json_key = undef
   $kube_scheduler_kubeconfig = undef
-  $kube_scheduler_log_flush_frequency = 5s
+  $kube_scheduler_log_flush_frequency = '5s'
   $kube_scheduler_master = 'http://127.0.0.1:8080'
   $kube_scheduler_port = 10251
   $kube_scheduler_args = ''
