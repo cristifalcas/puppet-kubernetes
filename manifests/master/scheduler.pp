@@ -40,6 +40,11 @@
 #   The port that the scheduler's http service runs on
 #   Defaults to 10251
 #
+# [*minimum_version*]
+#   Minimum supported Kubernetes version. Don't enable new features when
+#   incompatbile with that version.
+#   Default to 1.1.
+#
 class kubernetes::master::scheduler (
   $ensure              = $kubernetes::master::params::kube_scheduler_service_ensure,
   $enable              = $kubernetes::master::params::kube_scheduler_service_enable,
@@ -52,6 +57,7 @@ class kubernetes::master::scheduler (
   $master              = $kubernetes::master::params::kube_scheduler_master,
   $port                = $kubernetes::master::params::kube_scheduler_port,
   $extra_args          = $kubernetes::master::params::kube_scheduler_args,
+  $minimum_version     = $kubernetes::master::params::kube_scheduler_minimum_version,
 ) inherits kubernetes::master::params {
   include ::kubernetes
   include ::kubernetes::master

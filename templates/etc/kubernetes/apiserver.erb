@@ -58,7 +58,9 @@ KUBE_API_ARGS="<% -%>
  --long-running-request-regexp=<%= scope['kubernetes::master::apiserver::long_running_request_regexp'] -%>
 <% end -%>
  --master-service-namespace=<%= scope['kubernetes::master::apiserver::master_service_namespace'] -%>
+<% if @minimum_version.to_f > 1.0 then -%>
  --max-connection-bytes-per-sec=<%= scope['kubernetes::master::apiserver::max_connection_bytes_per_sec'] -%>
+<% end -%>
  --max-requests-inflight=<%= scope['kubernetes::master::apiserver::max_requests_inflight'] -%>
  --min-request-timeout=<%= scope['kubernetes::master::apiserver::min_request_timeout'] -%>
 <% if @runtime_config -%>
@@ -87,6 +89,8 @@ KUBE_API_ARGS="<% -%>
 <% if @token_auth_file -%>
  --token-auth-file=<%= scope['kubernetes::master::apiserver::token_auth_file'] -%>
 <% end -%>
+<% if @minimum_version.to_f > 1.0 then -%>
  --watch-cache=<%= scope['kubernetes::master::apiserver::watch_cache'] -%>
+<% end -%>
  <%= scope['kubernetes::master::apiserver::extra_args'] -%>
 "

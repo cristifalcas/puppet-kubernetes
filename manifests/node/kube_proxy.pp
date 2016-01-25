@@ -83,6 +83,11 @@
 #   Only applicable for proxy-mode=userspace
 #   Defaults to 250ms
 #
+# [*minimum_version*]
+#   Minimum supported Kubernetes version. Don't enable new features when
+#   incompatbile with that version.
+#   Default to 1.1.
+#
 # [*args*]
 #   Add your own!
 #
@@ -104,6 +109,7 @@ class kubernetes::node::kube_proxy (
   $proxy_port_range     = $kubernetes::node::params::kube_proxy_proxy_port_range,
   $resource_container   = $kubernetes::node::params::kube_proxy_resource_container,
   $udp_timeout          = $kubernetes::node::params::kube_proxy_udp_timeout,
+  $minimum_version      = $kubernetes::node::params::kube_proxy_minimum_version,
   $args                 = $kubernetes::node::params::kube_proxy_args,
 ) inherits kubernetes::node::params {
   include ::kubernetes

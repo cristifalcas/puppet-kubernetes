@@ -16,14 +16,18 @@ KUBE_CONTROLLER_MANAGER_ARGS="<% -%>
 <% end -%>
  --cluster-name=<%= scope['kubernetes::master::controller_manager::cluster_name'] -%>
  --concurrent-endpoint-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_endpoint_syncs'] -%>
- --concurrent_rc_syncs=<%= scope['kubernetes::master::controller_manager::concurrent_rc_syncs'] -%>
+ --concurrent-rc-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_rc_syncs'] -%>
  --deleting-pods-burst=<%= scope['kubernetes::master::controller_manager::deleting_pods_burst'] -%>
  --deleting-pods-qps=<%= scope['kubernetes::master::controller_manager::deleting_pods_qps'] -%>
+<% if @minimum_version.to_f > 1.0 then -%>
  --deployment-controller-sync-period=<%= scope['kubernetes::master::controller_manager::deployment_controller_sync_period'] -%>
+<% end -%>
 <% if @google_json_key then -%>
  --google-json-key=<%= scope['kubernetes::master::controller_manager::google_json_key'] -%>
 <% end -%>
+<% if @minimum_version.to_f > 1.0 then -%>
  --horizontal-pod-autoscaler-sync-period=<%= scope['kubernetes::master::controller_manager::horizontal_pod_autoscaler_sync_period'] -%>
+<% end -%>
 <% if @kubeconfig then -%>
  --kubeconfig=<%= scope['kubernetes::master::controller_manager::kubeconfig'] -%>
 <% end -%>
@@ -46,6 +50,8 @@ KUBE_CONTROLLER_MANAGER_ARGS="<% -%>
  --service-account-private-key-file=<%= scope['kubernetes::master::controller_manager::service_account_private_key_file'] -%>
 <% end -%>
  --service-sync-period=<%= scope['kubernetes::master::controller_manager::service_sync_period'] -%>
+<% if @minimum_version.to_f > 1.0 then -%>
  --terminated-pod-gc-threshold=<%= scope['kubernetes::master::controller_manager::terminated_pod_gc_threshold'] -%>
+<% end -%>
 <%= scope['kubernetes::master::controller_manager::extra_args'] -%>
 "

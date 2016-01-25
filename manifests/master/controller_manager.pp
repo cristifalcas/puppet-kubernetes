@@ -125,6 +125,11 @@
 #      deleting terminated pods. If <= 0, the terminated pod garbage collector is disabled.
 #   Defaults to 0
 #
+# [*minimum_version*]
+#   Minimum supported Kubernetes version. Don't enable new features when
+#   incompatbile with that version.
+#   Default to 1.1.
+#
 class kubernetes::master::controller_manager (
   $ensure                                = $kubernetes::master::params::kube_controller_service_ensure,
   $enable                                = $kubernetes::master::params::kube_controller_service_enable,
@@ -156,6 +161,7 @@ class kubernetes::master::controller_manager (
   $service_sync_period                   = $kubernetes::master::params::kube_controller_service_sync_period,
   $terminated_pod_gc_threshold           = $kubernetes::master::params::kube_controller_terminated_pod_gc_threshold,
   $extra_args                            = $kubernetes::master::params::kube_controller_args,
+  $minimum_version                       = $kubernetes::master::params::kube_controller_minimum_version,
 ) inherits kubernetes::master::params {
   include ::kubernetes
   include ::kubernetes::master

@@ -63,5 +63,6 @@ class kubernetes::node::params {
   $kube_proxy_proxy_port_range = '0-0'
   $kube_proxy_resource_container = undef
   $kube_proxy_udp_timeout = '250ms'
+  $kube_proxy_minimum_version = 1.1
   $kube_proxy_args = ''
 }
