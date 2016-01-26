@@ -191,15 +191,13 @@ class kubernetes::node::kubelet (
   $sync_frequency                        = $kubernetes::node::params::kubelet_sync_frequency,
   $args                                  = $kubernetes::node::params::kubelet_args,
 ) inherits kubernetes::node::params {
-  include ::kubernetes
   include ::kubernetes::node
   
   if $cert_dir and ($tls_cert_file or $tls_private_key_file) {
-    fail("You can't use both of cert_dir and tls_*.")
+    fail('You can\'t use both of cert_dir and tls_*.')
   }
 
-  #  /var/lib/kubelet/kubeconfig
-  #  /var/lib/kubelet/kubernetes_auth
+  # Autoregister and create docker bridge
   if $register_node and $configure_cbr0 {
     package { ['bridge-utils']: ensure => 'present', } ->
     file { '/etc/kubernetes/node_initial.yaml':
@@ -218,11 +216,11 @@ class kubernetes::node::kubelet (
     } ~> Service['docker']
   }
 
-  File['/etc/kubernetes/config'] ~> Service['kubelet']
   file { '/etc/kubernetes/kubelet':
     ensure  => 'file',
     content => template("${module_name}/etc/kubernetes/kubelet.erb"),
-  } ~>
+  } ~> Service['kubelet']
+
   service { 'kubelet':
     ensure => $ensure,
     enable => $enable,

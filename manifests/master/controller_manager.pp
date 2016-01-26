@@ -163,18 +163,16 @@ class kubernetes::master::controller_manager (
   $extra_args                            = $kubernetes::master::params::kube_controller_args,
   $minimum_version                       = $kubernetes::master::params::kube_controller_minimum_version,
 ) inherits kubernetes::master::params {
-  include ::kubernetes
   include ::kubernetes::master
-  
-  validate_bool($allocate_node_cidrs)
 
-  File['/etc/kubernetes/config'] ~> Service['kube-controller-manager']
+  validate_bool($allocate_node_cidrs)
 
   file { '/etc/kubernetes/controller-manager':
     ensure  => 'file',
     force   => true,
     content => template("${module_name}/etc/kubernetes/controller-manager.erb"),
-  } ~>
+  } ~> Service['kube-controller-manager']
+
   service { 'kube-controller-manager':
     ensure => $ensure,
     enable => $enable,

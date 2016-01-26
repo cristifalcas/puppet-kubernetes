@@ -59,16 +59,14 @@ class kubernetes::master::scheduler (
   $extra_args          = $kubernetes::master::params::kube_scheduler_args,
   $minimum_version     = $kubernetes::master::params::kube_scheduler_minimum_version,
 ) inherits kubernetes::master::params {
-  include ::kubernetes
   include ::kubernetes::master
-
-  File['/etc/kubernetes/config'] ~> Service['kube-scheduler']
 
   file { '/etc/kubernetes/scheduler':
     ensure  => 'file',
     force   => true,
     content => template("${module_name}/etc/kubernetes/scheduler.erb"),
-  } ~>
+  } ~> Service['kube-scheduler']
+
   service { 'kube-scheduler':
     ensure => $ensure,
     enable => $enable,

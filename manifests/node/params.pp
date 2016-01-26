@@ -3,8 +3,6 @@
 # Default parameter values for the kubernetes::node module
 #
 class kubernetes::node::params {
-  $pkg_ensure = 'present'
-
   # kubelet options
   # http://kubernetes.io/v1.1/docs/admin/kubelet.html
   $kubelet_service_ensure = 'running'

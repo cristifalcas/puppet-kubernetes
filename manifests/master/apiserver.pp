@@ -248,10 +248,8 @@ class kubernetes::master::apiserver (
   $extra_args                    = $kubernetes::master::params::kube_api_extra_args,
   $minimum_version               = $kubernetes::master::params::kube_api_minimum_version,
 ) inherits kubernetes::master::params {
-  include ::kubernetes
   include ::kubernetes::master
 
-  File['/etc/kubernetes/config'] ~> Service['kube-apiserver']
   file { '/etc/kubernetes/etcd_config.json':
     ensure  => 'file',
     force   => true,
@@ -262,7 +260,7 @@ class kubernetes::master::apiserver (
     force   => true,
     content => template("${module_name}/etc/kubernetes/apiserver.erb"),
   } ~> Service['kube-apiserver']
-  
+
   service { 'kube-apiserver':
     ensure => $ensure,
     enable => $enable,
