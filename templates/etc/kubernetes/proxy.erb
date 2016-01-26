@@ -6,19 +6,27 @@
 # Add your own!
 KUBE_PROXY_ARGS="<% -%>
  --bind-address=<%= scope['kubernetes::node::kube_proxy::bind_address'] -%>
+<% if @minimum_version.to_f > 1.0 then -%>
  --cleanup-iptables=<%= scope['kubernetes::node::kube_proxy::cleanup_iptables'] -%>
+<% end -%>
  --healthz-bind-address=<%= scope['kubernetes::node::kube_proxy::healthz_bind_address'] -%>
  --healthz-port=<%= scope['kubernetes::node::kube_proxy::healthz_port'] -%>
 <% if @hostname_override %> --hostname-override=<%= scope['kubernetes::node::kube_proxy::hostname_override'] %><% end -%>
+<% if @minimum_version.to_f > 1.0 then -%>
  --iptables-sync-period=<%= scope['kubernetes::node::kube_proxy::iptables_sync_period'] -%>
+<% end -%>
 <% if @kubeconfig %> --kubeconfig=<%= scope['kubernetes::node::kube_proxy::kubeconfig'] %><% end -%>
  --log-flush-frequency=<%= scope['kubernetes::node::kube_proxy::log_flush_frequency'] -%>
+<% if @minimum_version.to_f > 1.0 then -%>
  --masquerade-all=<%= scope['kubernetes::node::kube_proxy::masquerade_all'] -%>
+<% end -%>
  --master=<%= scope['kubernetes::node::kube_proxy::master'] -%>
 <% if @oom_score_adj %> --oom-score-adj=<%= scope['kubernetes::node::kube_proxy::oom_score_adj'] %><% end -%>
 <% if @proxy_mode %> --proxy-mode=<%= scope['kubernetes::node::kube_proxy::proxy_mode'] %><% end -%>
  --proxy-port-range=<%= scope['kubernetes::node::kube_proxy::proxy_port_range'] -%>
 <% if @resource_container %> --resource-container=<%= scope['kubernetes::node::kube_proxy::resource_container'] %><% end -%>
+<% if @minimum_version.to_f > 1.0 then -%>
  --udp-timeout=<%= scope['kubernetes::node::kube_proxy::udp_timeout'] -%>
+<% end -%>
  <%= scope['kubernetes::node::kube_proxy::args'] -%>
 "

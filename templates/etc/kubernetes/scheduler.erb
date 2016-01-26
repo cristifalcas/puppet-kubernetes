@@ -7,8 +7,10 @@
 # Add your own!
 KUBE_SCHEDULER_ARGS="<% -%>
  --address=<%= scope['kubernetes::master::scheduler::address'] -%>
+<% if @minimum_version.to_f > 1.0 then -%>
  --bind-pods-burst=<%= scope['kubernetes::master::scheduler::bind_pods_burst'] -%>
  --bind-pods-qps=<%= scope['kubernetes::master::scheduler::bind_pods_qps'] -%>
+<% end -%>
 <% if @google_json_key then -%>
  --google-json-key=<%= scope['kubernetes::master::scheduler::google_json_key'] -%>
 <% end -%>

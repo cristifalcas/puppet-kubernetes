@@ -53,6 +53,7 @@ class kubernetes::master::params {
   $kube_api_token_auth_file = undef
   $kube_api_watch_cache = true
   $kube_api_extra_args = ''
+  $kube_api_minimum_version = 1.1
 
   # controller manager config
   # http://kubernetes.io/v1.1/docs/admin/kube-controller-manager.html
@@ -86,6 +87,7 @@ class kubernetes::master::params {
   $kube_controller_service_sync_period = '5m0s'
   $kube_controller_terminated_pod_gc_threshold = 0
   $kube_controller_args = ''
+  $kube_controller_minimum_version = 1.1
 
   # scheduler config
   # http://kubernetes.io/v1.1/docs/admin/kube-scheduler.html
@@ -100,4 +102,5 @@ class kubernetes::master::params {
   $kube_scheduler_master = 'http://127.0.0.1:8080'
   $kube_scheduler_port = 10251
   $kube_scheduler_args = ''
+  $kube_scheduler_minimum_version = 1.1
 }
