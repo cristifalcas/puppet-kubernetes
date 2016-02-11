@@ -8,10 +8,10 @@ KUBELET_ADDRESS="--address=<%= scope['kubernetes::node::kubelet::address'] %>"
 KUBELET_PORT="--port=<%= scope['kubernetes::node::kubelet::port'] %>"
 
 # You may leave this blank to use the actual hostname
-KUBELET_HOSTNAME="--hostname_override=<%= scope['kubernetes::node::kubelet::hostname'] %>"
+KUBELET_HOSTNAME="--hostname-override=<%= scope['kubernetes::node::kubelet::hostname'] %>"
 
 # location of the api-server
-KUBELET_API_SERVER="--api_servers=<%= Array(scope['kubernetes::node::kubelet::api_servers']).join(',') %>"
+KUBELET_API_SERVER="--api-servers=<%= Array(scope['kubernetes::node::kubelet::api_servers']).join(',') %>"
 
 # Add your own!
 KUBELET_ARGS="<% -%>
@@ -55,9 +55,6 @@ KUBELET_ARGS="<% -%>
 <% end -%>
 <% if @cluster_domain -%>
  --cluster-domain=<%= scope['kubernetes::node::kubelet::cluster_domain'] -%>
-<% end -%>
-<% if @hostname_override -%>
- --hostname-override=<%= scope['kubernetes::node::kubelet::hostname_override'] -%>
 <% end -%>
 <% if @http_check_frequency -%>
  --http-check-frequency=<%= scope['kubernetes::node::kubelet::http_check_frequency'] -%>

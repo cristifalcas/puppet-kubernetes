@@ -114,10 +114,6 @@
 #   Domain for this cluster.  If set, kubelet will configure all containers to search this domain in addition to the host's search domains
 #   Default=undef
 #
-# [*hostname_override*]
-#   If non-empty, will use this string as identification instead of the actual hostname.
-#   Default=undef
-#
 # [*http_check_frequency*]
 #   Duration between checking http for new data
 #   Default=undef
@@ -180,7 +176,6 @@ class kubernetes::node::kubelet (
   $tls_private_key_file                  = $kubernetes::node::params::kubelet_tls_private_key_file,
   $cluster_dns                           = $kubernetes::node::params::kubelet_cluster_dns,
   $cluster_domain                        = $kubernetes::node::params::kubelet_cluster_domain,
-  $hostname_override                     = $kubernetes::node::params::kubelet_hostname_override,
   $http_check_frequency                  = $kubernetes::node::params::kubelet_http_check_frequency,
   $manifest_url                          = $kubernetes::node::params::kubelet_manifest_url,
   $master_service_namespace              = $kubernetes::node::params::kubelet_master_service_namespace,

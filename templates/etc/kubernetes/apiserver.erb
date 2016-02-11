@@ -11,17 +11,17 @@ KUBE_API_ADDRESS="--insecure-bind-address=<%= scope['kubernetes::master::apiserv
 KUBE_API_PORT="--insecure-port=<%= scope['kubernetes::master::apiserver::insecure_port'] %>"
 
 # Port minions listen on
-KUBELET_PORT="--kubelet_port=<%= scope['kubernetes::master::apiserver::kubelet_port'] %>"
+KUBELET_PORT="--kubelet-port=<%= scope['kubernetes::master::apiserver::kubelet_port'] %>"
 
 # we don't use --etcd_servers. Instead we use --etcd-config
 # Comma separated list of nodes in the etcd cluster
-#KUBE_ETCD_SERVERS="--etcd_servers=http://127.0.0.1:2379"
+#KUBE_ETCD_SERVERS="--etcd-servers=http://127.0.0.1:2379"
 
 # Address range to use for services
 KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=<%= scope['kubernetes::master::apiserver::service_cluster_ip_range'] %>"
 
 # default admission control policies
-KUBE_ADMISSION_CONTROL="--admission_control=<%= Array(scope['kubernetes::master::apiserver::admission_control']).join(',') %>"
+KUBE_ADMISSION_CONTROL="--admission-control=<%= Array(scope['kubernetes::master::apiserver::admission_control']).join(',') %>"
 
 # Add your own!
 KUBE_API_ARGS="<% -%>
