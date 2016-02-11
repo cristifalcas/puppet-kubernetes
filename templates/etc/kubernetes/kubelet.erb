@@ -56,9 +56,6 @@ KUBELET_ARGS="<% -%>
 <% if @cluster_domain -%>
  --cluster-domain=<%= scope['kubernetes::node::kubelet::cluster_domain'] -%>
 <% end -%>
-<% if @hostname_override -%>
- --hostname-override=<%= scope['kubernetes::node::kubelet::hostname_override'] -%>
-<% end -%>
 <% if @http_check_frequency -%>
  --http-check-frequency=<%= scope['kubernetes::node::kubelet::http_check_frequency'] -%>
 <% end -%>

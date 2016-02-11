@@ -31,7 +31,6 @@ class kubernetes::node::params {
   $kubelet_tls_private_key_file = undef
   $kubelet_cluster_dns = undef
   $kubelet_cluster_domain = undef
-  $kubelet_hostname_override = undef
   $kubelet_http_check_frequency = undef
   $kubelet_manifest_url = undef
   $kubelet_master_service_namespace = undef
