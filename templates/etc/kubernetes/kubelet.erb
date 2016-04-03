@@ -80,5 +80,67 @@ KUBELET_ARGS="<% -%>
 <% if @sync_frequency -%>
  --sync-frequency=<%= scope['kubernetes::node::kubelet::sync_frequency'] -%>
 <% end -%>
+<% if @minimum_version.to_f >= 1.2 then -%>
+<% if @application_metrics_count_limit -%>
+ --application-metrics-count-limit=<%= scope['kubernetes::node::kubelet::application_metrics_count_limit'] -%>
+<% end -%>
+<% if @docker_env_metadata_whitelist -%>
+ --docker-env-metadata-whitelist=<%= scope['kubernetes::node::kubelet::docker_env_metadata_whitelist'] -%>
+<% end -%>
+<% if @enable_custom_metrics -%>
+ --enable-custom-metrics=<%= scope['kubernetes::node::kubelet::enable_custom_metrics'] -%>
+<% end -%>
+<% if @experimental_flannel_overlay -%>
+ --experimental-flannel-overlay=<%= scope['kubernetes::node::kubelet::experimental_flannel_overlay'] -%>
+<% end -%>
+<% if @hairpin_mode -%>
+ --hairpin-mode=<%= scope['kubernetes::node::kubelet::hairpin_mode'] -%>
+<% end -%>
+<% if @housekeeping_interval -%>
+ --housekeeping-interval=<%= scope['kubernetes::node::kubelet::housekeeping_interval'] -%>
+<% end -%>
+<% if @kube_api_burst -%>
+ --kube-api-burst=<%= scope['kubernetes::node::kubelet::kube_api_burst'] -%>
+<% end -%>
+<% if @kube_api_qps -%>
+ --kube-api-qps=<%= scope['kubernetes::node::kubelet::kube_api_qps'] -%>
+<% end -%>
+<% if @kube_reserved -%>
+ --kube-reserved=<%= scope['kubernetes::node::kubelet::kube_reserved'] -%>
+<% end -%>
+<% if @kubelet_cgroups -%>
+ --kubelet-cgroups=<%= scope['kubernetes::node::kubelet::kubelet_cgroups'] -%>
+<% end -%>
+<% if @lock_file -%>
+ --lock-file=<%= scope['kubernetes::node::kubelet::lock_file'] -%>
+<% end -%>
+<% if @minimum_image_ttl_duration -%>
+ --minimum-image-ttl-duration=<%= scope['kubernetes::node::kubelet::minimum_image_ttl_duration'] -%>
+<% end -%>
+<% if @node_ip -%>
+ --node-ip=<%= scope['kubernetes::node::kubelet::node_ip'] -%>
+<% end -%>
+<% if @node_labels -%>
+ --node-labels=<%= scope['kubernetes::node::kubelet::node_labels'] -%>
+<% end -%>
+<% if @reconcile_cidr -%>
+ --reconcile-cidr=<%= scope['kubernetes::node::kubelet::reconcile_cidr'] -%>
+<% end -%>
+<% if @register_schedulable -%>
+ --register-schedulable=<%= scope['kubernetes::node::kubelet::register_schedulable'] -%>
+<% end -%>
+<% if @runtime_cgroups -%>
+ --runtime-cgroups=<%= scope['kubernetes::node::kubelet::runtime_cgroups'] -%>
+<% end -%>
+<% if @system_cgroups -%>
+ --system-cgroups=<%= scope['kubernetes::node::kubelet::system_cgroups'] -%>
+<% end -%>
+<% if @system_reserved -%>
+ --system-reserved=<%= scope['kubernetes::node::kubelet::system_reserved'] -%>
+<% end -%>
+<% if @non_masquerade_cidr -%>
+ --non-masquerade-cidr=<%= scope['kubernetes::node::kubelet::non_masquerade_cidr'] -%>
+<% end -%>
+<% end -%>
  <%= scope['kubernetes::node::kubelet::args'] -%>
 "

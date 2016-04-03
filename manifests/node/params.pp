@@ -39,6 +39,27 @@ class kubernetes::node::params {
   $kubelet_root_dir = undef
   $kubelet_streaming_connection_idle_timeout = undef
   $kubelet_sync_frequency = undef
+  $kubelet_application_metrics_count_limit = 100
+  $kubelet_docker_env_metadata_whitelist = undef
+  $kubelet_enable_custom_metrics = undef
+  $kubelet_experimental_flannel_overlay = undef
+  $kubelet_hairpin_mode = undef
+  $kubelet_housekeeping_interval = '10s'
+  $kubelet_kube_api_burst = undef
+  $kubelet_kube_api_qps = undef
+  $kubelet_kube_reserved = undef
+  $kubelet_kubelet_cgroups = undef
+  $kubelet_lock_file = undef
+  $kubelet_minimum_image_ttl_duration = undef
+  $kubelet_node_ip = undef
+  $kubelet_node_labels = undef
+  $kubelet_reconcile_cidr = undef
+  $kubelet_register_schedulable = undef
+  $kubelet_runtime_cgroups = undef
+  $kubelet_system_cgroups = undef
+  $kubelet_system_reserved = undef
+  $kubelet_non_masquerade_cidr = undef
+  $kubelet_minimum_version = 1.1
   $kubelet_args = ''
 
   # proxy options
@@ -60,6 +81,12 @@ class kubernetes::node::params {
   $kube_proxy_proxy_port_range = '0-0'
   $kube_proxy_resource_container = undef
   $kube_proxy_udp_timeout = '250ms'
+  $kube_proxy_config_sync_period = undef
+  $kube_proxy_conntrack_max = undef
+  $kube_proxy_conntrack_tcp_timeout_established = undef
+  $kube_proxy_iptables_masquerade_bit = undef
+  $kube_proxy_kube_api_burst = undef
+  $kube_proxy_kube_api_qps = undef
   $kube_proxy_minimum_version = 1.1
   $kube_proxy_args = ''
 }

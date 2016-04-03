@@ -196,6 +196,30 @@
 #   Enable watch caching in the apiserver
 #   Default true
 #
+# [*watch_cache_sizes*]
+#   List of watch cache sizes for every resource (pods, nodes, etc.), comma separated. The individual override format: resource#size, where size is a number. It takes effect when watch-cache is enabled.
+#   Default undef
+#
+# [*repair_malformed_updates*]
+#   If true, server will do its best to fix the update request to pass the validation, e.g., setting empty UID in update request to its existing value. This flag can be turned off after we fix all the clients that send malformed updates.
+#   Default true
+#
+# [*delete_collection_workers*]
+#   Number of workers spawned for DeleteCollection call. These are used to speed up namespace cleanup.
+#   Default 1
+#
+# [*kubernetes_service_node_port*]
+#   If non-zero, the Kubernetes master service (which apiserver creates/maintains) will be of type NodePort, using this as the value of the port. If zero, the Kubernetes master service will be of type ClusterIP.
+#   Default 0
+#
+# [*authorization_webhook_config*]
+#   File with webhook configuration in kubeconfig format, used with --authorization-mode=Webhook. The API server will query the remote service to determine access on the API server's secure port.
+#   Default undef
+#
+# [*ir_hawkular*]
+#   Hawkular configuration URL
+#   Default undef
+#
 # [*minimum_version*]
 #   Minimum supported Kubernetes version. Don't enable new features when
 #   incompatbile with that version.
@@ -247,6 +271,12 @@ class kubernetes::master::apiserver (
   $watch_cache                   = $kubernetes::master::params::kube_api_watch_cache,
   $extra_args                    = $kubernetes::master::params::kube_api_extra_args,
   $minimum_version               = $kubernetes::master::params::kube_api_minimum_version,
+  $watch_cache_sizes             = $kubernetes::master::params::kube_api_watch_cache_sizes,
+  $repair_malformed_updates      = $kubernetes::master::params::kube_api_repair_malformed_updates,
+  $delete_collection_workers     = $kubernetes::master::params::kube_api_delete_collection_workers,
+  $kubernetes_service_node_port  = $kubernetes::master::params::kube_api_kubernetes_service_node_port,
+  $authorization_webhook_config  = $kubernetes::master::params::kube_api_authorization_webhook_config,
+  $ir_hawkular                   = $kubernetes::master::params::kube_api_ir_hawkular,
 ) inherits kubernetes::master::params {
   include ::kubernetes::master
 
