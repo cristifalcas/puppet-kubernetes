@@ -13,10 +13,6 @@ KUBE_API_PORT="--insecure-port=<%= scope['kubernetes::master::apiserver::insecur
 # Port minions listen on
 KUBELET_PORT="--kubelet-port=<%= scope['kubernetes::master::apiserver::kubelet_port'] %>"
 
-# we don't use --etcd_servers. Instead we use --etcd-config
-# Comma separated list of nodes in the etcd cluster
-#KUBE_ETCD_SERVERS="--etcd-servers=http://127.0.0.1:2379"
-
 # Address range to use for services
 KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=<%= scope['kubernetes::master::apiserver::service_cluster_ip_range'] %>"
 
@@ -25,7 +21,17 @@ KUBE_ADMISSION_CONTROL="--admission-control=<%= Array(scope['kubernetes::master:
 
 # Add your own!
 KUBE_API_ARGS="<% -%>
+<% if @minimum_version.to_f < 1.2 then -%>
  --etcd-config=/etc/kubernetes/etcd_config.json<% -%>
+<% end -%>
+<% if @minimum_version.to_f >= 1.2 then -%>
+ --etcd-servers=<%= Array(scope['kubernetes::master::apiserver::etcd_servers']).join(',') -%>
+<% if @etcd_certfile and @etcd_keyfile and @etcd_cacertfiles and not Array(@etcd_cacertfiles).flatten.empty? -%>
+ --etcd-certfile=<%= scope['kubernetes::master::apiserver::etcd_certfile'] -%>
+ --etcd-keyfile=<%= scope['kubernetes::master::apiserver::etcd_keyfile'] -%>
+ --etcd-cafile=<%= Array(scope['kubernetes::master::apiserver::etcd_cacertfiles'])[0] -%>
+<% end -%>
+<% end -%>
 <% if @advertise_address then -%>
  --advertise-address=<%= scope['kubernetes::master::apiserver::advertise_address'] -%>
 <% end -%>
@@ -36,7 +42,9 @@ KUBE_API_ARGS="<% -%>
 <% if @client_ca_file then -%>
  --client-ca-file=<%= scope['kubernetes::master::apiserver::client_ca_file'] -%>
 <% end -%>
+<% if @minimum_version.to_f < 1.2 then -%>
  --cluster-name=<%= scope['kubernetes::master::apiserver::cluster_name'] -%>
+<% end -%>
  --etcd-prefix=<%= scope['kubernetes::master::apiserver::etcd_prefix'] -%>
  --event-ttl=<%= scope['kubernetes::master::apiserver::event_ttl'] -%>
 <% if @google_json_key -%>
@@ -91,6 +99,20 @@ KUBE_API_ARGS="<% -%>
 <% end -%>
 <% if @minimum_version.to_f > 1.0 then -%>
  --watch-cache=<%= scope['kubernetes::master::apiserver::watch_cache'] -%>
+<% end -%>
+<% if @minimum_version.to_f >= 1.2 then -%>
+ --repair-malformed-updates=<%= scope['kubernetes::master::apiserver::repair_malformed_updates'] -%>
+ --delete-collection-workers==<%= scope['kubernetes::master::apiserver::delete_collection_workers'] -%>
+ --kubernetes-service-node-port=<%= scope['kubernetes::master::apiserver::kubernetes_service_node_port'] -%>
+<% if @watch_cache_sizes -%>
+ --watch-cache-sizes=<%= scope['kubernetes::master::apiserver::watch_cache_sizes'] -%>
+<% end -%>
+<% if @authorization_webhook_config -%>
+ --authorization-webhook-config-file=<%= scope['kubernetes::master::apiserver::authorization_webhook_config'] -%>
+<% end -%>
+<% if @ir_hawkular -%>
+ --ir-hawkular=<%= scope['kubernetes::master::apiserver::ir_hawkular'] -%>
+<% end -%>
 <% end -%>
  <%= scope['kubernetes::master::apiserver::extra_args'] -%>
 "

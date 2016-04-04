@@ -52,6 +52,12 @@ class kubernetes::master::params {
   $kube_api_tls_private_key_file = undef
   $kube_api_token_auth_file = undef
   $kube_api_watch_cache = true
+  $kube_api_watch_cache_sizes = undef
+  $kube_api_repair_malformed_updates = true
+  $kube_api_delete_collection_workers = 1
+  $kube_api_kubernetes_service_node_port = 0
+  $kube_api_authorization_webhook_config = undef
+  $kube_api_ir_hawkular = undef
   $kube_api_extra_args = ''
   $kube_api_minimum_version = 1.1
 
@@ -86,6 +92,18 @@ class kubernetes::master::params {
   $kube_controller_service_account_private_key_file = undef
   $kube_controller_service_sync_period = '5m0s'
   $kube_controller_terminated_pod_gc_threshold = 0
+  $kube_controller_concurrent_deployment_syncs = 5
+  $kube_controller_concurrent_namespace_syncs = 2
+  $kube_controller_concurrent_replicaset_syncs = 5
+  $kube_controller_concurrent_resource_quota_syncs = 5
+  $kube_controller_daemonset_lookup_cache_size = 1024
+  $kube_controller_kube_api_burst = 30
+  $kube_controller_kube_api_qps = 20
+  $kube_controller_leader_elect = undef
+  $kube_controller_leader_elect_lease_duration = '15s'
+  $kube_controller_leader_elect_renew_deadline = '10s'
+  $kube_controller_leader_elect_retry_period = '2s'
+  $kube_controller_replicaset_lookup_cache_size = 4096
   $kube_controller_args = ''
   $kube_controller_minimum_version = 1.1
 
@@ -101,6 +119,11 @@ class kubernetes::master::params {
   $kube_scheduler_log_flush_frequency = '5s'
   $kube_scheduler_master = 'http://127.0.0.1:8080'
   $kube_scheduler_port = 10251
+  $kube_scheduler_leader_elect = undef
+  $kube_scheduler_leader_elect_lease_duration = '15s'
+  $kube_scheduler_leader_elect_renew_deadline = '10s'
+  $kube_scheduler_leader_elect_retry_period = '2s'
+  $kube_scheduler_scheduler_name = undef
   $kube_scheduler_args = ''
   $kube_scheduler_minimum_version = 1.1
 }

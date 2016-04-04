@@ -125,6 +125,54 @@
 #      deleting terminated pods. If <= 0, the terminated pod garbage collector is disabled.
 #   Defaults to 0
 #
+# [*concurrent_deployment_syncs*]
+#   The number of deployment objects that are allowed to sync concurrently. Larger number = more responsive deployments, but more CPU (and network) load
+#   Default 5
+#
+# [*concurrent_namespace_syncs*]
+#   The number of namespace objects that are allowed to sync concurrently. Larger number = more responsive namespace termination, but more CPU (and network) load
+#   Default 2
+#
+# [*concurrent_replicaset_syncs*]
+#   The number of replica sets that are allowed to sync concurrently. Larger number = more responsive replica management, but more CPU (and network) load
+#   Default 5
+#
+# [*concurrent_resource_quota_syncs*]
+#   The number of resource quotas that are allowed to sync concurrently. Larger number = more responsive quota management, but more CPU (and network) load
+#   Default 5
+#
+# [*daemonset_lookup_cache_size*]
+#   The the size of lookup cache for daemonsets. Larger number = more responsive daemonsets, but more MEM load.
+#   Default 1024
+#
+# [*kube_api_burst*]
+#   Burst to use while talking with kubernetes apiserver
+#   Default 30
+#
+# [*kube_api_qps*]
+#   QPS to use while talking with kubernetes apiserver
+#   Default 20
+#
+# [*leader_elect*]
+#   Start a leader election client and gain leadership before executing the main loop. Enable this when running replicated components for high availability.
+#   Default undef
+#
+# [*leader_elect_lease_duration*]
+#   The duration that non-leader candidates will wait after observing a leadership renewal until attempting to acquire leadership of a led but unrenewed leader slot. This is effectively the maximum duration that a leader can be stopped before it is replaced by another candidate. This is only applicable if leader election is enabled.
+#   Default '15s'
+#
+# [*leader_elect_renew_deadline*]
+#   The interval between attempts by the acting master to renew a leadership slot before it stops leading. This must be less than or equal to the lease duration. This is only applicable if leader election is enabled.
+#   Default '10s'
+#
+# [*leader_elect_retry_period*]
+#   The duration the clients should wait between attempting acquisition and renewal of a leadership. This is only applicable if leader election is enabled.
+#   Default '2s'
+#
+# [*replicaset_lookup_cache_size*]
+#   The the size of lookup cache for replicatsets. Larger number = more responsive replica management, but more MEM load.
+#   Default 4096
+#
 # [*minimum_version*]
 #   Minimum supported Kubernetes version. Don't enable new features when
 #   incompatbile with that version.
@@ -160,6 +208,18 @@ class kubernetes::master::controller_manager (
   $service_account_private_key_file      = $kubernetes::master::params::kube_controller_service_account_private_key_file,
   $service_sync_period                   = $kubernetes::master::params::kube_controller_service_sync_period,
   $terminated_pod_gc_threshold           = $kubernetes::master::params::kube_controller_terminated_pod_gc_threshold,
+  $concurrent_deployment_syncs           = $kubernetes::master::params::kube_controller_concurrent_deployment_syncs,
+  $concurrent_namespace_syncs            = $kubernetes::master::params::kube_controller_concurrent_namespace_syncs,
+  $concurrent_replicaset_syncs           = $kubernetes::master::params::kube_controller_concurrent_replicaset_syncs,
+  $concurrent_resource_quota_syncs       = $kubernetes::master::params::kube_controller_concurrent_resource_quota_syncs,
+  $daemonset_lookup_cache_size           = $kubernetes::master::params::kube_controller_daemonset_lookup_cache_size,
+  $kube_api_burst                        = $kubernetes::master::params::kube_controller_kube_api_burst,
+  $kube_api_qps                          = $kubernetes::master::params::kube_controller_kube_api_qps,
+  $leader_elect                          = $kubernetes::master::params::kube_controller_leader_elect,
+  $leader_elect_lease_duration           = $kubernetes::master::params::kube_controller_leader_elect_lease_duration,
+  $leader_elect_renew_deadline           = $kubernetes::master::params::kube_controller_leader_elect_renew_deadline,
+  $leader_elect_retry_period             = $kubernetes::master::params::kube_controller_leader_elect_retry_period,
+  $replicaset_lookup_cache_size          = $kubernetes::master::params::kube_controller_replicaset_lookup_cache_size,
   $extra_args                            = $kubernetes::master::params::kube_controller_args,
   $minimum_version                       = $kubernetes::master::params::kube_controller_minimum_version,
 ) inherits kubernetes::master::params {
