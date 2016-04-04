@@ -83,6 +83,30 @@
 #   Only applicable for proxy-mode=userspace
 #   Defaults to 250ms
 #
+# [*config_sync_period*]
+#   How often configuration from the apiserver is refreshed.
+#   Default undef
+#
+# [*conntrack_max*]
+#   Maximum number of NAT connections to track
+#   Default undef
+#
+# [*conntrack_tcp_timeout_established*]
+#   Idle timeout for established TCP connections
+#   Default undef
+#
+# [*iptables_masquerade_bit*]
+#   If using the pure iptables proxy, the bit of the fwmark space to mark packets requiring SNAT with.  Must be within the range [0, 31].
+#   Default undef
+#
+# [*kube_api_burst*]
+#   Burst to use while talking with kubernetes apiserver
+#   Default undef
+#
+# [*kube_api_qps*]
+#   QPS to use while talking with kubernetes apiserver
+#   Default undef
+#
 # [*minimum_version*]
 #   Minimum supported Kubernetes version. Don't enable new features when
 #   incompatbile with that version.
@@ -92,25 +116,31 @@
 #   Add your own!
 #
 class kubernetes::node::kube_proxy (
-  $ensure               = $kubernetes::node::params::kube_proxy_service_ensure,
-  $enable               = $kubernetes::node::params::kube_proxy_service_enable,
-  $bind_address         = $kubernetes::node::params::kube_proxy_bind_address,
-  $cleanup_iptables     = $kubernetes::node::params::kube_proxy_cleanup_iptables,
-  $healthz_bind_address = $kubernetes::node::params::kube_proxy_healthz_bind_address,
-  $healthz_port         = $kubernetes::node::params::kube_proxy_healthz_port,
-  $hostname_override    = $kubernetes::node::params::kube_proxy_hostname_override,
-  $iptables_sync_period = $kubernetes::node::params::kube_proxy_iptables_sync_period,
-  $kubeconfig           = $kubernetes::node::params::kube_proxy_kubeconfig,
-  $log_flush_frequency  = $kubernetes::node::params::kube_proxy_log_flush_frequency,
-  $masquerade_all       = $kubernetes::node::params::kube_proxy_masquerade_all,
-  $master               = $kubernetes::node::params::kube_proxy_master,
-  $oom_score_adj        = $kubernetes::node::params::kube_proxy_oom_score_adj,
-  $proxy_mode           = $kubernetes::node::params::kube_proxy_proxy_mode,
-  $proxy_port_range     = $kubernetes::node::params::kube_proxy_proxy_port_range,
-  $resource_container   = $kubernetes::node::params::kube_proxy_resource_container,
-  $udp_timeout          = $kubernetes::node::params::kube_proxy_udp_timeout,
-  $minimum_version      = $kubernetes::node::params::kube_proxy_minimum_version,
-  $args                 = $kubernetes::node::params::kube_proxy_args,
+  $ensure                            = $kubernetes::node::params::kube_proxy_service_ensure,
+  $enable                            = $kubernetes::node::params::kube_proxy_service_enable,
+  $bind_address                      = $kubernetes::node::params::kube_proxy_bind_address,
+  $cleanup_iptables                  = $kubernetes::node::params::kube_proxy_cleanup_iptables,
+  $healthz_bind_address              = $kubernetes::node::params::kube_proxy_healthz_bind_address,
+  $healthz_port                      = $kubernetes::node::params::kube_proxy_healthz_port,
+  $hostname_override                 = $kubernetes::node::params::kube_proxy_hostname_override,
+  $iptables_sync_period              = $kubernetes::node::params::kube_proxy_iptables_sync_period,
+  $kubeconfig                        = $kubernetes::node::params::kube_proxy_kubeconfig,
+  $log_flush_frequency               = $kubernetes::node::params::kube_proxy_log_flush_frequency,
+  $masquerade_all                    = $kubernetes::node::params::kube_proxy_masquerade_all,
+  $master                            = $kubernetes::node::params::kube_proxy_master,
+  $oom_score_adj                     = $kubernetes::node::params::kube_proxy_oom_score_adj,
+  $proxy_mode                        = $kubernetes::node::params::kube_proxy_proxy_mode,
+  $proxy_port_range                  = $kubernetes::node::params::kube_proxy_proxy_port_range,
+  $resource_container                = $kubernetes::node::params::kube_proxy_resource_container,
+  $udp_timeout                       = $kubernetes::node::params::kube_proxy_udp_timeout,
+  $config_sync_period                = $kubernetes::node::params::kube_proxy_config_sync_period,
+  $conntrack_max                     = $kubernetes::node::params::kube_proxy_conntrack_max,
+  $conntrack_tcp_timeout_established = $kubernetes::node::params::kube_proxy_conntrack_tcp_timeout_established,
+  $iptables_masquerade_bit           = $kubernetes::node::params::kube_proxy_iptables_masquerade_bit,
+  $kube_api_burst                    = $kubernetes::node::params::kube_proxy_kube_api_burst,
+  $kube_api_qps                      = $kubernetes::node::params::kube_proxy_kube_api_qps,
+  $minimum_version                   = $kubernetes::node::params::kube_proxy_minimum_version,
+  $args                              = $kubernetes::node::params::kube_proxy_args,
 ) inherits kubernetes::node::params {
   include ::kubernetes::node
 

@@ -53,5 +53,21 @@ KUBE_CONTROLLER_MANAGER_ARGS="<% -%>
 <% if @minimum_version.to_f > 1.0 then -%>
  --terminated-pod-gc-threshold=<%= scope['kubernetes::master::controller_manager::terminated_pod_gc_threshold'] -%>
 <% end -%>
+<% if @minimum_version.to_f >= 1.2 then -%>
+ --concurrent-deployment-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_deployment_syncs'] -%>
+ --concurrent-namespace-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_namespace_syncs'] -%>
+ --concurrent-replicaset-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_replicaset_syncs'] -%>
+ --concurrent-resource-quota-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_resource_quota_syncs'] -%>
+ --daemonset-lookup-cache-size=<%= scope['kubernetes::master::controller_manager::daemonset_lookup_cache_size'] -%>
+ --kube-api-burst=<%= scope['kubernetes::master::controller_manager::kube_api_burst'] -%>
+ --kube-api-qps=<%= scope['kubernetes::master::controller_manager::kube_api_qps'] -%>
+ --replicaset-lookup-cache-size=<%= scope['kubernetes::master::controller_manager::replicaset_lookup_cache_size'] -%>
+<% if @leader_elect then -%>
+ --leader-elect=<%= scope['kubernetes::master::controller_manager::leader_elect'] -%>
+ --leader-elect-lease-duration=<%= scope['kubernetes::master::controller_manager::leader_elect_lease_duration'] -%>
+ --leader-elect-renew-deadline=<%= scope['kubernetes::master::controller_manager::leader_elect_renew_deadline'] -%>
+ --leader-elect-retry-period=<%= scope['kubernetes::master::controller_manager::leader_elect_retry_period'] -%>
+<% end -%>
+<% end -%>
 <%= scope['kubernetes::master::controller_manager::extra_args'] -%>
 "

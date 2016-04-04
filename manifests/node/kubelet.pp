@@ -146,6 +146,91 @@
 #   Max period between synchronizing running containers and config
 #   Default=undef
 #
+# [*application_metrics_count_limit*]
+#   Max number of application metrics to store (per container)
+#   Default 100
+#
+# [*docker_env_metadata_whitelist*]
+#   A comma-separated list of environment variable keys that needs to be collected for docker containers
+#   Default undef
+#
+# [*enable_custom_metrics[*]
+#   Support for gathering custom metrics.
+#   Default undef
+#
+# [*experimental_flannel_overlay[*]
+#   Experimental support for starting the kubelet with the default overlay network (flannel). Assumes flanneld is already running in client mode.
+#   Default undef
+#
+# [*hairpin_mode*]
+#   How should the kubelet setup hairpin NAT. This allows endpoints of a Service to loadbalance back to themselves if they should try to access their own Service. Valid values are "promiscuous-bridge", "hairpin-veth" and "none".
+#   Default undef
+#
+# [*housekeeping_interval*]
+#   Interval between container housekeepings
+#   Default '10s'
+#
+# [*kube_api_burst*]
+#   Burst to use while talking with kubernetes apiserver
+#   Default undef
+#
+# [*kube_api_qps*]
+#   QPS to use while talking with kubernetes apiserver
+#   Default undef
+#
+# [*kube_reserved*]
+#   A set of ResourceName=ResourceQuantity (e.g. cpu=200m,memory=150G) pairs that describe resources reserved for kubernetes system components. Currently only cpu and memory are supported.
+#   Default undef
+#
+# [*kubelet_cgroups*]
+#   Optional absolute name of cgroups to create and run the Kubelet in.
+#   Default undef
+#
+# [*lock_file*]
+#   Warning: Alpha feature. The path to file for kubelet to use as a lock file.
+#   Default undef
+#
+# [*minimum_image_ttl_duration*]
+#   Minimum age for a unused image before it is garbage collected.  Examples: '300ms', '10s' or '2h45m'.
+#   Default undef
+#
+# [*node_ip*]
+#   IP address of the node. If set, kubelet will use this IP address for the node
+#   Default undef
+#
+# [*node_labels*]
+#   Warning: Alpha feature. Labels to add when registering the node in the cluster.  Labels must be key=value pairs separated by ','.
+#   Default undef
+#
+# [*reconcile_cidr*]
+#   Reconcile node CIDR with the CIDR specified by the API server. No-op if register-node or configure-cbr0 is false.
+#   Default undef
+#
+# [*register_schedulable[*]
+#   Register the node as schedulable. No-op if register-node is false.
+#   Default undef
+#
+# [*runtime_cgroups*]
+#   Optional absolute name of cgroups to create and run the runtime in.
+#   Default undef
+#
+# [*system_cgroups*]
+#   Optional absolute name of cgroups in which to place all non-kernel processes that are not already inside a cgroup under `/`. Empty for no container. Rolling back the flag requires a reboot.
+#   Default undef
+#
+# [*system_reserved*]
+#   A set of ResourceName=ResourceQuantity (e.g. cpu=200m,memory=150G) pairs that describe resources reserved for non-kubernetes components. Currently only cpu and memory are supported.
+#   Default undef
+#
+# [*non_masquerade_cidr*]
+#   Traffic to IPs outside this range will use IP masquerade.
+#   Default undef
+#
+# [*minimum_version*]
+#   Minimum supported Kubernetes version. Don't enable new features when
+#   incompatbile with that version.
+#   Default to 1.1.
+#
 # [*args*]
 #   Add your own!
 
@@ -184,6 +269,26 @@ class kubernetes::node::kubelet (
   $root_dir                              = $kubernetes::node::params::kubelet_root_dir,
   $streaming_connection_idle_timeout     = $kubernetes::node::params::kubelet_streaming_connection_idle_timeout,
   $sync_frequency                        = $kubernetes::node::params::kubelet_sync_frequency,
+  $application_metrics_count_limit       = $kubernetes::node::params::kubelet_application_metrics_count_limit,
+  $docker_env_metadata_whitelist         = $kubernetes::node::params::kubelet_docker_env_metadata_whitelist,
+  $enable_custom_metrics                 = $kubernetes::node::params::kubelet_enable_custom_metrics,
+  $experimental_flannel_overlay          = $kubernetes::node::params::kubelet_experimental_flannel_overlay,
+  $hairpin_mode                          = $kubernetes::node::params::kubelet_hairpin_mode,
+  $housekeeping_interval                 = $kubernetes::node::params::kubelet_housekeeping_interval,
+  $kube_api_burst                        = $kubernetes::node::params::kubelet_kube_api_burst,
+  $kube_api_qps                          = $kubernetes::node::params::kubelet_kube_api_qps,
+  $kube_reserved                         = $kubernetes::node::params::kubelet_kube_reserved,
+  $kubelet_cgroups                       = $kubernetes::node::params::kubelet_kubelet_cgroups,
+  $lock_file                             = $kubernetes::node::params::kubelet_lock_file,
+  $minimum_image_ttl_duration            = $kubernetes::node::params::kubelet_minimum_image_ttl_duration,
+  $node_ip                               = $kubernetes::node::params::kubelet_node_ip,
+  $node_labels                           = $kubernetes::node::params::kubelet_node_labels,
+  $reconcile_cidr                        = $kubernetes::node::params::kubelet_reconcile_cidr,
+  $register_schedulable                  = $kubernetes::node::params::kubelet_register_schedulable,
+  $runtime_cgroups                       = $kubernetes::node::params::kubelet_runtime_cgroups,
+  $system_cgroups                        = $kubernetes::node::params::kubelet_system_cgroups,
+  $system_reserved                       = $kubernetes::node::params::kubelet_system_reserved,
+  $minimum_version                       = $kubernetes::node::params::kubelet_minimum_version,
   $args                                  = $kubernetes::node::params::kubelet_args,
 ) inherits kubernetes::node::params {
   include ::kubernetes::node
