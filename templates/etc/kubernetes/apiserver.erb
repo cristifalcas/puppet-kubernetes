@@ -102,7 +102,7 @@ KUBE_API_ARGS="<% -%>
 <% end -%>
 <% if @minimum_version.to_f >= 1.2 then -%>
  --repair-malformed-updates=<%= scope['kubernetes::master::apiserver::repair_malformed_updates'] -%>
- --delete-collection-workers==<%= scope['kubernetes::master::apiserver::delete_collection_workers'] -%>
+ --delete-collection-workers=<%= scope['kubernetes::master::apiserver::delete_collection_workers'] -%>
  --kubernetes-service-node-port=<%= scope['kubernetes::master::apiserver::kubernetes_service_node_port'] -%>
 <% if @watch_cache_sizes -%>
  --watch-cache-sizes=<%= scope['kubernetes::master::apiserver::watch_cache_sizes'] -%>
