@@ -151,13 +151,40 @@ class kubernetes::node::kube_proxy (
   validate_bool($cleanup_iptables, $masquerade_all)
   validate_integer([$healthz_port, $oom_score_adj,])
 
-  file { '/etc/kubernetes/proxy':
-    ensure  => 'file',
-    content => template("${module_name}/etc/kubernetes/proxy.erb"),
-  } ~> Service['kube-proxy']
 
-  service { 'kube-proxy':
-    ensure => $ensure,
-    enable => $enable,
+  case $::osfamily {
+    'Debian': {
+      if ($::operatingsystem == 'ubuntu' and $::lsbdistcodename in ['lucid', 'precise', 'trusty'])
+      or ($::operatingsystem == 'debian' and $::operatingsystemmajrelease in ['6', '7', '8']) {
+        file { '/etc/kubernetes/proxy':
+          ensure  => 'file',
+          content => template("${module_name}/etc/kubernetes/proxy.erb"),
+        } ~> Service['kube-proxy']
+
+        file { '/etc/default/kube-proxy':
+          ensure  => 'file',
+          force   => true,
+          content => template("${module_name}/etc/default/proxy.erb"),
+        } ~> Service['kube-proxy']
+
+        service { 'kube-proxy':
+          ensure => $ensure,
+          enable => $enable,
+        }
+      }
+    }
+    'RedHat': {
+      if ($::operatingsystem in ['RedHat', 'CentOS'] and $::operatingsystemmajrelease in ['5', '6', '7']) {
+        file { '/etc/kubernetes/proxy':
+          ensure  => 'file',
+          content => template("${module_name}/etc/kubernetes/proxy.erb"),
+        } ~> Service['kube-proxy']
+
+        service { 'kube-proxy':
+          ensure => $ensure,
+          enable => $enable,
+        }
+      }
+    }
   }
 }
