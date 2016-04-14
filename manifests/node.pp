@@ -9,7 +9,7 @@
 #   Defaults to present
 #
 class kubernetes::node ($ensure = 'present',) {
-  include ::kubernetes
+  include ::kubernetes::client
 
   # this should ensure also that all files from /etc/kubernetes are managed after package install
   package { ['kubernetes-node']: ensure => $ensure, } -> File['/etc/kubernetes/'] ->

@@ -233,7 +233,7 @@
 #
 # [*args*]
 #   Add your own!
-
+#
 class kubernetes::node::kubelet (
   $ensure                                = $kubernetes::node::params::kubelet_service_ensure,
   $enable                                = $kubernetes::node::params::kubelet_service_enable,
