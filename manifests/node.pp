@@ -9,6 +9,8 @@
 #   Defaults to present
 #
 class kubernetes::node ($ensure = 'present',) {
+  validate_string($ensure)
+
   include ::kubernetes::client
 
   # this should ensure also that all files from /etc/kubernetes are managed after package install

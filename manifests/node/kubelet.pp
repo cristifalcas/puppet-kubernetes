@@ -291,6 +291,9 @@ class kubernetes::node::kubelet (
   $minimum_version                       = $kubernetes::node::params::kubelet_minimum_version,
   $args                                  = $kubernetes::node::params::kubelet_args,
 ) inherits kubernetes::node::params {
+  validate_re($ensure, '^(running|stopped)$')
+  validate_bool($enable)
+
   include ::kubernetes::node
   
   if $cert_dir and ($tls_cert_file or $tls_private_key_file) {

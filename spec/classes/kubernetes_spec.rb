@@ -1,14 +1,10 @@
 require 'spec_helper'
 
-describe 'kubernetes' do
+describe 'kubernetes', :type => :class do
   context 'with defaults for all parameters on RedHat' do
-    let :facts do
-      {
-        :kernel   => 'Linux',
-        :osfamily => 'RedHat',
-      }
+    it 'test default install' do
+      is_expected.to compile.with_all_deps
+      is_expected.to contain_class('kubernetes')
     end
-    it { is_expected.to compile.with_all_deps }
-    it { should contain_class('kubernetes') }
   end
 end

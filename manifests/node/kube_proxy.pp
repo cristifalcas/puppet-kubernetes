@@ -142,6 +142,10 @@ class kubernetes::node::kube_proxy (
   $minimum_version                   = $kubernetes::node::params::kube_proxy_minimum_version,
   $args                              = $kubernetes::node::params::kube_proxy_args,
 ) inherits kubernetes::node::params {
+  validate_re($ensure, '^(running|stopped)$')
+  validate_bool($enable)
+  validate_string($bind_address)
+
   include ::kubernetes::node
 
   validate_bool($cleanup_iptables, $masquerade_all)

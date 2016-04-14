@@ -278,13 +278,19 @@ class kubernetes::master::apiserver (
   $authorization_webhook_config  = $kubernetes::master::params::kube_api_authorization_webhook_config,
   $ir_hawkular                   = $kubernetes::master::params::kube_api_ir_hawkular,
 ) inherits kubernetes::master::params {
+  validate_re($ensure, '^(running|stopped)$')
+  validate_bool($enable)
+
   include ::kubernetes::master
 
-  file { '/etc/kubernetes/etcd_config.json':
-    ensure  => 'file',
-    force   => true,
-    content => template("${module_name}/etc/kubernetes/etcd_config.json.erb"),
-  } ~> Service['kube-apiserver']
+  if $minimum_version < 1.2 {
+    file { '/etc/kubernetes/etcd_config.json':
+      ensure  => 'file',
+      force   => true,
+      content => template("${module_name}/etc/kubernetes/etcd_config.json.erb"),
+    } ~> Service['kube-apiserver']
+  }
+
   file { '/etc/kubernetes/apiserver':
     ensure  => 'file',
     force   => true,

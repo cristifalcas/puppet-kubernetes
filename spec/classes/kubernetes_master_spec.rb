@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'kubernetes::master' do
+describe 'kubernetes::master', :type => :class do
   context 'with defaults for all parameters on RedHat' do
     let :facts do
       {
@@ -8,8 +8,13 @@ describe 'kubernetes::master' do
         :osfamily => 'RedHat',
       }
     end
-    it { is_expected.to compile.with_all_deps }
-    it { should contain_class('kubernetes::master') }
-    it { should contain_package('kubernetes-master').with_ensure('present') }
+    it 'test default install' do
+      is_expected.to compile.with_all_deps
+      is_expected.to contain_class('kubernetes::client')
+      is_expected.to contain_class('kubernetes::master')
+
+      is_expected.to contain_package('kubernetes-master').with_ensure('present')
+      is_expected.to contain_file('/etc/kubernetes/').with({ 'ensure'  => 'directory',  })
+    end
   end
 end

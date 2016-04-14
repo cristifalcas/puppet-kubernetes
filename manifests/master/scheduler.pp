@@ -84,6 +84,9 @@ class kubernetes::master::scheduler (
   $extra_args                  = $kubernetes::master::params::kube_scheduler_args,
   $minimum_version             = $kubernetes::master::params::kube_scheduler_minimum_version,
 ) inherits kubernetes::master::params {
+  validate_re($ensure, '^(running|stopped)$')
+  validate_bool($enable)
+
   include ::kubernetes::master
 
   file { '/etc/kubernetes/scheduler':

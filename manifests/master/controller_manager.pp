@@ -223,6 +223,9 @@ class kubernetes::master::controller_manager (
   $extra_args                            = $kubernetes::master::params::kube_controller_args,
   $minimum_version                       = $kubernetes::master::params::kube_controller_minimum_version,
 ) inherits kubernetes::master::params {
+  validate_re($ensure, '^(running|stopped)$')
+  validate_bool($enable)
+
   include ::kubernetes::master
 
   validate_bool($allocate_node_cidrs)
