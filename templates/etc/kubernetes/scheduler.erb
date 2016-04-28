@@ -7,7 +7,7 @@
 # Add your own!
 KUBE_SCHEDULER_ARGS="<% -%>
  --address=<%= scope['kubernetes::master::scheduler::address'] -%>
-<% if @minimum_version.to_f > 1.0 then -%>
+<% if @minimum_version.to_f > 1.0 and @minimum_version.to_f < 1.2 then -%>
  --bind-pods-burst=<%= scope['kubernetes::master::scheduler::bind_pods_burst'] -%>
  --bind-pods-qps=<%= scope['kubernetes::master::scheduler::bind_pods_qps'] -%>
 <% end -%>
@@ -23,7 +23,7 @@ KUBE_SCHEDULER_ARGS="<% -%>
 <% if @minimum_version.to_f >= 1.2 then -%>
 <% if @leader_elect then -%>
  --leader-elect=<%= scope['kubernetes::master::scheduler::leader_elect'] -%>
- --leader-elect-lease-duration=<%= scope['kubernetes::master::scheduler:leader_elect_lease_duration'] -%>
+ --leader-elect-lease-duration=<%= scope['kubernetes::master::scheduler::leader_elect_lease_duration'] -%>
  --leader-elect-renew-deadline=<%= scope['kubernetes::master::scheduler::leader_elect_renew_deadline'] -%>
  --leader-elect-retry-period=<%= scope['kubernetes::master::scheduler::leader_elect_retry_period'] -%>
 <% end -%>
