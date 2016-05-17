@@ -300,75 +300,67 @@ class kubernetes::node::kubelet (
     fail('You can\'t use both of cert_dir and tls_*.')
   }
 
-  case $::osfamily {
-    'Debian': {
-      if ($::operatingsystem == 'ubuntu' and $::lsbdistcodename in ['lucid', 'precise', 'trusty'])
-      or ($::operatingsystem == 'debian' and $::operatingsystemmajrelease in ['6', '7', '8']) {
-        if $register_node and $configure_cbr0 {
-          package { ['bridge-utils']: ensure => 'present', } ->
-          file { '/etc/kubernetes/node_initial.yaml':
-            ensure  => 'file',
-            content => template("${module_name}/node.yaml.erb"),
-          } ->
-          exec { 'register node':
-            command => "/bin/kubectl create --server=${api_servers} -f /etc/kubernetes/node_initial.yaml",
-            unless  => "/bin/kubectl describe nodes --server=${api_servers} ${::fqdn}",
-          } ->
-          # if we configure cbr0, most probably docker will have to wait for this first to be configured,
-          exec { 'force kubelet to create cbr0':
-            command => "/bin/kubelet --runonce=true --api_servers=${api_servers} --configure-cbr0=true --enable-server=false",
-            creates => '/sys/class/net/cbr0/',
-            returns => 1,
-          } ~> Service['docker']
-        }
-
-        file { '/etc/default/kubelet':
-          ensure  => 'file',
-          force   => true,
-          content => template("${module_name}/etc/default/kubelet.erb"),
-        } ~> Service['kubelet']
-        file { '/etc/kubernetes/kubelet':
-          ensure  => 'file',
-          content => template("${module_name}/etc/kubernetes/kubelet.erb"),
-        } ~> Service['kubelet']
-
-        service { 'kubelet':
-          ensure => $ensure,
-          enable => $enable,
-        }
-      }
+  if $::osfamily == 'Debian' {
+    if $register_node and $configure_cbr0 {
+      package { ['bridge-utils']: ensure => 'present', } ->
+      file { '/etc/kubernetes/node_initial.yaml':
+        ensure  => 'file',
+        content => template("${module_name}/node.yaml.erb"),
+      } ->
+      exec { 'register node':
+        command => "/bin/kubectl create --server=${api_servers} -f /etc/kubernetes/node_initial.yaml",
+        unless  => "/bin/kubectl describe nodes --server=${api_servers} ${::fqdn}",
+      } ->
+      # if we configure cbr0, most probably docker will have to wait for this first to be configured,
+      exec { 'force kubelet to create cbr0':
+        command => "/bin/kubelet --runonce=true --api_servers=${api_servers} --configure-cbr0=true --enable-server=false",
+        creates => '/sys/class/net/cbr0/',
+        returns => 1,
+      } ~> Service['docker']
     }
-    'RedHat': {
-      if ($::operatingsystem in ['RedHat', 'CentOS'] and $::operatingsystemmajrelease in ['5', '6', '7']) {
-        # Autoregister and create docker bridge
-        if $register_node and $configure_cbr0 {
-          package { ['bridge-utils']: ensure => 'present', } ->
-          file { '/etc/kubernetes/node_initial.yaml':
-            ensure  => 'file',
-            content => template("${module_name}/node.yaml.erb"),
-          } ->
-          exec { 'register node':
-            command => "/bin/kubectl create --server=${api_servers} -f /etc/kubernetes/node_initial.yaml",
-            unless  => "/bin/kubectl describe nodes --server=${api_servers} ${::fqdn}",
-          } ->
-          # if we configure cbr0, most probably docker will have to wait for this first to be configured,
-          exec { 'force kubelet to create cbr0':
-            command => "/bin/kubelet --runonce=true --api_servers=${api_servers} --configure-cbr0=true --enable-server=false",
-            creates => '/sys/class/net/cbr0/',
-            returns => 1,
-          } ~> Service['docker']
-        }
 
-        file { '/etc/kubernetes/kubelet':
-          ensure  => 'file',
-          content => template("${module_name}/etc/kubernetes/kubelet.erb"),
-        } ~> Service['kubelet']
+    file { '/etc/default/kubelet':
+      ensure  => 'file',
+      force   => true,
+      content => template("${module_name}/etc/default/kubelet.erb"),
+    } ~> Service['kubelet']
+    file { '/etc/kubernetes/kubelet':
+      ensure  => 'file',
+      content => template("${module_name}/etc/kubernetes/kubelet.erb"),
+    } ~> Service['kubelet']
 
-        service { 'kubelet':
-          ensure => $ensure,
-          enable => $enable,
-        }
-      }
+    service { 'kubelet':
+      ensure => $ensure,
+      enable => $enable,
+    }
+  } else { # 'RedHat':
+    # Autoregister and create docker bridge
+    if $register_node and $configure_cbr0 {
+      package { ['bridge-utils']: ensure => 'present', } ->
+      file { '/etc/kubernetes/node_initial.yaml':
+        ensure  => 'file',
+        content => template("${module_name}/node.yaml.erb"),
+      } ->
+      exec { 'register node':
+        command => "/bin/kubectl create --server=${api_servers} -f /etc/kubernetes/node_initial.yaml",
+        unless  => "/bin/kubectl describe nodes --server=${api_servers} ${::fqdn}",
+      } ->
+      # if we configure cbr0, most probably docker will have to wait for this first to be configured,
+      exec { 'force kubelet to create cbr0':
+        command => "/bin/kubelet --runonce=true --api_servers=${api_servers} --configure-cbr0=true --enable-server=false",
+        creates => '/sys/class/net/cbr0/',
+        returns => 1,
+      } ~> Service['docker']
+    }
+
+    file { '/etc/kubernetes/kubelet':
+      ensure  => 'file',
+      content => template("${module_name}/etc/kubernetes/kubelet.erb"),
+    } ~> Service['kubelet']
+
+    service { 'kubelet':
+      ensure => $ensure,
+      enable => $enable,
     }
   }
 }

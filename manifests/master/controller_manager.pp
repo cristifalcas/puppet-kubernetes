@@ -230,38 +230,30 @@ class kubernetes::master::controller_manager (
 
   validate_bool($allocate_node_cidrs)
 
-  case $::osfamily {
-    'Debian': {
-      if ($::operatingsystem == 'ubuntu' and $::lsbdistcodename in ['lucid', 'precise', 'trusty'])
-      or ($::operatingsystem == 'debian' and $::operatingsystemmajrelease in ['6', '7', '8']) {
-        file { '/etc/kubernetes/controller-manager':
-          ensure  => 'file',
-          force   => true,
-          content => template("${module_name}/etc/kubernetes/controller-manager.erb"),
-        } ~> Service['kube-controller-manager']
-        file { '/etc/default/kube-controller-manager':
-          ensure  => 'file',
-          force   => true,
-          content => template("${module_name}/etc/default/controller-manager.erb"),
-        } ~> Service['kube-apiserver']
-        service { 'kube-controller-manager':
-          ensure => $ensure,
-          enable => $enable,
-        }
-      }
+  if $::osfamily == 'Debian' {
+    file { '/etc/kubernetes/controller-manager':
+      ensure  => 'file',
+      force   => true,
+      content => template("${module_name}/etc/kubernetes/controller-manager.erb"),
+    } ~> Service['kube-controller-manager']
+    file { '/etc/default/kube-controller-manager':
+      ensure  => 'file',
+      force   => true,
+      content => template("${module_name}/etc/default/controller-manager.erb"),
+    } ~> Service['kube-apiserver']
+    service { 'kube-controller-manager':
+      ensure => $ensure,
+      enable => $enable,
     }
-    'RedHat': {
-      if ($::operatingsystem in ['RedHat', 'CentOS'] and $::operatingsystemmajrelease in ['5', '6', '7']) {
-        file { '/etc/kubernetes/controller-manager':
-          ensure  => 'file',
-          force   => true,
-          content => template("${module_name}/etc/kubernetes/controller-manager.erb"),
-        } ~> Service['kube-controller-manager']
-        service { 'kube-controller-manager':
-          ensure => $ensure,
-          enable => $enable,
-        }
-      }
+  } else { # 'RedHat'
+    file { '/etc/kubernetes/controller-manager':
+      ensure  => 'file',
+      force   => true,
+      content => template("${module_name}/etc/kubernetes/controller-manager.erb"),
+    } ~> Service['kube-controller-manager']
+    service { 'kube-controller-manager':
+      ensure => $ensure,
+      enable => $enable,
     }
   }
 }
