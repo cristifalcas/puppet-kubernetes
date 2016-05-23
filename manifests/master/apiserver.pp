@@ -283,22 +283,40 @@ class kubernetes::master::apiserver (
 
   include ::kubernetes::master
 
-  if $minimum_version < 1.2 {
+  if $::osfamily == 'Debian' {
     file { '/etc/kubernetes/etcd_config.json':
       ensure  => 'file',
       force   => true,
       content => template("${module_name}/etc/kubernetes/etcd_config.json.erb"),
     } ~> Service['kube-apiserver']
-  }
-
-  file { '/etc/kubernetes/apiserver':
-    ensure  => 'file',
-    force   => true,
-    content => template("${module_name}/etc/kubernetes/apiserver.erb"),
-  } ~> Service['kube-apiserver']
-
-  service { 'kube-apiserver':
-    ensure => $ensure,
-    enable => $enable,
+    file { '/etc/default/kube-apiserver':
+      ensure  => 'file',
+      force   => true,
+      content => template("${module_name}/etc/default/api-server.erb"),
+    } ~> Service['kube-apiserver']
+    file { '/etc/kubernetes/apiserver':
+      ensure  => 'file',
+      force   => true,
+      content => template("${module_name}/etc/kubernetes/apiserver.erb"),
+    } ~> Service['kube-apiserver']
+    service { 'kube-apiserver':
+      ensure => $ensure,
+      enable => $enable,
+    }
+  } else { # 'RedHat'
+    file { '/etc/kubernetes/etcd_config.json':
+      ensure  => 'file',
+      force   => true,
+      content => template("${module_name}/etc/kubernetes/etcd_config.json.erb"),
+    } ~> Service['kube-apiserver']
+    file { '/etc/kubernetes/apiserver':
+      ensure  => 'file',
+      force   => true,
+      content => template("${module_name}/etc/kubernetes/apiserver.erb"),
+    } ~> Service['kube-apiserver']
+    service { 'kube-apiserver':
+      ensure => $ensure,
+      enable => $enable,
+    }
   }
 }

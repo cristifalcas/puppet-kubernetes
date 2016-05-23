@@ -1,6 +1,5 @@
 # == Class: kubernetes::master
 #
-# Module to install an up-to-date version of Docker from package.
 #
 # === Parameters
 #

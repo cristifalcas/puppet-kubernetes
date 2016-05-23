@@ -89,14 +89,33 @@ class kubernetes::master::scheduler (
 
   include ::kubernetes::master
 
-  file { '/etc/kubernetes/scheduler':
-    ensure  => 'file',
-    force   => true,
-    content => template("${module_name}/etc/kubernetes/scheduler.erb"),
-  } ~> Service['kube-scheduler']
 
-  service { 'kube-scheduler':
-    ensure => $ensure,
-    enable => $enable,
+  if $::osfamily == 'Debian' {
+    file { '/etc/kubernetes/scheduler':
+      ensure  => 'file',
+      force   => true,
+      content => template("${module_name}/etc/kubernetes/scheduler.erb"),
+    } ~> Service['kube-scheduler']
+    file { '/etc/default/kube-scheduler':
+      ensure  => 'file',
+      force   => true,
+      content => template("${module_name}/etc/default/scheduler.erb"),
+    } ~> Service['kube-scheduler']
+
+    service { 'kube-scheduler':
+      ensure => $ensure,
+      enable => $enable,
+    }
+  } else { # 'RedHat'
+    file { '/etc/kubernetes/scheduler':
+      ensure  => 'file',
+      force   => true,
+      content => template("${module_name}/etc/kubernetes/scheduler.erb"),
+    } ~> Service['kube-scheduler']
+
+    service { 'kube-scheduler':
+      ensure => $ensure,
+      enable => $enable,
+    }
   }
 }

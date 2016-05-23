@@ -151,13 +151,32 @@ class kubernetes::node::kube_proxy (
   validate_bool($cleanup_iptables, $masquerade_all)
   validate_integer([$healthz_port, $oom_score_adj,])
 
-  file { '/etc/kubernetes/proxy':
-    ensure  => 'file',
-    content => template("${module_name}/etc/kubernetes/proxy.erb"),
-  } ~> Service['kube-proxy']
 
-  service { 'kube-proxy':
-    ensure => $ensure,
-    enable => $enable,
+  if $::osfamily == 'Debian' {
+    file { '/etc/kubernetes/proxy':
+      ensure  => 'file',
+      content => template("${module_name}/etc/kubernetes/proxy.erb"),
+    } ~> Service['kube-proxy']
+
+    file { '/etc/default/kube-proxy':
+      ensure  => 'file',
+      force   => true,
+      content => template("${module_name}/etc/default/proxy.erb"),
+    } ~> Service['kube-proxy']
+
+    service { 'kube-proxy':
+      ensure => $ensure,
+      enable => $enable,
+    }
+  } else { # 'RedHat'
+    file { '/etc/kubernetes/proxy':
+      ensure  => 'file',
+      content => template("${module_name}/etc/kubernetes/proxy.erb"),
+    } ~> Service['kube-proxy']
+
+    service { 'kube-proxy':
+      ensure => $ensure,
+      enable => $enable,
+    }
   }
 }
