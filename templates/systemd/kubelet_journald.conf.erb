@@ -1,0 +1,13 @@
+[Service]
+ExecStart=
+ExecStart=-/bin/sh -c "/usr/bin/kubelet \
+	    $KUBE_LOGTOSTDERR \
+	    $KUBE_LOG_LEVEL \
+	    $KUBELET_API_SERVER \
+	    $KUBELET_ADDRESS \
+	    $KUBELET_PORT \
+	    $KUBELET_HOSTNAME \
+	    $KUBE_ALLOW_PRIV \
+	    $KUBELET_ARGS 2>&1 | /usr/bin/forward-journald -tag kubelet"
+StandardOutput=null
+StandardError=null

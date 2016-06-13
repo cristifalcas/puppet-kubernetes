@@ -4,6 +4,7 @@ class kubernetes::master::params {
   # api server config
   # http://kubernetes.io/v1.1/docs/admin/kube-apiserver.html
   $kube_api_service_ensure = running
+  $kube_api_journald_forward_enable = false
   $kube_api_service_enable = true
   $kube_api_admission_control = [
     'NamespaceLifecycle',
@@ -15,6 +16,7 @@ class kubernetes::master::params {
     ]
   $kube_api_advertise_address = undef
   $kube_api_allow_privileged = false
+  $kube_apiserver_count = 1
   $kube_api_authorization_mode = 'AlwaysAllow'
   $kube_api_bind_address = '0.0.0.0'
   $kube_api_cert_dir = '/var/run/kubernetes'
@@ -64,6 +66,7 @@ class kubernetes::master::params {
   # controller manager config
   # http://kubernetes.io/v1.1/docs/admin/kube-controller-manager.html
   $kube_controller_service_ensure = running
+  $kube_controller_journald_forward_enable = false
   $kube_controller_service_enable = true
   $kube_controller_address = '127.0.0.1'
   $kube_controller_allocate_node_cidrs = false
@@ -110,6 +113,7 @@ class kubernetes::master::params {
   # scheduler config
   # http://kubernetes.io/v1.1/docs/admin/kube-scheduler.html
   $kube_scheduler_service_ensure = running
+  $kube_scheduler_journald_forward_enable = false
   $kube_scheduler_service_enable = true
   $kube_scheduler_address = '127.0.0.1'
   $kube_scheduler_bind_pods_burst = 100

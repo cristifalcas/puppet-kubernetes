@@ -4,6 +4,10 @@
 #   Whether you want the scheduler daemon to start up
 #   Defaults to running
 #
+# [*journald_forward_enable*]
+#   Fix for SIGPIPE sent to registry daemon during journald restart
+#   Defaults to false
+#
 # [*enable*]
 #   Whether you want the scheduler daemon to start up at boot
 #   Defaults to true
@@ -41,23 +45,29 @@
 #   Defaults to 10251
 #
 # [*leader_elect*]
-#   Start a leader election client and gain leadership before executing the main loop. Enable this when running replicated components for high availability.
+#   Start a leader election client and gain leadership before executing the main loop. Enable this when running
+#   replicated components for high availability.
 #   Defaults to undef
 #
 # [*leader_elect_lease_duration*]
-#   The duration that non-leader candidates will wait after observing a leadership renewal until attempting to acquire leadership of a led but unrenewed leader slot. This is effectively the maximum duration that a leader can be stopped before it is replaced by another candidate. This is only applicable if leader election is enabled.
+#   The duration that non-leader candidates will wait after observing a leadership renewal until attempting to
+#   acquire leadership of a led but unrenewed leader slot. This is effectively the maximum duration that a leader can be
+#   stopped before it is replaced by another candidate. This is only applicable if leader election is enabled.
 #   Defaults to '15s'
 #
 # [*leader_elect_renew_deadline*]
-#   The interval between attempts by the acting master to renew a leadership slot before it stops leading. This must be less than or equal to the lease duration. This is only applicable if leader election is enabled.
+#   The interval between attempts by the acting master to renew a leadership slot before it stops leading. This must
+#   be less than or equal to the lease duration. This is only applicable if leader election is enabled.
 #   Defaults to '10s'
 #
 # [*leader_elect_retry_period*]
-#   The duration the clients should wait between attempting acquisition and renewal of a leadership. This is only applicable if leader election is enabled.
+#   The duration the clients should wait between attempting acquisition and renewal of a leadership. This is only applicable
+#   if leader election is enabled.
 #   Defaults to '2s"
 #
 # [*scheduler_name*]
-#   Name of the scheduler, used to select which pods will be processed by this scheduler, based on pod's annotation with key 'scheduler.alpha.kubernetes.io/name'
+#   Name of the scheduler, used to select which pods will be processed by this scheduler, based on pod's annotation with
+#   key 'scheduler.alpha.kubernetes.io/name'
 #   Defaults to undef
 #
 # [*minimum_version*]
@@ -67,6 +77,7 @@
 #
 class kubernetes::master::scheduler (
   $ensure                      = $kubernetes::master::params::kube_scheduler_service_ensure,
+  $journald_forward_enable     = $kubernetes::master::params::kube_scheduler_journald_forward_enable,
   $enable                      = $kubernetes::master::params::kube_scheduler_service_enable,
   $address                     = $kubernetes::master::params::kube_scheduler_address,
   $bind_pods_burst             = $kubernetes::master::params::kube_scheduler_bind_pods_burst,
@@ -88,6 +99,26 @@ class kubernetes::master::scheduler (
   validate_bool($enable)
 
   include ::kubernetes::master
+
+  if $journald_forward_enable {
+    file { '/etc/systemd/system/kube-scheduler.service.d':
+      ensure => 'directory',
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0755',
+    }
+    file { '/etc/systemd/system/kube-scheduler.service.d/journald.conf':
+      ensure  => file,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template("${module_name}/systemd/scheduler_journald.conf.erb"),
+    } ~>
+    exec { 'reload systemctl daemon for kube-scheduler':
+      command     => '/bin/systemctl daemon-reload',
+      refreshonly => true,
+    } ~> Service['kube-scheduler']
+  }
 
   file { '/etc/kubernetes/scheduler':
     ensure  => 'file',

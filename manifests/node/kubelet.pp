@@ -8,6 +8,10 @@
 #   Whether you want to kubelet daemon to start up
 #   Defaults to running
 #
+# [*journald_forward_enable*]
+#   Fix for SIGPIPE sent to registry daemon during journald restart
+#   Defaults to false
+#
 # [*enable*]
 #   Whether you want to kubelet daemon to start up at boot
 #   Defaults to true
@@ -163,7 +167,8 @@
 #   Default undef
 #
 # [*hairpin_mode*]
-#   How should the kubelet setup hairpin NAT. This allows endpoints of a Service to loadbalance back to themselves if they should try to access their own Service. Valid values are "promiscuous-bridge", "hairpin-veth" and "none".
+#   How should the kubelet setup hairpin NAT. This allows endpoints of a Service to loadbalance back to themselves if they should
+#   try to access their own Service. Valid values are "promiscuous-bridge", "hairpin-veth" and "none".
 #   Default undef
 #
 # [*housekeeping_interval*]
@@ -179,7 +184,8 @@
 #   Default undef
 #
 # [*kube_reserved*]
-#   A set of ResourceName=ResourceQuantity (e.g. cpu=200m,memory=150G) pairs that describe resources reserved for kubernetes system components. Currently only cpu and memory are supported.
+#   A set of ResourceName=ResourceQuantity (e.g. cpu=200m,memory=150G) pairs that describe resources reserved for
+#   kubernetes system components. Currently only cpu and memory are supported.
 #   Default undef
 #
 # [*kubelet_cgroups*]
@@ -215,11 +221,13 @@
 #   Default undef
 #
 # [*system_cgroups*]
-#   Optional absolute name of cgroups in which to place all non-kernel processes that are not already inside a cgroup under `/`. Empty for no container. Rolling back the flag requires a reboot.
+#   Optional absolute name of cgroups in which to place all non-kernel processes that are not already inside a
+#   cgroup under `/`. Empty for no container. Rolling back the flag requires a reboot.
 #   Default undef
 #
 # [*system_reserved*]
-#   A set of ResourceName=ResourceQuantity (e.g. cpu=200m,memory=150G) pairs that describe resources reserved for non-kubernetes components. Currently only cpu and memory are supported.
+#   A set of ResourceName=ResourceQuantity (e.g. cpu=200m,memory=150G) pairs that describe resources reserved for non-kubernetes
+#   components. Currently only cpu and memory are supported.
 #   Default undef
 #
 # [*non_masquerade_cidr*]
@@ -236,6 +244,7 @@
 #
 class kubernetes::node::kubelet (
   $ensure                                = $kubernetes::node::params::kubelet_service_ensure,
+  $journald_forward_enable               = $kubernetes::node::params::kubelet_journald_forward_enable,
   $enable                                = $kubernetes::node::params::kubelet_service_enable,
   $api_servers                           = $kubernetes::node::params::kubelet_api_servers,
   $address                               = $kubernetes::node::params::kubelet_address,
@@ -317,6 +326,26 @@ class kubernetes::node::kubelet (
       creates => '/sys/class/net/cbr0/',
       returns => 1,
     } ~> Service['docker']
+  }
+
+  if $journald_forward_enable {
+    file { '/etc/systemd/system/kubelet.service.d':
+      ensure => 'directory',
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0755',
+    }
+    file { '/etc/systemd/system/kubelet.service.d/journald.conf':
+      ensure  => file,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template("${module_name}/systemd/kubelet_journald.conf.erb"),
+    } ~>
+    exec { 'reload systemctl daemon for kubelet':
+      command     => '/bin/systemctl daemon-reload',
+      refreshonly => true,
+    } ~> Service['kubelet']
   }
 
   file { '/etc/kubernetes/kubelet':

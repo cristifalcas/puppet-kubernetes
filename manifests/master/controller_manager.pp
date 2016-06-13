@@ -5,6 +5,10 @@
 #   Whether you want the controller-manager daemon to start up
 #   Defaults to running
 #
+# [*journald_forward_enable*]
+#   Fix for SIGPIPE sent to registry daemon during journald restart
+#   Defaults to false
+#
 # [*enable*]
 #   Whether you want the controller-manager daemon to start up at boot
 #   Defaults to true
@@ -126,19 +130,23 @@
 #   Defaults to 0
 #
 # [*concurrent_deployment_syncs*]
-#   The number of deployment objects that are allowed to sync concurrently. Larger number = more responsive deployments, but more CPU (and network) load
+#   The number of deployment objects that are allowed to sync concurrently. Larger number = more responsive deployments,
+#   but more CPU (and network) load
 #   Default 5
 #
 # [*concurrent_namespace_syncs*]
-#   The number of namespace objects that are allowed to sync concurrently. Larger number = more responsive namespace termination, but more CPU (and network) load
+#   The number of namespace objects that are allowed to sync concurrently. Larger number = more responsive namespace
+#   termination, but more CPU (and network) load
 #   Default 2
 #
 # [*concurrent_replicaset_syncs*]
-#   The number of replica sets that are allowed to sync concurrently. Larger number = more responsive replica management, but more CPU (and network) load
+#   The number of replica sets that are allowed to sync concurrently. Larger number = more responsive replica management,
+#   but more CPU (and network) load
 #   Default 5
 #
 # [*concurrent_resource_quota_syncs*]
-#   The number of resource quotas that are allowed to sync concurrently. Larger number = more responsive quota management, but more CPU (and network) load
+#   The number of resource quotas that are allowed to sync concurrently. Larger number = more responsive quota management,
+#   but more CPU (and network) load
 #   Default 5
 #
 # [*daemonset_lookup_cache_size*]
@@ -154,19 +162,24 @@
 #   Default 20
 #
 # [*leader_elect*]
-#   Start a leader election client and gain leadership before executing the main loop. Enable this when running replicated components for high availability.
+#   Start a leader election client and gain leadership before executing the main loop. Enable this when running replicated
+#   components for high availability.
 #   Default undef
 #
 # [*leader_elect_lease_duration*]
-#   The duration that non-leader candidates will wait after observing a leadership renewal until attempting to acquire leadership of a led but unrenewed leader slot. This is effectively the maximum duration that a leader can be stopped before it is replaced by another candidate. This is only applicable if leader election is enabled.
+#   The duration that non-leader candidates will wait after observing a leadership renewal until attempting to acquire
+#   leadership of a led but unrenewed leader slot. This is effectively the maximum duration that a leader can be stopped
+#   before it is replaced by another candidate. This is only applicable if leader election is enabled.
 #   Default '15s'
 #
 # [*leader_elect_renew_deadline*]
-#   The interval between attempts by the acting master to renew a leadership slot before it stops leading. This must be less than or equal to the lease duration. This is only applicable if leader election is enabled.
+#   The interval between attempts by the acting master to renew a leadership slot before it stops leading. This must be less
+#   than or equal to the lease duration. This is only applicable if leader election is enabled.
 #   Default '10s'
 #
 # [*leader_elect_retry_period*]
-#   The duration the clients should wait between attempting acquisition and renewal of a leadership. This is only applicable if leader election is enabled.
+#   The duration the clients should wait between attempting acquisition and renewal of a leadership. This is only applicable if
+#   leader election is enabled.
 #   Default '2s'
 #
 # [*replicaset_lookup_cache_size*]
@@ -180,6 +193,7 @@
 #
 class kubernetes::master::controller_manager (
   $ensure                                = $kubernetes::master::params::kube_controller_service_ensure,
+  $journald_forward_enable               = $kubernetes::master::params::kube_controller_journald_forward_enable,
   $enable                                = $kubernetes::master::params::kube_controller_service_enable,
   $address                               = $kubernetes::master::params::kube_controller_address,
   $allocate_node_cidrs                   = $kubernetes::master::params::kube_controller_allocate_node_cidrs,
@@ -229,6 +243,26 @@ class kubernetes::master::controller_manager (
   include ::kubernetes::master
 
   validate_bool($allocate_node_cidrs)
+
+  if $journald_forward_enable {
+    file { '/etc/systemd/system/kube-controller-manager.service.d':
+      ensure => 'directory',
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0755',
+    }
+    file { '/etc/systemd/system/kube-controller-manager.service.d/journald.conf':
+      ensure  => file,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template("${module_name}/systemd/controller_manager_journald.conf.erb"),
+    } ~>
+    exec { 'reload systemctl daemon for kube-controller-manager':
+      command     => '/bin/systemctl daemon-reload',
+      refreshonly => true,
+    } ~> Service['kube-controller-manager']
+  }
 
   file { '/etc/kubernetes/controller-manager':
     ensure  => 'file',

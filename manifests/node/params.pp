@@ -6,6 +6,7 @@ class kubernetes::node::params {
   # kubelet options
   # http://kubernetes.io/v1.1/docs/admin/kubelet.html
   $kubelet_service_ensure = 'running'
+  $kubelet_journald_forward_enable = false
   $kubelet_service_enable = true
   $kubelet_address = '0.0.0.0'
   $kubelet_api_servers = ['http://127.0.0.1:8080']
@@ -65,6 +66,7 @@ class kubernetes::node::params {
   # proxy options
   # http://kubernetes.io/v1.1/docs/admin/kube-proxy.html
   $kube_proxy_service_ensure = 'running'
+  $kube_proxy_journald_forward_enable = false
   $kube_proxy_service_enable = true
   $kube_proxy_bind_address = '127.0.0.1'
   $kube_proxy_cleanup_iptables = false

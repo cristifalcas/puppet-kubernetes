@@ -4,6 +4,10 @@
 #   Whether you want the apiserver daemon to start up
 #   Defaults to running
 #
+# [*journald_forward_enable*]
+#   Fix for SIGPIPE sent to registry daemon during journald restart
+#   Defaults to false
+#
 # [*enable*]
 #   Whether you want the apiserver daemon to start up at boot
 #   Defaults to true
@@ -23,6 +27,10 @@
 # [*allow_privileged*]
 #   If true, allow privileged containers.
 #   Defaults to false.
+#
+# [*apiserver_count*]
+#   The number of apiservers running in the cluster
+#   Defaults to 1.
 #
 # [*authorization_mode*]
 #   Ordered list of plug-ins to do authorization on secure port. Comma-delimited list of: AlwaysAllow,AlwaysDeny,ABAC
@@ -188,8 +196,7 @@
 #   Default undef
 #
 # [*token_auth_file*]
-#   If set, the file that will be used to secure the secure port of the API server via token
-#      authentication.
+#   If set, the file that will be used to secure the secure port of the API server via token authentication.
 #   Default undef
 #
 # [*watch_cache*]
@@ -197,11 +204,13 @@
 #   Default true
 #
 # [*watch_cache_sizes*]
-#   List of watch cache sizes for every resource (pods, nodes, etc.), comma separated. The individual override format: resource#size, where size is a number. It takes effect when watch-cache is enabled.
+#   List of watch cache sizes for every resource (pods, nodes, etc.), comma separated. The individual override format: resource#size,
+#   where size is a number. It takes effect when watch-cache is enabled.
 #   Default undef
 #
 # [*repair_malformed_updates*]
-#   If true, server will do its best to fix the update request to pass the validation, e.g., setting empty UID in update request to its existing value. This flag can be turned off after we fix all the clients that send malformed updates.
+#   If true, server will do its best to fix the update request to pass the validation, e.g., setting empty UID in update request
+#   to its existing value. This flag can be turned off after we fix all the clients that send malformed updates.
 #   Default true
 #
 # [*delete_collection_workers*]
@@ -209,11 +218,13 @@
 #   Default 1
 #
 # [*kubernetes_service_node_port*]
-#   If non-zero, the Kubernetes master service (which apiserver creates/maintains) will be of type NodePort, using this as the value of the port. If zero, the Kubernetes master service will be of type ClusterIP.
+#   If non-zero, the Kubernetes master service (which apiserver creates/maintains) will be of type NodePort, using this as
+#   the value of the port. If zero, the Kubernetes master service will be of type ClusterIP.
 #   Default 0
 #
 # [*authorization_webhook_config*]
-#   File with webhook configuration in kubeconfig format, used with --authorization-mode=Webhook. The API server will query the remote service to determine access on the API server's secure port.
+#   File with webhook configuration in kubeconfig format, used with --authorization-mode=Webhook. The API server will query
+#   the remote service to determine access on the API server's secure port.
 #   Default undef
 #
 # [*ir_hawkular*]
@@ -228,10 +239,12 @@
 class kubernetes::master::apiserver (
   $service_cluster_ip_range,
   $ensure                        = $kubernetes::master::params::kube_api_service_ensure,
+  $journald_forward_enable       = $kubernetes::master::params::kube_api_journald_forward_enable,
   $enable                        = $kubernetes::master::params::kube_api_service_enable,
   $admission_control             = $kubernetes::master::params::kube_api_admission_control,
   $advertise_address             = $kubernetes::master::params::kube_api_advertise_address,
   $allow_privileged              = $kubernetes::master::params::kube_api_allow_privileged,
+  $apiserver_count               = $kubernetes::master::params::kube_apiserver_count,
   $authorization_mode            = $kubernetes::master::params::kube_api_authorization_mode,
   $bind_address                  = $kubernetes::master::params::kube_api_bind_address,
   $cert_dir                      = $kubernetes::master::params::kube_api_cert_dir,
@@ -288,6 +301,26 @@ class kubernetes::master::apiserver (
       ensure  => 'file',
       force   => true,
       content => template("${module_name}/etc/kubernetes/etcd_config.json.erb"),
+    } ~> Service['kube-apiserver']
+  }
+
+  if $journald_forward_enable {
+    file { '/etc/systemd/system/kube-apiserver.service.d':
+      ensure => 'directory',
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0755',
+    }
+    file { '/etc/systemd/system/kube-apiserver.service.d/journald.conf':
+      ensure  => file,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template("${module_name}/systemd/apiserver_journald.conf.erb"),
+    } ~>
+    exec { 'reload systemctl daemon for kube-apiserver':
+      command     => '/bin/systemctl daemon-reload',
+      refreshonly => true,
     } ~> Service['kube-apiserver']
   }
 

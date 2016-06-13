@@ -25,6 +25,7 @@ KUBE_API_ARGS="<% -%>
  --etcd-config=/etc/kubernetes/etcd_config.json<% -%>
 <% end -%>
 <% if @minimum_version.to_f >= 1.2 then -%>
+ --apiserver-count=<%= scope['kubernetes::master::apiserver::apiserver_count'] -%>
  --etcd-servers=<%= Array(scope['kubernetes::master::apiserver::etcd_servers']).join(',') -%>
 <% if @etcd_certfile and @etcd_keyfile and @etcd_cacertfiles and not Array(@etcd_cacertfiles).flatten.empty? -%>
  --etcd-certfile=<%= scope['kubernetes::master::apiserver::etcd_certfile'] -%>

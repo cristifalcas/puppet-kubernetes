@@ -8,6 +8,10 @@
 #   Whether you want to kube_proxy daemon to start up
 #   Defaults to running
 #
+# [*journald_forward_enable*]
+#   Fix for SIGPIPE sent to registry daemon during journald restart
+#   Defaults to false
+#
 # [*enable*]
 #   Whether you want to kube_proxy daemon to start up at boot
 #   Defaults to true
@@ -117,6 +121,7 @@
 #
 class kubernetes::node::kube_proxy (
   $ensure                            = $kubernetes::node::params::kube_proxy_service_ensure,
+  $journald_forward_enable           = $kubernetes::node::params::kube_proxy_journald_forward_enable,
   $enable                            = $kubernetes::node::params::kube_proxy_service_enable,
   $bind_address                      = $kubernetes::node::params::kube_proxy_bind_address,
   $cleanup_iptables                  = $kubernetes::node::params::kube_proxy_cleanup_iptables,
@@ -150,6 +155,26 @@ class kubernetes::node::kube_proxy (
 
   validate_bool($cleanup_iptables, $masquerade_all)
   validate_integer([$healthz_port, $oom_score_adj,])
+
+  if $journald_forward_enable {
+    file { '/etc/systemd/system/kube-proxy.service.d':
+      ensure => 'directory',
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0755',
+    }
+    file { '/etc/systemd/system/kube-proxy.service.d/journald.conf':
+      ensure  => file,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template("${module_name}/systemd/kubeproxy_journald.conf.erb"),
+    } ~>
+    exec { 'reload systemctl daemon for kube-proxy':
+      command     => '/bin/systemctl daemon-reload',
+      refreshonly => true,
+    } ~> Service['kube-proxy']
+  }
 
   file { '/etc/kubernetes/proxy':
     ensure  => 'file',
