@@ -1,6 +1,6 @@
 {
 	"name": "cristifalcas-kubernetes",
-	"version": "1.3.0",
+	"version": "1.4.0",
 	"author": "Cristian Falcas",
 	"license": "Apache-2.0",
 	"summary": "Configuring and installing kubernetes",
@@ -28,6 +28,10 @@
 			"operatingsystem": "Fedora",
 			"operatingsystemrelease": [ "21"
 			]
+		},{
+			"operatingsystem": "Debian"
+		},{
+			"operatingsystem": "Ubuntu"
 		}
 	],
 	"tags": [ "kubernetes",

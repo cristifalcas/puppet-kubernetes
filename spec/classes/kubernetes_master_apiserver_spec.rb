@@ -24,19 +24,19 @@ describe 'kubernetes::master::apiserver', :type => :class do
         is_expected.to contain_file('/etc/kubernetes/apiserver').with_content(/### file managed by puppet/)
         should contain_service('kube-apiserver')
       end
-    end
-  end
 
-  describe 'with minimum_version 1.2' do
-    let :params do
-      {
-        :service_cluster_ip_range  => '1.1.1.1',
-        :minimum_version           => '1.2',
-      }
-    end
+      describe 'with minimum_version 1.2' do
+        let :params do
+          {
+            :service_cluster_ip_range  => '1.1.1.1',
+            :minimum_version           => '1.2',
+          }
+        end
 
-    it 'test with param minimum_version set to 1.2' do
-      is_expected.to_not contain_file('/etc/kubernetes/etcd_config.json')
+        it 'test with param minimum_version set to 1.2' do
+          is_expected.to_not contain_file('/etc/kubernetes/etcd_config.json')
+        end
+      end
     end
   end
 end
