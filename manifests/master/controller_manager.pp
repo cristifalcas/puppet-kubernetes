@@ -264,6 +264,21 @@ class kubernetes::master::controller_manager (
     } ~> Service['kube-controller-manager']
   }
 
+  case $::osfamily {
+    'redhat' : {
+    }
+    'debian' : {
+      file { '/etc/default/kube-controller-manager':
+        ensure  => 'file',
+        force   => true,
+        content => template("${module_name}/etc/default/controller-manager.erb"),
+      } ~> Service['kube-controller-manager']
+    }
+    default  : {
+      fail("Unsupport OS: ${::osfamily}")
+    }
+  }
+
   file { '/etc/kubernetes/controller-manager':
     ensure  => 'file',
     force   => true,

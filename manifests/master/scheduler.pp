@@ -120,6 +120,21 @@ class kubernetes::master::scheduler (
     } ~> Service['kube-scheduler']
   }
 
+  case $::osfamily {
+    'redhat' : {
+    }
+    'debian' : {
+      file { '/etc/default/kube-scheduler':
+        ensure  => 'file',
+        force   => true,
+        content => template("${module_name}/etc/default/scheduler.erb"),
+      } ~> Service['kube-scheduler']
+    }
+    default  : {
+      fail("Unsupport OS: ${::osfamily}")
+    }
+  }
+
   file { '/etc/kubernetes/scheduler':
     ensure  => 'file',
     force   => true,

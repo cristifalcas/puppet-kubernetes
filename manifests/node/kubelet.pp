@@ -348,6 +348,21 @@ class kubernetes::node::kubelet (
     } ~> Service['kubelet']
   }
 
+  case $::osfamily {
+    'redhat' : {
+    }
+    'debian' : {
+      file { '/etc/default/kubelet':
+        ensure  => 'file',
+        force   => true,
+        content => template("${module_name}/etc/default/kubelet.erb"),
+      } ~> Service['kubelet']
+    }
+    default  : {
+      fail("Unsupport OS: ${::osfamily}")
+    }
+  }
+
   file { '/etc/kubernetes/kubelet':
     ensure  => 'file',
     content => template("${module_name}/etc/kubernetes/kubelet.erb"),

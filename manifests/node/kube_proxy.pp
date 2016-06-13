@@ -176,6 +176,21 @@ class kubernetes::node::kube_proxy (
     } ~> Service['kube-proxy']
   }
 
+  case $::osfamily {
+    'redhat' : {
+    }
+    'debian' : {
+      file { '/etc/default/kube-proxy':
+        ensure  => 'file',
+        force   => true,
+        content => template("${module_name}/etc/default/proxy.erb"),
+      } ~> Service['kube-proxy']
+    }
+    default  : {
+      fail("Unsupport OS: ${::osfamily}")
+    }
+  }
+
   file { '/etc/kubernetes/proxy':
     ensure  => 'file',
     content => template("${module_name}/etc/kubernetes/proxy.erb"),

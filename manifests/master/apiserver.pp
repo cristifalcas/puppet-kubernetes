@@ -324,6 +324,21 @@ class kubernetes::master::apiserver (
     } ~> Service['kube-apiserver']
   }
 
+  case $::osfamily {
+    'redhat' : {
+    }
+    'debian' : {
+      file { '/etc/default/kube-apiserver':
+        ensure  => 'file',
+        force   => true,
+        content => template("${module_name}/etc/default/api-server.erb"),
+      } ~> Service['kube-apiserver']
+    }
+    default  : {
+      fail("Unsupport OS: ${::osfamily}")
+    }
+  }
+
   file { '/etc/kubernetes/apiserver':
     ensure  => 'file',
     force   => true,
