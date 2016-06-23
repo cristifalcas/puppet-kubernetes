@@ -1,7 +1,6 @@
 # kubernetes #
 [![Build Status](https://travis-ci.org/cristifalcas/puppet-kubernetes.png?branch=master)](https://travis-ci.org/cristifalcas/puppet-kubernetes)
 
-
 This module installs and configures a kubernetes clutser.
 
 The main class kubernetes doesn't do anything and is kept for historical reasons.
@@ -17,6 +16,17 @@ any programs (the file is created by both master or node). This is accomplished 
 this in the node and master class.
 
 The class kubernetes::client doesn't do anything now.
+
+## Versioning:
+
+Due to rapid change of the arguments for various kubernetes components,
+on master we will only keep the latest stable version with the respective arguments.
+
+For older versions there will be a branch where updates will be commited.
+
+For each new major kubernetes version (1.1, 1.2, etc.) the puppet modules version will
+have the major number increased. This is mostly because on each version they have
+new parameters, or some parameters are removed.
 
 ## Journald forward:
 

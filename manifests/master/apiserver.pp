@@ -1,4 +1,5 @@
 # == Class: kubernetes::master::apiserver
+# http://kubernetes.io/docs/admin/kube-apiserver/
 #
 # [*ensure*]
 #   Whether you want the apiserver daemon to start up
@@ -12,11 +13,17 @@
 #   Whether you want the apiserver daemon to start up at boot
 #   Defaults to true
 #
+## Parameters ##
+#
 # [*admission_control*]
 #   Ordered list of plug-ins to do admission control of resources into cluster.
 #   Comma-delimited list of: LimitRanger, AlwaysAdmit, ServiceAccount, ResourceQuota,
 #   NamespaceExists, NamespaceAutoProvision, DenyExecOnPrivileged, AlwaysDeny, SecurityContextDeny, NamespaceLifecycle
 #   Defaults to AlwaysAdmit
+#
+# [*admission_control_config_file*]
+#   File with admission control configuration.
+#   Defaults to undef
 #
 # [*advertise_address*]
 #   The IP address on which to advertise the apiserver to members of the cluster.
@@ -36,6 +43,19 @@
 #   Ordered list of plug-ins to do authorization on secure port. Comma-delimited list of: AlwaysAllow,AlwaysDeny,ABAC
 #   Default AlwaysAllow.
 #
+# [*authorization_policy_file*]
+#   File with authorization policy in csv format, used with --authorization-mode=ABAC, on the secure port.
+#   Default undef.
+#
+# [*authorization_webhook_config*]
+#   File with webhook configuration in kubeconfig format, used with --authorization-mode=Webhook. The API server will query
+#   the remote service to determine access on the API server's secure port.
+#   Default undef
+#
+# [*basic_auth_file*]
+#   If set, the file that will be used to admit requests to the secure port of the API server via http basic authentication.
+#   Deafaul undef
+#
 # [*bind_address*]
 #   The IP address on which to serve the --read-only-port and --secure-port ports.
 #    The associated interface(s) must be reachable by the rest of the cluster, and
@@ -52,17 +72,13 @@
 #    in the client-ca-file is authenticated with an identity corresponding to the CommonName of the client certificate.
 #   Default undef
 #
-# [*cluster_name*]
-#   The instance prefix for the cluster
-#   Default kubernetes
+# [*delete_collection_workers*]
+#   Number of workers spawned for DeleteCollection call. These are used to speed up namespace cleanup.
+#   Default 1
 #
-# [*etcd_prefix*]
-#   The prefix for all resource paths in etcd.
-#   Default /registry
-#
-# [*etcd_servers*]
-#   List of etcd servers to watch (http://ip:port), comma separated.
-#   Default http://127.0.0.1:2379
+# [*etcd_cafile*]
+#   List of ca certificates
+#   Default []
 #
 # [*etcd_certfile*]
 #   Public key to connect to etcd servers
@@ -72,13 +88,31 @@
 #   Private key to connect to etcd servers
 #   Default undef
 #
-# [*etcd_cacertfiles*]
-#   List of ca certificates
+# [*etcd_prefix*]
+#   The prefix for all resource paths in etcd.
+#   Default /registry
+#
+# [*etcd_quorum_read*]
+#   If true, enable quorum read
+#   Default false
+#
+# [*etcd_servers*]
+#   List of etcd servers to watch (http://ip:port), comma separated.
+#   Default http://127.0.0.1:2379
+#
+# [*etcd_servers_overrides*]
+#   Per-resource etcd servers overrides, comma separated.
+#    The individual override format: group/resource#servers,
+#    where servers are http://ip:port, semicolon separated.
 #   Default []
 #
 # [*event_ttl*]
 #   Amount of time to retain events. Default 1 hour.
 #   Default 1h0m0s
+#
+# [*external_hostname*]
+#   The hostname to use when generating externalized URLs for this master (e.g. Swagger API Docs.)
+#   Default undef
 #
 # [*google_json_key*]
 #   The Google Cloud Platform Service Account JSON Key to use for authentication.
@@ -119,6 +153,11 @@
 #   Timeout for kubelet operations
 #   Default 5s
 #
+# [*kubernetes_service_node_port*]
+#   If non-zero, the Kubernetes master service (which apiserver creates/maintains) will be of type NodePort, using this as
+#   the value of the port. If zero, the Kubernetes master service will be of type ClusterIP.
+#   Default 0
+#
 # [*log_flush_frequency*]
 #   Maximum number of seconds between log flushes
 #   Default 5s
@@ -147,6 +186,15 @@
 #      before timing it out. Currently only honored by the watch request handler, which picks a randomized value above this number
 #      as the connection timeout, to spread out load.
 #   Default 1800
+#
+# [*profiling*]
+#   Enable profiling via web interface host:port/debug/pprof/
+#   Default true
+#
+# [*repair_malformed_updates*]
+#   If true, server will do its best to fix the update request to pass the validation, e.g., setting empty UID in update request
+#   to its existing value. This flag can be turned off after we fix all the clients that send malformed updates.
+#   Default true
 #
 # [*runtime_config*]
 #   A set of key=value pairs that describe runtime configuration that may be passed to apiserver.
@@ -208,33 +256,9 @@
 #   where size is a number. It takes effect when watch-cache is enabled.
 #   Default undef
 #
-# [*repair_malformed_updates*]
-#   If true, server will do its best to fix the update request to pass the validation, e.g., setting empty UID in update request
-#   to its existing value. This flag can be turned off after we fix all the clients that send malformed updates.
-#   Default true
-#
-# [*delete_collection_workers*]
-#   Number of workers spawned for DeleteCollection call. These are used to speed up namespace cleanup.
-#   Default 1
-#
-# [*kubernetes_service_node_port*]
-#   If non-zero, the Kubernetes master service (which apiserver creates/maintains) will be of type NodePort, using this as
-#   the value of the port. If zero, the Kubernetes master service will be of type ClusterIP.
-#   Default 0
-#
-# [*authorization_webhook_config*]
-#   File with webhook configuration in kubeconfig format, used with --authorization-mode=Webhook. The API server will query
-#   the remote service to determine access on the API server's secure port.
-#   Default undef
-#
 # [*ir_hawkular*]
 #   Hawkular configuration URL
 #   Default undef
-#
-# [*minimum_version*]
-#   Minimum supported Kubernetes version. Don't enable new features when
-#   incompatbile with that version.
-#   Default to 1.1.
 #
 class kubernetes::master::apiserver (
   $service_cluster_ip_range,
@@ -242,20 +266,27 @@ class kubernetes::master::apiserver (
   $journald_forward_enable       = $kubernetes::master::params::kube_api_journald_forward_enable,
   $enable                        = $kubernetes::master::params::kube_api_service_enable,
   $admission_control             = $kubernetes::master::params::kube_api_admission_control,
+  $admission_control_config_file = $kubernetes::master::params::kube_api_admission_control_config_file,
   $advertise_address             = $kubernetes::master::params::kube_api_advertise_address,
   $allow_privileged              = $kubernetes::master::params::kube_api_allow_privileged,
-  $apiserver_count               = $kubernetes::master::params::kube_apiserver_count,
+  $apiserver_count               = $kubernetes::master::params::kube_api_server_count,
   $authorization_mode            = $kubernetes::master::params::kube_api_authorization_mode,
+  $authorization_policy_file     = $kubernetes::master::params::kube_api_authorization_policy_file,
+  $authorization_webhook_config  = $kubernetes::master::params::kube_api_authorization_webhook_config,
+  $basic_auth_file               = $kubernetes::master::params::kube_api_basic_auth_file,
   $bind_address                  = $kubernetes::master::params::kube_api_bind_address,
   $cert_dir                      = $kubernetes::master::params::kube_api_cert_dir,
   $client_ca_file                = $kubernetes::master::params::kube_api_client_ca_file,
-  $cluster_name                  = $kubernetes::master::params::kube_api_cluster_name,
-  $etcd_prefix                   = $kubernetes::master::params::kube_api_etcd_prefix,
-  $etcd_servers                  = $kubernetes::master::params::kube_api_etcd_servers,
+  $delete_collection_workers     = $kubernetes::master::params::kube_api_delete_collection_workers,
+  $etcd_cafile                   = $kubernetes::master::params::kube_api_etcd_cafile,
   $etcd_certfile                 = $kubernetes::master::params::kube_api_etcd_certfile,
   $etcd_keyfile                  = $kubernetes::master::params::kube_api_etcd_keyfile,
-  $etcd_cacertfiles              = $kubernetes::master::params::kube_api_etcd_cacertfiles,
+  $etcd_prefix                   = $kubernetes::master::params::kube_api_etcd_prefix,
+  $etcd_quorum_read              = $kubernetes::master::params::kube_api_etcd_quorum_read,
+  $etcd_servers                  = $kubernetes::master::params::kube_api_etcd_servers,
+  $etcd_servers_overrides        = $kubernetes::master::params::kube_api_etcd_servers_overrides,
   $event_ttl                     = $kubernetes::master::params::kube_api_event_ttl,
+  $external_hostname             = $kubernetes::master::params::kube_api_external_hostname,
   $google_json_key               = $kubernetes::master::params::kube_api_google_json_key,
   $insecure_bind_address         = $kubernetes::master::params::kube_api_insecure_bind_address,
   $insecure_port                 = $kubernetes::master::params::kube_api_insecure_port,
@@ -265,12 +296,15 @@ class kubernetes::master::apiserver (
   $kubelet_https                 = $kubernetes::master::params::kube_api_kubelet_https,
   $kubelet_port                  = $kubernetes::master::params::kube_api_kubelet_port,
   $kubelet_timeout               = $kubernetes::master::params::kube_api_kubelet_timeout,
+  $kubernetes_service_node_port  = $kubernetes::master::params::kube_api_kubernetes_service_node_port,
   $log_flush_frequency           = $kubernetes::master::params::kube_api_log_flush_frequency,
   $long_running_request_regexp   = $kubernetes::master::params::kube_api_long_running_request_regexp,
   $master_service_namespace      = $kubernetes::master::params::kube_api_master_service_namespace,
   $max_connection_bytes_per_sec  = $kubernetes::master::params::kube_api_max_connection_bytes_per_sec,
   $max_requests_inflight         = $kubernetes::master::params::kube_api_max_requests_inflight,
   $min_request_timeout           = $kubernetes::master::params::kube_api_min_request_timeout,
+  $profiling                     = $kubernetes::master::params::kube_api_profiling,
+  $repair_malformed_updates      = $kubernetes::master::params::kube_api_repair_malformed_updates,
   $runtime_config                = $kubernetes::master::params::kube_api_runtime_config,
   $secure_port                   = $kubernetes::master::params::kube_api_secure_port,
   $service_account_key_file      = $kubernetes::master::params::kube_api_service_account_key_file,
@@ -283,26 +317,13 @@ class kubernetes::master::apiserver (
   $token_auth_file               = $kubernetes::master::params::kube_api_token_auth_file,
   $watch_cache                   = $kubernetes::master::params::kube_api_watch_cache,
   $extra_args                    = $kubernetes::master::params::kube_api_extra_args,
-  $minimum_version               = $kubernetes::master::params::kube_api_minimum_version,
   $watch_cache_sizes             = $kubernetes::master::params::kube_api_watch_cache_sizes,
-  $repair_malformed_updates      = $kubernetes::master::params::kube_api_repair_malformed_updates,
-  $delete_collection_workers     = $kubernetes::master::params::kube_api_delete_collection_workers,
-  $kubernetes_service_node_port  = $kubernetes::master::params::kube_api_kubernetes_service_node_port,
-  $authorization_webhook_config  = $kubernetes::master::params::kube_api_authorization_webhook_config,
   $ir_hawkular                   = $kubernetes::master::params::kube_api_ir_hawkular,
 ) inherits kubernetes::master::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)
 
   include ::kubernetes::master
-
-  if $minimum_version < 1.2 {
-    file { '/etc/kubernetes/etcd_config.json':
-      ensure  => 'file',
-      force   => true,
-      content => template("${module_name}/etc/kubernetes/etcd_config.json.erb"),
-    } ~> Service['kube-apiserver']
-  }
 
   if $journald_forward_enable {
     file { '/etc/systemd/system/kube-apiserver.service.d':

@@ -1,4 +1,5 @@
 # == Class: kubernetes::master::scheduler
+# http://kubernetes.io/docs/admin/kube-scheduler/
 #
 # [*ensure*]
 #   Whether you want the scheduler daemon to start up
@@ -12,9 +13,15 @@
 #   Whether you want the scheduler daemon to start up at boot
 #   Defaults to true
 #
+## Parameters ##
+#
 # [*address*]
 #   The IP address to serve on (set to 0.0.0.0 for all interfaces)
 #   Defaults to 127.0.0.1
+#
+# [*algorithm_provider*]
+#   The scheduling algorithm provider to use, one of: DefaultProvider
+#   Defaults to DefaultProvider
 #
 # [*bind_pods_burst*]
 #   Number of bindings per second scheduler is allowed to make during bursts
@@ -28,21 +35,17 @@
 #   The Google Cloud Platform Service Account JSON Key to use for authentication.
 #   Defaults to undef
 #
+# [*kube_api_burst*]
+#   Burst to use while talking with kubernetes apiserver
+#   Default 100
+#
+# [*kube_api_qps*]
+#   QPS to use while talking with kubernetes apiserver
+#   Default 50
+#
 # [*kubeconfig*]
 #   Path to kubeconfig file with authorization and master location information.
 #   Defaults to undef
-#
-# [*log_flush_frequency*]
-#   Maximum number of seconds between log flushes
-#   Defaults to 5s
-#
-# [*master*]
-#   The address of the Kubernetes API server (overrides any value in kubeconfig)
-#   Defaults to 'http://127.0.0.1:8080'
-#
-# [*port*]
-#   The port that the scheduler's http service runs on
-#   Defaults to 10251
 #
 # [*leader_elect*]
 #   Start a leader election client and gain leadership before executing the main loop. Enable this when running
@@ -65,35 +68,53 @@
 #   if leader election is enabled.
 #   Defaults to '2s"
 #
-# [*scheduler_name*]
-#   Name of the scheduler, used to select which pods will be processed by this scheduler, based on pod's annotation with
-#   key 'scheduler.alpha.kubernetes.io/name'
+# [*log_flush_frequency*]
+#   Maximum number of seconds between log flushes
+#   Defaults to 5s
+#
+# [*master*]
+#   The address of the Kubernetes API server (overrides any value in kubeconfig)
+#   Defaults to 'http://127.0.0.1:8080'
+#
+# [*policy_config_file*]
+#   File with scheduler policy configuration
 #   Defaults to undef
 #
-# [*minimum_version*]
-#   Minimum supported Kubernetes version. Don't enable new features when
-#   incompatbile with that version.
-#   Default to 1.1.
+# [*port*]
+#   The port that the scheduler's http service runs on
+#   Defaults to 10251
+#
+# [*profiling*]
+#   Enable profiling via web interface host:port/debug/pprof/
+#   Defaults to true
+#
+# [*scheduler_name*]
+#   Name of the scheduler, used to select which pods will be processed by this scheduler,
+#    based on pod's annotation with key 'scheduler.alpha.kubernetes.io/name'
+#    If not defined, defaults to default-scheduler
+#   Defaults to undef
 #
 class kubernetes::master::scheduler (
   $ensure                      = $kubernetes::master::params::kube_scheduler_service_ensure,
   $journald_forward_enable     = $kubernetes::master::params::kube_scheduler_journald_forward_enable,
   $enable                      = $kubernetes::master::params::kube_scheduler_service_enable,
   $address                     = $kubernetes::master::params::kube_scheduler_address,
+  $algorithm_provider          = $kubernetes::master::params::kube_scheduler_algorithm_provider,
   $bind_pods_burst             = $kubernetes::master::params::kube_scheduler_bind_pods_burst,
   $bind_pods_qps               = $kubernetes::master::params::kube_scheduler_bind_pods_qps,
   $google_json_key             = $kubernetes::master::params::kube_scheduler_google_json_key,
   $kubeconfig                  = $kubernetes::master::params::kube_scheduler_kubeconfig,
-  $log_flush_frequency         = $kubernetes::master::params::kube_scheduler_log_flush_frequency,
-  $master                      = $kubernetes::master::params::kube_scheduler_master,
-  $port                        = $kubernetes::master::params::kube_scheduler_port,
   $leader_elect                = $kubernetes::master::params::kube_scheduler_leader_elect,
   $leader_elect_lease_duration = $kubernetes::master::params::kube_scheduler_leader_elect_lease_duration,
   $leader_elect_renew_deadline = $kubernetes::master::params::kube_scheduler_leader_elect_renew_deadline,
   $leader_elect_retry_period   = $kubernetes::master::params::kube_scheduler_leader_elect_retry_period,
+  $log_flush_frequency         = $kubernetes::master::params::kube_scheduler_log_flush_frequency,
+  $master                      = $kubernetes::master::params::kube_scheduler_master,
+  $policy_config_file          = $kubernetes::master::params::kube_scheduler_policy_config_file,
+  $port                        = $kubernetes::master::params::kube_scheduler_port,
+  $profiling                   = $kubernetes::master::params::kube_scheduler_profiling,
   $scheduler_name              = $kubernetes::master::params::kube_scheduler_scheduler_name,
   $extra_args                  = $kubernetes::master::params::kube_scheduler_args,
-  $minimum_version             = $kubernetes::master::params::kube_scheduler_minimum_version,
 ) inherits kubernetes::master::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)

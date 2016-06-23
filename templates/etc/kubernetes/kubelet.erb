@@ -8,47 +8,25 @@ KUBELET_ADDRESS="--address=<%= scope['kubernetes::node::kubelet::address'] %>"
 KUBELET_PORT="--port=<%= scope['kubernetes::node::kubelet::port'] %>"
 
 # You may leave this blank to use the actual hostname
-KUBELET_HOSTNAME="--hostname-override=<%= scope['kubernetes::node::kubelet::hostname'] %>"
+KUBELET_HOSTNAME="--hostname-override=<%= scope['kubernetes::node::kubelet::hostname_override'] %>"
 
 # location of the api-server
 KUBELET_API_SERVER="--api-servers=<%= Array(scope['kubernetes::node::kubelet::api_servers']).join(',') %>"
 
 # Add your own!
 KUBELET_ARGS="<% -%>
-<% if @configure_cbr0 -%>
- --configure-cbr0=<%= scope['kubernetes::node::kubelet::configure_cbr0'] -%>
-<% end -%>
-<% if @register_node -%>
- --register-node=<%= scope['kubernetes::node::kubelet::register_node'] -%>
-<% end -%>
  --allow-privileged=<%= scope['kubernetes::node::kubelet::allow_privileged'] -%>
 <% if @cadvisor_port -%>
  --cadvisor-port=<%= scope['kubernetes::node::kubelet::cadvisor_port'] -%>
 <% end -%>
-<% if @file_check_frequency -%>
- --file-check-frequency=<%= scope['kubernetes::node::kubelet::file_check_frequency'] -%>
-<% end -%>
-<% if @healthz_bind_address -%>
- --healthz-bind-address=<%= scope['kubernetes::node::kubelet::healthz_bind_address'] -%>
-<% end -%>
-<% if @healthz_port -%>
- --healthz-port=<%= scope['kubernetes::node::kubelet::healthz_port'] -%>
-<% end -%>
- --image-gc-high-threshold=<%= scope['kubernetes::node::kubelet::image_gc_high_threshold'] -%>
- --image-gc-low-threshold=<%= scope['kubernetes::node::kubelet::image_gc_low_threshold'] -%>
- --max-pods=<%= scope['kubernetes::node::kubelet::max_pods'] -%>
- --maximum-dead-containers=<%= scope['kubernetes::node::kubelet::maximum_dead_containers'] -%>
- --maximum-dead-containers-per-container=<%= scope['kubernetes::node::kubelet::maximum_dead_containers_per_container'] -%>
- --minimum-container-ttl-duration=<%= scope['kubernetes::node::kubelet::minimum_container_ttl_duration'] -%>
- --low-diskspace-threshold-mb=<%= scope['kubernetes::node::kubelet::low_diskspace_threshold_mb'] -%>
 <% if @cert_dir -%>
  --cert-dir=<%= scope['kubernetes::node::kubelet::cert_dir'] -%>
 <% end -%>
-<% if @tls_cert_file -%>
- --tls-cert-file=<%= scope['kubernetes::node::kubelet::tls_cert_file'] -%>
+<% if @cgroup_root -%>
+ --cgroup-root=<%= scope['kubernetes::node::kubelet::cgroup_root'] -%>
 <% end -%>
-<% if @tls_private_key_file -%>
- --tls-private-key-file=<%= scope['kubernetes::node::kubelet::tls_private_key_file'] -%>
+<% if @chaos_chance -%>
+ --chaos-chance=<%= scope['kubernetes::node::kubelet::chaos_chance'] -%>
 <% end -%>
 <% if @cluster_dns -%>
  --cluster-dns=<%= scope['kubernetes::node::kubelet::cluster_dns'] -%>
@@ -56,49 +34,62 @@ KUBELET_ARGS="<% -%>
 <% if @cluster_domain -%>
  --cluster-domain=<%= scope['kubernetes::node::kubelet::cluster_domain'] -%>
 <% end -%>
-<% if @http_check_frequency -%>
- --http-check-frequency=<%= scope['kubernetes::node::kubelet::http_check_frequency'] -%>
+<% if @config -%>
+ --config=<%= scope['kubernetes::node::kubelet::config'] -%>
 <% end -%>
-<% if @manifest_url -%>
- --manifest-url=<%= scope['kubernetes::node::kubelet::manifest_url'] -%>
+<% if @configure_cbr0 -%>
+ --configure-cbr0=<%= scope['kubernetes::node::kubelet::configure_cbr0'] -%>
 <% end -%>
-<% if @master_service_namespace -%>
- --master-service-namespace=<%= scope['kubernetes::node::kubelet::master_service_namespace'] -%>
+<% if @container_runtime -%>
+ --container-runtime=<%= scope['kubernetes::node::kubelet::container_runtime'] -%>
 <% end -%>
-<% if @pod_infra_container_image -%>
- --pod-infra-container-image=<%= scope['kubernetes::node::kubelet::pod_infra_container_image'] -%>
+<% if @containerized -%>
+ --containerized=<%= scope['kubernetes::node::kubelet::containerized'] -%>
 <% end -%>
-<% if @read_only_port -%>
- --read-only-port=<%= scope['kubernetes::node::kubelet::read_only_port'] -%>
+<% if @cpu_cfs_quota -%>
+ --cpu-cfs-quota=<%= scope['kubernetes::node::kubelet::cpu_cfs_quota'] -%>
 <% end -%>
-<% if @root_dir -%>
- --root-dir=<%= scope['kubernetes::node::kubelet::root_dir'] -%>
+<% if @docker_endpoint -%>
+ --docker-endpoint=<%= scope['kubernetes::node::kubelet::docker_endpoint'] -%>
 <% end -%>
-<% if @streaming_connection_idle_timeout -%>
- --streaming-connection-idle-timeout=<%= scope['kubernetes::node::kubelet::streaming_connection_idle_timeout'] -%>
-<% end -%>
-<% if @sync_frequency -%>
- --sync-frequency=<%= scope['kubernetes::node::kubelet::sync_frequency'] -%>
-<% end -%>
-<% if @minimum_version.to_f >= 1.2 then -%>
-<% if @application_metrics_count_limit -%>
- --application-metrics-count-limit=<%= scope['kubernetes::node::kubelet::application_metrics_count_limit'] -%>
-<% end -%>
-<% if @docker_env_metadata_whitelist -%>
- --docker-env-metadata-whitelist=<%= scope['kubernetes::node::kubelet::docker_env_metadata_whitelist'] -%>
+<% if @docker_exec_handler -%>
+ --docker-exec-handler=<%= scope['kubernetes::node::kubelet::docker_exec_handler'] -%>
 <% end -%>
 <% if @enable_custom_metrics -%>
  --enable-custom-metrics=<%= scope['kubernetes::node::kubelet::enable_custom_metrics'] -%>
 <% end -%>
+<% if @enable_debugging_handlers -%>
+ --enable-debugging-handlers=<%= scope['kubernetes::node::kubelet::enable_debugging_handlers'] -%>
+<% end -%>
+<% if @enable_server -%>
+ --enable-server=<%= scope['kubernetes::node::kubelet::enable_server'] -%>
+<% end -%>
+<% if @event_burst -%>
+ --event-burst=<%= scope['kubernetes::node::kubelet::event_burst'] -%>
+<% end -%>
+<% if @event_qps -%>
+ --event-qps=<%= scope['kubernetes::node::kubelet::event_qps'] -%>
+<% end -%>
 <% if @experimental_flannel_overlay -%>
  --experimental-flannel-overlay=<%= scope['kubernetes::node::kubelet::experimental_flannel_overlay'] -%>
+<% end -%>
+<% if @file_check_frequency -%>
+ --file-check-frequency=<%= scope['kubernetes::node::kubelet::file_check_frequency'] -%>
 <% end -%>
 <% if @hairpin_mode -%>
  --hairpin-mode=<%= scope['kubernetes::node::kubelet::hairpin_mode'] -%>
 <% end -%>
-<% if @housekeeping_interval -%>
- --housekeeping-interval=<%= scope['kubernetes::node::kubelet::housekeeping_interval'] -%>
+<% if @healthz_bind_address -%>
+ --healthz-bind-address=<%= scope['kubernetes::node::kubelet::healthz_bind_address'] -%>
 <% end -%>
+<% if @healthz_port -%>
+ --healthz-port=<%= scope['kubernetes::node::kubelet::healthz_port'] -%>
+<% end -%>
+<% if @http_check_frequency -%>
+ --http-check-frequency=<%= scope['kubernetes::node::kubelet::http_check_frequency'] -%>
+<% end -%>
+ --image-gc-high-threshold=<%= scope['kubernetes::node::kubelet::image_gc_high_threshold'] -%>
+ --image-gc-low-threshold=<%= scope['kubernetes::node::kubelet::image_gc_low_threshold'] -%>
 <% if @kube_api_burst -%>
  --kube-api-burst=<%= scope['kubernetes::node::kubelet::kube_api_burst'] -%>
 <% end -%>
@@ -108,29 +99,85 @@ KUBELET_ARGS="<% -%>
 <% if @kube_reserved -%>
  --kube-reserved=<%= scope['kubernetes::node::kubelet::kube_reserved'] -%>
 <% end -%>
+<% if @kubeconfig -%>
+ --kubeconfig=<%= scope['kubernetes::node::kubelet::kubeconfig'] -%>
+<% end -%>
 <% if @kubelet_cgroups -%>
  --kubelet-cgroups=<%= scope['kubernetes::node::kubelet::kubelet_cgroups'] -%>
 <% end -%>
 <% if @lock_file -%>
  --lock-file=<%= scope['kubernetes::node::kubelet::lock_file'] -%>
 <% end -%>
-<% if @minimum_image_ttl_duration -%>
- --minimum-image-ttl-duration=<%= scope['kubernetes::node::kubelet::minimum_image_ttl_duration'] -%>
+ --log-flush-frequency=<%= scope['kubernetes::node::kubelet::log_flush_frequency'] -%>
+ --low-diskspace-threshold-mb=<%= scope['kubernetes::node::kubelet::low_diskspace_threshold_mb'] -%>
+<% if @manifest_url -%>
+ --manifest-url=<%= scope['kubernetes::node::kubelet::manifest_url'] -%>
 <% end -%>
+<% if @manifest_url_header -%>
+ --manifest-url-header=<%= scope['kubernetes::node::kubelet::manifest_url_header'] -%>
+<% end -%>
+<% if @master_service_namespace -%>
+ --master-service-namespace=<%= scope['kubernetes::node::kubelet::master_service_namespace'] -%>
+<% end -%>
+ --max-open-files=<%= scope['kubernetes::node::kubelet::max_open_files'] -%>
+ --max-pods=<%= scope['kubernetes::node::kubelet::max_pods'] -%>
+ --maximum-dead-containers=<%= scope['kubernetes::node::kubelet::maximum_dead_containers'] -%>
+ --maximum-dead-containers-per-container=<%= scope['kubernetes::node::kubelet::maximum_dead_containers_per_container'] -%>
+ --minimum-container-ttl-duration=<%= scope['kubernetes::node::kubelet::minimum_container_ttl_duration'] -%>
+ --minimum-image-ttl-duration=<%= scope['kubernetes::node::kubelet::minimum_image_ttl_duration'] -%>
 <% if @node_ip -%>
  --node-ip=<%= scope['kubernetes::node::kubelet::node_ip'] -%>
 <% end -%>
 <% if @node_labels -%>
  --node-labels=<%= scope['kubernetes::node::kubelet::node_labels'] -%>
 <% end -%>
+ --node-status-update-frequency=<%= scope['kubernetes::node::kubelet::node_status_update_frequency'] -%>
+<% if @non_masquerade_cidr -%>oom_score_adj
+ --non-masquerade-cidr=<%= scope['kubernetes::node::kubelet::non_masquerade_cidr'] -%>
+<% end -%>
+<% if @oom_score_adj -%>
+ --oom-score-adj=<%= scope['kubernetes::node::kubelet::oom_score_adj'] -%>
+<% end -%>
+ --outofdisk-transition-frequency=<%= scope['kubernetes::node::kubelet::outofdisk_transition_frequency'] -%>
+<% if @pod_cidr -%>
+ --pod-cidr=<%= scope['kubernetes::node::kubelet::pod_cidr'] -%>
+<% end -%>
+<% if @pod_infra_container_image -%>
+ --pod-infra-container-image=<%= scope['kubernetes::node::kubelet::pod_infra_container_image'] -%>
+<% end -%>
+<% if @read_only_port -%>
+ --read-only-port=<%= scope['kubernetes::node::kubelet::read_only_port'] -%>
+<% end -%>
 <% if @reconcile_cidr -%>
  --reconcile-cidr=<%= scope['kubernetes::node::kubelet::reconcile_cidr'] -%>
+<% end -%>
+<% if @register_node -%>
+ --register-node=<%= scope['kubernetes::node::kubelet::register_node'] -%>
 <% end -%>
 <% if @register_schedulable -%>
  --register-schedulable=<%= scope['kubernetes::node::kubelet::register_schedulable'] -%>
 <% end -%>
+<% if @registry_burst -%>
+ --registry-burst=<%= scope['kubernetes::node::kubelet::registry_burst'] -%>
+<% end -%>
+<% if @registry_qps -%>
+ --registry-qps=<%= scope['kubernetes::node::kubelet::registry_qps'] -%>
+<% end -%>
+<% if @resolv_conf -%>
+ --resolv-conf=<%= scope['kubernetes::node::kubelet::resolv_conf'] -%>
+<% end -%>
+<% if @root_dir -%>
+ --root-dir=<%= scope['kubernetes::node::kubelet::root_dir'] -%>
+<% end -%>
 <% if @runtime_cgroups -%>
  --runtime-cgroups=<%= scope['kubernetes::node::kubelet::runtime_cgroups'] -%>
+<% end -%>
+ --serialize-image-pulls=<%= scope['kubernetes::node::kubelet::serialize_image_pulls'] -%>
+<% if @streaming_connection_idle_timeout -%>
+ --streaming-connection-idle-timeout=<%= scope['kubernetes::node::kubelet::streaming_connection_idle_timeout'] -%>
+<% end -%>
+<% if @sync_frequency -%>
+ --sync-frequency=<%= scope['kubernetes::node::kubelet::sync_frequency'] -%>
 <% end -%>
 <% if @system_cgroups -%>
  --system-cgroups=<%= scope['kubernetes::node::kubelet::system_cgroups'] -%>
@@ -138,9 +185,11 @@ KUBELET_ARGS="<% -%>
 <% if @system_reserved -%>
  --system-reserved=<%= scope['kubernetes::node::kubelet::system_reserved'] -%>
 <% end -%>
-<% if @non_masquerade_cidr -%>
- --non-masquerade-cidr=<%= scope['kubernetes::node::kubelet::non_masquerade_cidr'] -%>
+<% if @tls_cert_file -%>
+ --tls-cert-file=<%= scope['kubernetes::node::kubelet::tls_cert_file'] -%>
 <% end -%>
+<% if @tls_private_key_file -%>
+ --tls-private-key-file=<%= scope['kubernetes::node::kubelet::tls_private_key_file'] -%>
 <% end -%>
  <%= scope['kubernetes::node::kubelet::args'] -%>
 "
