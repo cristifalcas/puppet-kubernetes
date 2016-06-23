@@ -128,7 +128,7 @@ class kubernetes::master::params {
   $kube_scheduler_journald_forward_enable = false
   $kube_scheduler_service_enable = true
   $kube_scheduler_address = '127.0.0.1'
-  $kube_scheduler_algorithm_provider = 'DefaultProvider' 
+  $kube_scheduler_algorithm_provider = 'DefaultProvider'
   $kube_scheduler_bind_pods_burst = 100
   $kube_scheduler_bind_pods_qps = 50
   $kube_scheduler_google_json_key = undef
