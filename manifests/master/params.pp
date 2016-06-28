@@ -25,7 +25,7 @@ class kubernetes::master::params {
   $kube_api_cert_dir = '/var/run/kubernetes'
   $kube_api_client_ca_file = undef
   $kube_api_delete_collection_workers = 1
-  $kube_api_etcd_cafile = []
+  $kube_api_etcd_cafile = undef
   $kube_api_etcd_certfile = undef
   $kube_api_etcd_keyfile = undef
   $kube_api_etcd_prefix = '/registry'
@@ -116,7 +116,7 @@ class kubernetes::master::params {
   $kube_controller_pvclaimbinder_sync_period = undef
   $kube_controller_replicaset_lookup_cache_size = 4096
   $kube_controller_replication_controller_lookup_cache_size = 4096
-  $kube_controller_resource_quota_sync_period = 4096
+  $kube_controller_resource_quota_sync_period = '5m0s'
   $kube_controller_root_ca_file = undef
   $kube_controller_service_account_private_key_file = undef
   $kube_controller_service_sync_period = '5m0s'

@@ -1,13 +1,20 @@
 {
 	"name": "cristifalcas-kubernetes",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"author": "Cristian Falcas",
 	"license": "Apache-2.0",
 	"summary": "Configuring and installing kubernetes",
 	"source": "git@github.com:cristifalcas/puppet-kubernetes.git",
 	"project_page": "https://github.com/cristifalcas/puppet-kubernetes",
 	"issues_url": "https://github.com/cristifalcas/puppet-kubernetes/issues",
-	"requirements": [],
+	"requirements": [{
+			"name": "pe",
+			"version_requirement": "3.x"
+		},{
+			"name": "puppet",
+			"version_requirement": ">=3.4.0 <5.0.0"
+		}
+	],
 	"operatingsystem_support": [{
 			"operatingsystem": "RedHat",
 			"operatingsystemrelease": [ "7"

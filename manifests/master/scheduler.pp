@@ -103,6 +103,8 @@ class kubernetes::master::scheduler (
   $bind_pods_burst             = $kubernetes::master::params::kube_scheduler_bind_pods_burst,
   $bind_pods_qps               = $kubernetes::master::params::kube_scheduler_bind_pods_qps,
   $google_json_key             = $kubernetes::master::params::kube_scheduler_google_json_key,
+  $kube_api_burst              = $kubernetes::master::params::kube_scheduler_kube_api_burst,
+  $kube_api_qps                = $kubernetes::master::params::kube_scheduler_kube_api_qps,
   $kubeconfig                  = $kubernetes::master::params::kube_scheduler_kubeconfig,
   $leader_elect                = $kubernetes::master::params::kube_scheduler_leader_elect,
   $leader_elect_lease_duration = $kubernetes::master::params::kube_scheduler_leader_elect_lease_duration,

@@ -78,7 +78,7 @@
 #
 # [*etcd_cafile*]
 #   List of ca certificates
-#   Default []
+#   Default undef
 #
 # [*etcd_certfile*]
 #   Public key to connect to etcd servers

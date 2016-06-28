@@ -33,7 +33,7 @@ class kubernetes::node::params {
   $kubelet_hairpin_mode = undef
   $kubelet_healthz_bind_address = undef
   $kubelet_healthz_port = undef
-  $kubelet_hostname_override = undef
+  $kubelet_hostname_override = $::fqdn
   $kubelet_http_check_frequency = undef
   $kubelet_image_gc_high_threshold = 90
   $kubelet_image_gc_low_threshold = 80

@@ -138,7 +138,7 @@
 #
 # [*hostname_override*]
 #   If non-empty, will use this string as identification instead of the actual hostname.
-#   Defaults to undef
+#   Defaults to $::fqdn
 #
 # [*http_check_frequency*]
 #   Duration between checking http for new data

@@ -46,8 +46,8 @@ KUBE_API_ARGS="<% -%>
  --client-ca-file=<%= scope['kubernetes::master::apiserver::client_ca_file'] -%>
 <% end -%>
  --delete-collection-workers=<%= scope['kubernetes::master::apiserver::delete_collection_workers'] -%>
-<% if not Array(@etcd_cafile).flatten.empty? and @etcd_certfile and @etcd_keyfile and @etcd_cacertfiles -%>
- --etcd-cafile=<%= Array(scope['kubernetes::master::apiserver::etcd_cafile'])[0] -%>
+<% if @etcd_cafile and @etcd_certfile and @etcd_keyfile -%>
+ --etcd-cafile=<%= scope['kubernetes::master::apiserver::etcd_cafile'] -%>
  --etcd-certfile=<%= scope['kubernetes::master::apiserver::etcd_certfile'] -%>
  --etcd-keyfile=<%= scope['kubernetes::master::apiserver::etcd_keyfile'] -%>
 <% end -%>
