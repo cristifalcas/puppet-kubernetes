@@ -145,7 +145,7 @@
 #   Use https for kubelet connections
 #   Default true
 #
-# [*kubelet_port*]
+# [*kubelet_port*]  <<DEPRECATED>>
 #   Kubelet port
 #   Default 10250
 #
@@ -256,10 +256,6 @@
 #   where size is a number. It takes effect when watch-cache is enabled.
 #   Default undef
 #
-# [*ir_hawkular*]
-#   Hawkular configuration URL
-#   Default undef
-#
 class kubernetes::master::apiserver (
   $service_cluster_ip_range,
   $ensure                        = $kubernetes::master::params::kube_api_service_ensure,
@@ -316,9 +312,9 @@ class kubernetes::master::apiserver (
   $tls_private_key_file          = $kubernetes::master::params::kube_api_tls_private_key_file,
   $token_auth_file               = $kubernetes::master::params::kube_api_token_auth_file,
   $watch_cache                   = $kubernetes::master::params::kube_api_watch_cache,
-  $extra_args                    = $kubernetes::master::params::kube_api_extra_args,
   $watch_cache_sizes             = $kubernetes::master::params::kube_api_watch_cache_sizes,
-  $ir_hawkular                   = $kubernetes::master::params::kube_api_ir_hawkular,
+  $verbosity                     = $kubernetes::master::params::kube_api_verbosity,
+  $extra_args                    = $kubernetes::master::params::kube_api_extra_args,
 ) inherits kubernetes::master::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)

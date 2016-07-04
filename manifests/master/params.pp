@@ -64,7 +64,7 @@ class kubernetes::master::params {
   $kube_api_watch_cache = true
   $kube_api_watch_cache_sizes = undef
   $kube_api_kubernetes_service_node_port = 0
-  $kube_api_ir_hawkular = undef
+  $kube_api_verbosity = 2
   $kube_api_extra_args = ''
 
   # controller manager config
@@ -121,7 +121,8 @@ class kubernetes::master::params {
   $kube_controller_service_account_private_key_file = undef
   $kube_controller_service_sync_period = '5m0s'
   $kube_controller_terminated_pod_gc_threshold = 0
-  $kube_controller_args = ''
+  $kube_controller_verbosity = 2
+  $kube_controller_extra_args = ''
 
   # scheduler config
   $kube_scheduler_service_ensure = running
@@ -145,5 +146,6 @@ class kubernetes::master::params {
   $kube_scheduler_port = 10251
   $kube_scheduler_profiling = true
   $kube_scheduler_scheduler_name = undef
-  $kube_scheduler_args = ''
+  $kube_scheduler_verbosity = 2
+  $kube_scheduler_extra_args = ''
 }

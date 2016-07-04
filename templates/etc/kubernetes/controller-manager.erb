@@ -85,5 +85,6 @@ KUBE_CONTROLLER_MANAGER_ARGS="<% -%>
 <% end -%>
  --service-sync-period=<%= scope['kubernetes::master::controller_manager::service_sync_period'] -%>
  --terminated-pod-gc-threshold=<%= scope['kubernetes::master::controller_manager::terminated_pod_gc_threshold'] -%>
-<%= scope['kubernetes::master::controller_manager::extra_args'] -%>
+ --v=<%= scope['kubernetes::master::controller_manager::verbosity'] -%>
+ <%= scope['kubernetes::master::controller_manager::extra_args'] -%>
 "

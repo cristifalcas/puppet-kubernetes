@@ -51,5 +51,6 @@ KUBE_PROXY_ARGS="<% -%>
 <% if @udp_timeout -%>
  --udp-timeout=<%= scope['kubernetes::node::kube_proxy::udp_timeout'] -%>
 <% end -%>
- <%= scope['kubernetes::node::kube_proxy::args'] -%>
+ --v=<%= scope['kubernetes::node::kube_proxy::verbosity'] -%>
+ <%= scope['kubernetes::node::kube_proxy::extra_args'] -%>
 "

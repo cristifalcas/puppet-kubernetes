@@ -116,7 +116,8 @@ class kubernetes::master::scheduler (
   $port                        = $kubernetes::master::params::kube_scheduler_port,
   $profiling                   = $kubernetes::master::params::kube_scheduler_profiling,
   $scheduler_name              = $kubernetes::master::params::kube_scheduler_scheduler_name,
-  $extra_args                  = $kubernetes::master::params::kube_scheduler_args,
+  $verbosity                   = $kubernetes::master::params::kube_scheduler_verbosity,
+  $extra_args                  = $kubernetes::master::params::kube_scheduler_extra_args,
 ) inherits kubernetes::master::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)

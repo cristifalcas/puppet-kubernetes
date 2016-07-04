@@ -137,7 +137,8 @@ class kubernetes::node::kube_proxy (
   $proxy_mode                        = $kubernetes::node::params::kube_proxy_proxy_mode,
   $proxy_port_range                  = $kubernetes::node::params::kube_proxy_proxy_port_range,
   $udp_timeout                       = $kubernetes::node::params::kube_proxy_udp_timeout,
-  $args                              = $kubernetes::node::params::kube_proxy_args,
+  $verbosity                         = $kubernetes::node::params::kube_proxy_verbosity,
+  $extra_args                        = $kubernetes::node::params::kube_proxy_extra_args,
 ) inherits kubernetes::node::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)

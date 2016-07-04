@@ -298,7 +298,8 @@ class kubernetes::master::controller_manager (
   $service_account_private_key_file           = $kubernetes::master::params::kube_controller_service_account_private_key_file,
   $service_sync_period                        = $kubernetes::master::params::kube_controller_service_sync_period,
   $terminated_pod_gc_threshold                = $kubernetes::master::params::kube_controller_terminated_pod_gc_threshold,
-  $extra_args                                 = $kubernetes::master::params::kube_controller_args,
+  $verbosity                                  = $kubernetes::master::params::kube_controller_verbosity,
+  $extra_args                                 = $kubernetes::master::params::kube_controller_extra_args,
 ) inherits kubernetes::master::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)

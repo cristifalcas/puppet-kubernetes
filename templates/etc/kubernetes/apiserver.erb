@@ -116,8 +116,6 @@ KUBE_API_ARGS="<% -%>
 <% if @watch_cache_sizes -%>
  --watch-cache-sizes=<%= scope['kubernetes::master::apiserver::watch_cache_sizes'] -%>
 <% end -%>
-<% if @ir_hawkular -%>
- --ir-hawkular=<%= scope['kubernetes::master::apiserver::ir_hawkular'] -%>
-<% end -%>
+ --v=<%= scope['kubernetes::master::apiserver::verbosity'] -%>
  <%= scope['kubernetes::master::apiserver::extra_args'] -%>
 "

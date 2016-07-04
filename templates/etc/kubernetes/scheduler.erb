@@ -32,5 +32,6 @@ KUBE_SCHEDULER_ARGS="<% -%>
 <% if @scheduler_name then -%>
  --scheduler-name=<%= scope['kubernetes::master::scheduler::scheduler_name'] -%>
 <% end -%>
-<%= scope['kubernetes::master::scheduler::extra_args'] -%>
+ --v=<%= scope['kubernetes::master::scheduler::verbosity'] -%>
+ <%= scope['kubernetes::master::scheduler::extra_args'] -%>
 "

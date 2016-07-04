@@ -79,7 +79,8 @@ class kubernetes::node::params {
   $kubelet_system_reserved = undef
   $kubelet_tls_cert_file = undef
   $kubelet_tls_private_key_file = undef
-  $kubelet_args = ''
+  $kubelet_verbosity = 2
+  $kubelet_extra_args = ''
 
   # proxy options
   $kube_proxy_service_ensure = 'running'
@@ -105,5 +106,6 @@ class kubernetes::node::params {
   $kube_proxy_proxy_mode = undef
   $kube_proxy_proxy_port_range = undef
   $kube_proxy_udp_timeout = undef
-  $kube_proxy_args = ''
+  $kube_proxy_verbosity = 2
+  $kube_proxy_extra_args = ''
 }

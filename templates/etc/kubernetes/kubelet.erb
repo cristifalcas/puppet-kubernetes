@@ -191,5 +191,6 @@ KUBELET_ARGS="<% -%>
 <% if @tls_private_key_file -%>
  --tls-private-key-file=<%= scope['kubernetes::node::kubelet::tls_private_key_file'] -%>
 <% end -%>
- <%= scope['kubernetes::node::kubelet::args'] -%>
+ --v=<%= scope['kubernetes::node::kubelet::verbosity'] -%>
+ <%= scope['kubernetes::node::kubelet::extra_args'] -%>
 "

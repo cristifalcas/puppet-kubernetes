@@ -415,7 +415,8 @@ class kubernetes::node::kubelet (
   $system_reserved                       = $kubernetes::node::params::kubelet_system_reserved,
   $tls_cert_file                         = $kubernetes::node::params::kubelet_tls_cert_file,
   $tls_private_key_file                  = $kubernetes::node::params::kubelet_tls_private_key_file,
-  $args                                  = $kubernetes::node::params::kubelet_args,
+  $verbosity                             = $kubernetes::node::params::kubelet_verbosity,
+  $extra_args                            = $kubernetes::node::params::kubelet_extra_args,
 ) inherits kubernetes::node::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)
