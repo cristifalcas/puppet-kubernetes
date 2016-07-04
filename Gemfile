@@ -18,4 +18,5 @@ gem 'simplecov'
 gem 'rspec-puppet-facts'
 gem 'metadata-json-lint'
 gem 'rspec', '< 3.2.0', {"platforms"=>["ruby_18"]}
-gem 'json', '~> 1.0'
+gem 'json', '< 2.0', {"platforms"=>["ruby_18", "ruby_19"]}
+gem 'json_pure', '< 2.0', {"platforms"=>["ruby_18", "ruby_19"]}
