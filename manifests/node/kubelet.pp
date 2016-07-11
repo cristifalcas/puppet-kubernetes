@@ -294,6 +294,15 @@
 #    If undefined, defaults to /etc/resolv.conf
 #   Defaults to undef
 #
+# [*rkt_path*]
+#   Path of rkt binary. Leave empty to use the first rkt in $PATH.  Only used if --container-runtime='rkt'
+#   Defaults to undef
+#
+# [*rkt_stage1_image*]
+#   image to use as stage1. Local paths and http/https URLs are supported.
+#    If empty, the 'stage1.aci' in the same directory as '--rkt-path' will be used
+#   Defaults to undef
+#
 # [*root_dir*]
 #   Directory path for managing kubelet files (volume mounts,etc).
 #   Defaults to undef
@@ -336,7 +345,12 @@
 #   File containing x509 private key matching --tls_cert_file.
 #   Default=undef
 #
-# [*args*]
+# [*volume_stats_agg_period*]
+#   Specifies interval for kubelet to calculate and cache the volume disk usage for all pods and volumes.
+#     To disable volume calculations, set to 0.  Default: '1m'
+#   Default to '1m0s'
+#
+# [*extra_args*]
 #   Add your own!
 #
 class kubernetes::node::kubelet (
@@ -406,6 +420,8 @@ class kubernetes::node::kubelet (
   $registry_burst                        = $kubernetes::node::params::kubelet_registry_burst,
   $registry_qps                          = $kubernetes::node::params::kubelet_registry_qps,
   $resolv_conf                           = $kubernetes::node::params::kubelet_resolv_conf,
+  $rkt_path                              = $kubernetes::node::params::kubelet_rkt_path,
+  $rkt_stage1_image                      = $kubernetes::node::params::kubelet_rkt_stage1_image,
   $root_dir                              = $kubernetes::node::params::kubelet_root_dir,
   $runtime_cgroups                       = $kubernetes::node::params::kubelet_runtime_cgroups,
   $serialize_image_pulls                 = $kubernetes::node::params::kubelet_serialize_image_pulls,
@@ -415,6 +431,7 @@ class kubernetes::node::kubelet (
   $system_reserved                       = $kubernetes::node::params::kubelet_system_reserved,
   $tls_cert_file                         = $kubernetes::node::params::kubelet_tls_cert_file,
   $tls_private_key_file                  = $kubernetes::node::params::kubelet_tls_private_key_file,
+  $volume_stats_agg_period               = $kubernetes::node::params::kubelet_volume_stats_agg_period,
   $verbosity                             = $kubernetes::node::params::kubelet_verbosity,
   $extra_args                            = $kubernetes::node::params::kubelet_extra_args,
 ) inherits kubernetes::node::params {

@@ -10,6 +10,9 @@ KUBE_CONTROLLER_MANAGER_ARGS="<% -%>
 <% if @cloud_config then -%>
  --cloud-config=<%= scope['kubernetes::master::controller_manager::cloud_config'] -%>
 <% end -%>
+<% if @cloud_provider then -%>
+ --cloud-provider=<%= scope['kubernetes::master::controller_manager::cloud_provider'] -%>
+<% end -%>
 <% if @cluster_cidr then -%>
  --cluster-cidr=<%= scope['kubernetes::master::controller_manager::cluster_cidr'] -%>
 <% end -%>

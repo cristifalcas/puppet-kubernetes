@@ -10,9 +10,6 @@ KUBE_API_ADDRESS="--insecure-bind-address=<%= scope['kubernetes::master::apiserv
 # The port on the local server to listen on.
 KUBE_API_PORT="--insecure-port=<%= scope['kubernetes::master::apiserver::insecure_port'] %>"
 
-# Port minions listen on
-KUBELET_PORT="--kubelet-port=<%= scope['kubernetes::master::apiserver::kubelet_port'] %>"
-
 # Address range to use for services
 KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=<%= scope['kubernetes::master::apiserver::service_cluster_ip_range'] %>"
 

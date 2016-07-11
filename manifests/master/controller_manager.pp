@@ -251,6 +251,7 @@ class kubernetes::master::controller_manager (
   $address                                    = $kubernetes::master::params::kube_controller_address,
   $allocate_node_cidrs                        = $kubernetes::master::params::kube_controller_allocate_node_cidrs,
   $cloud_config                               = $kubernetes::master::params::kube_controller_cloud_config,
+  $cloud_provider                             = $kubernetes::master::params::kube_controller_cloud_provider,
   $cluster_cidr                               = $kubernetes::master::params::kube_controller_cluster_cidr,
   $cluster_name                               = $kubernetes::master::params::kube_controller_cluster_name,
   $concurrent_deployment_syncs                = $kubernetes::master::params::kube_controller_concurrent_deployment_syncs,

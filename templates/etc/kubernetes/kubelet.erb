@@ -166,6 +166,12 @@ KUBELET_ARGS="<% -%>
 <% if @resolv_conf -%>
  --resolv-conf=<%= scope['kubernetes::node::kubelet::resolv_conf'] -%>
 <% end -%>
+<% if @rkt_path -%>
+ --rkt-path=<%= scope['kubernetes::node::kubelet::rkt_path'] -%>
+<% end -%>
+<% if @rkt_stage1_image -%>
+ --rkt-stage1-image=<%= scope['kubernetes::node::kubelet::rkt_stage1_image'] -%>
+<% end -%>
 <% if @root_dir -%>
  --root-dir=<%= scope['kubernetes::node::kubelet::root_dir'] -%>
 <% end -%>
@@ -190,6 +196,9 @@ KUBELET_ARGS="<% -%>
 <% end -%>
 <% if @tls_private_key_file -%>
  --tls-private-key-file=<%= scope['kubernetes::node::kubelet::tls_private_key_file'] -%>
+<% end -%>
+<% if @volume_stats_agg_period -%>
+ --volume-stats-agg-period=<%= scope['kubernetes::node::kubelet::volume_stats_agg_period'] -%>
 <% end -%>
  --v=<%= scope['kubernetes::node::kubelet::verbosity'] -%>
  <%= scope['kubernetes::node::kubelet::extra_args'] -%>

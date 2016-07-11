@@ -41,7 +41,6 @@ class kubernetes::master::params {
   $kube_api_kubelet_client_certificate = undef
   $kube_api_kubelet_client_key = undef
   $kube_api_kubelet_https = true
-  $kube_api_kubelet_port = 10250
   $kube_api_kubelet_timeout = '5s'
   $kube_api_log_flush_frequency = '5s'
   $kube_api_long_running_request_regexp = undef
@@ -74,6 +73,7 @@ class kubernetes::master::params {
   $kube_controller_address = '127.0.0.1'
   $kube_controller_allocate_node_cidrs = false
   $kube_controller_cloud_config = undef
+  $kube_controller_cloud_provider = undef
   $kube_controller_cluster_cidr = undef
   $kube_controller_cluster_name = 'kubernetes'
   $kube_controller_concurrent_deployment_syncs = 5
@@ -130,8 +130,6 @@ class kubernetes::master::params {
   $kube_scheduler_service_enable = true
   $kube_scheduler_address = '127.0.0.1'
   $kube_scheduler_algorithm_provider = 'DefaultProvider'
-  $kube_scheduler_bind_pods_burst = 100
-  $kube_scheduler_bind_pods_qps = 50
   $kube_scheduler_google_json_key = undef
   $kube_scheduler_kube_api_burst = 10
   $kube_scheduler_kube_api_qps = 50

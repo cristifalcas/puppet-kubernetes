@@ -70,6 +70,8 @@ class kubernetes::node::params {
   $kubelet_registry_burst = undef
   $kubelet_registry_qps = undef
   $kubelet_resolv_conf = undef
+  $kubelet_rkt_path = undef
+  $kubelet_rkt_stage1_image = undef
   $kubelet_root_dir = undef
   $kubelet_runtime_cgroups = undef
   $kubelet_serialize_image_pulls = true
@@ -79,6 +81,7 @@ class kubernetes::node::params {
   $kubelet_system_reserved = undef
   $kubelet_tls_cert_file = undef
   $kubelet_tls_private_key_file = undef
+  $kubelet_volume_stats_agg_period = undef
   $kubelet_verbosity = 2
   $kubelet_extra_args = ''
 
@@ -91,6 +94,7 @@ class kubernetes::node::params {
   $kube_proxy_config_sync_period = undef
   $kube_proxy_conntrack_max = undef
   $kube_proxy_conntrack_tcp_timeout_established = undef
+  $kube_proxy_google_json_key = undef
   $kube_proxy_healthz_bind_address = '127.0.0.1'
   $kube_proxy_healthz_port = 0
   $kube_proxy_hostname_override = undef

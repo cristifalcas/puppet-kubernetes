@@ -23,14 +23,6 @@
 #   The scheduling algorithm provider to use, one of: DefaultProvider
 #   Defaults to DefaultProvider
 #
-# [*bind_pods_burst*]
-#   Number of bindings per second scheduler is allowed to make during bursts
-#   Defaults to 100
-#
-# [*bind_pods_qps*]
-#   Number of bindings per second scheduler is allowed to continuously make
-#   Defaults to 50
-#
 # [*google_json_key*]
 #   The Google Cloud Platform Service Account JSON Key to use for authentication.
 #   Defaults to undef
@@ -100,8 +92,6 @@ class kubernetes::master::scheduler (
   $enable                      = $kubernetes::master::params::kube_scheduler_service_enable,
   $address                     = $kubernetes::master::params::kube_scheduler_address,
   $algorithm_provider          = $kubernetes::master::params::kube_scheduler_algorithm_provider,
-  $bind_pods_burst             = $kubernetes::master::params::kube_scheduler_bind_pods_burst,
-  $bind_pods_qps               = $kubernetes::master::params::kube_scheduler_bind_pods_qps,
   $google_json_key             = $kubernetes::master::params::kube_scheduler_google_json_key,
   $kube_api_burst              = $kubernetes::master::params::kube_scheduler_kube_api_burst,
   $kube_api_qps                = $kubernetes::master::params::kube_scheduler_kube_api_qps,

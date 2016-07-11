@@ -145,10 +145,6 @@
 #   Use https for kubelet connections
 #   Default true
 #
-# [*kubelet_port*]  <<DEPRECATED>>
-#   Kubelet port
-#   Default 10250
-#
 # [*kubelet_timeout*]
 #   Timeout for kubelet operations
 #   Default 5s
@@ -290,7 +286,6 @@ class kubernetes::master::apiserver (
   $kubelet_client_certificate    = $kubernetes::master::params::kube_api_kubelet_client_certificate,
   $kubelet_client_key            = $kubernetes::master::params::kube_api_kubelet_client_key,
   $kubelet_https                 = $kubernetes::master::params::kube_api_kubelet_https,
-  $kubelet_port                  = $kubernetes::master::params::kube_api_kubelet_port,
   $kubelet_timeout               = $kubernetes::master::params::kube_api_kubelet_timeout,
   $kubernetes_service_node_port  = $kubernetes::master::params::kube_api_kubernetes_service_node_port,
   $log_flush_frequency           = $kubernetes::master::params::kube_api_log_flush_frequency,

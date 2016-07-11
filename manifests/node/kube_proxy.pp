@@ -42,6 +42,10 @@
 #    If undefined, defaults to 24h0m0s
 #   Defaults to undef
 #
+# [*google_json_key*]
+#   The Google Cloud Platform Service Account JSON Key to use for authentication.
+#   Defaults to undef
+#
 # [*healthz_bind_address*]
 #   The IP address for the health check server to serve on, defaulting to 127.0.0.1 (set to 0.0.0.0 for all interfaces)
 #   Defaults to '127.0.0.1'
@@ -119,9 +123,10 @@ class kubernetes::node::kube_proxy (
   $enable                            = $kubernetes::node::params::kube_proxy_service_enable,
   $bind_address                      = $kubernetes::node::params::kube_proxy_bind_address,
   $cleanup_iptables                  = $kubernetes::node::params::kube_proxy_cleanup_iptables,
+  $config_sync_period                = $kubernetes::node::params::kube_proxy_config_sync_period,
   $conntrack_max                     = $kubernetes::node::params::kube_proxy_conntrack_max,
   $conntrack_tcp_timeout_established = $kubernetes::node::params::kube_proxy_conntrack_tcp_timeout_established,
-  $config_sync_period                = $kubernetes::node::params::kube_proxy_config_sync_period,
+  $google_json_key                   = $kubernetes::node::params::kube_proxy_google_json_key,
   $healthz_bind_address              = $kubernetes::node::params::kube_proxy_healthz_bind_address,
   $healthz_port                      = $kubernetes::node::params::kube_proxy_healthz_port,
   $hostname_override                 = $kubernetes::node::params::kube_proxy_hostname_override,
