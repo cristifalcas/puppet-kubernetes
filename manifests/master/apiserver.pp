@@ -316,7 +316,7 @@ class kubernetes::master::apiserver (
 
   include ::kubernetes::master
 
-  if $journald_forward_enable {
+  if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
     file { '/etc/systemd/system/kube-apiserver.service.d':
       ensure => 'directory',
       owner  => 'root',

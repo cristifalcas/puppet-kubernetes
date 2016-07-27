@@ -114,7 +114,7 @@ class kubernetes::master::scheduler (
 
   include ::kubernetes::master
 
-  if $journald_forward_enable {
+  if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
     file { '/etc/systemd/system/kube-scheduler.service.d':
       ensure => 'directory',
       owner  => 'root',

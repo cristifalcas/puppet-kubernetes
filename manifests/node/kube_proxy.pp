@@ -150,7 +150,7 @@ class kubernetes::node::kube_proxy (
 
   include ::kubernetes::node
 
-  if $journald_forward_enable {
+  if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
     file { '/etc/systemd/system/kube-proxy.service.d':
       ensure => 'directory',
       owner  => 'root',

@@ -463,7 +463,7 @@ class kubernetes::node::kubelet (
     } ~> Service['docker']
   }
 
-  if $journald_forward_enable {
+  if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
     file { '/etc/systemd/system/kubelet.service.d':
       ensure => 'directory',
       owner  => 'root',
