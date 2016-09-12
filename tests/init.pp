@@ -1,1 +1,1 @@
-include kubernetes
+include ::kubernetes

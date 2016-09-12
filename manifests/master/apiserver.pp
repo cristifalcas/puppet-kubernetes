@@ -13,6 +13,14 @@
 #   Whether you want the apiserver daemon to start up at boot
 #   Defaults to true
 #
+# [*manage_as*]
+#   How to manage the apiserver service. Valid values are: service, pod, container
+#   Defaults to service
+#
+# [*container_image*]
+#   From where to pull the image.
+#   Defaults to gcr.io/google_containers/hyperkube-amd64:v1.3.5
+#
 ## Parameters ##
 #
 # [*admission_control*]
@@ -257,6 +265,8 @@ class kubernetes::master::apiserver (
   $ensure                        = $kubernetes::master::params::kube_api_service_ensure,
   $journald_forward_enable       = $kubernetes::master::params::kube_api_journald_forward_enable,
   $enable                        = $kubernetes::master::params::kube_api_service_enable,
+  $manage_as                     = $kubernetes::master::params::kube_api_manage_as,
+  $container_image               = $kubernetes::master::params::kube_api_container_image,
   $admission_control             = $kubernetes::master::params::kube_api_admission_control,
   $admission_control_config_file = $kubernetes::master::params::kube_api_admission_control_config_file,
   $advertise_address             = $kubernetes::master::params::kube_api_advertise_address,
@@ -313,52 +323,96 @@ class kubernetes::master::apiserver (
 ) inherits kubernetes::master::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)
+  validate_re($manage_as, '^(service|pod|container)$')
 
-  include ::kubernetes::master
+  case $manage_as {
+    'service'   : {
+      include ::kubernetes::master
 
-  if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
-    file { '/etc/systemd/system/kube-apiserver.service.d':
-      ensure => 'directory',
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0755',
-    }
-    file { '/etc/systemd/system/kube-apiserver.service.d/journald.conf':
-      ensure  => file,
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0644',
-      content => template("${module_name}/systemd/apiserver_journald.conf.erb"),
-    } ~>
-    exec { 'reload systemctl daemon for kube-apiserver':
-      command     => '/bin/systemctl daemon-reload',
-      refreshonly => true,
-    } ~> Service['kube-apiserver']
-  }
+      case $::osfamily {
+        'redhat' : {
+        }
+        'debian' : {
+          file { '/etc/default/kube-apiserver':
+            ensure  => 'file',
+            force   => true,
+            content => template("${module_name}/etc/default/api-server.erb"),
+            notify  => Service['kube-apiserver'],
+          }
+        }
+        default  : {
+          fail("Unsupport OS: ${::osfamily}")
+        }
+      }
 
-  case $::osfamily {
-    'redhat' : {
-    }
-    'debian' : {
-      file { '/etc/default/kube-apiserver':
+      file { '/etc/kubernetes/apiserver':
         ensure  => 'file',
-        force   => true,
-        content => template("${module_name}/etc/default/api-server.erb"),
-      } ~> Service['kube-apiserver']
-    }
-    default  : {
-      fail("Unsupport OS: ${::osfamily}")
-    }
-  }
+        content => template("${module_name}/etc/kubernetes/apiserver.erb"),
+        notify  => Service['kube-apiserver'],
+      }
 
-  file { '/etc/kubernetes/apiserver':
-    ensure  => 'file',
-    force   => true,
-    content => template("${module_name}/etc/kubernetes/apiserver.erb"),
-  } ~> Service['kube-apiserver']
+      service { 'kube-apiserver':
+        ensure => $ensure,
+        enable => $enable,
+      }
 
-  service { 'kube-apiserver':
-    ensure => $ensure,
-    enable => $enable,
+      if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
+        file { '/etc/systemd/system/kube-apiserver.service.d':
+          ensure => 'directory',
+          owner  => 'root',
+          group  => 'root',
+          mode   => '0755',
+        } ->
+        file { '/etc/systemd/system/kube-apiserver.service.d/journald.conf':
+          ensure  => file,
+          owner   => 'root',
+          group   => 'root',
+          mode    => '0644',
+          content => template("${module_name}/systemd/apiserver_journald.conf.erb"),
+        } ~>
+        exec { 'reload systemctl daemon for kube-apiserver':
+          command     => '/bin/systemctl daemon-reload',
+          refreshonly => true,
+        } ~> Service['kube-apiserver']
+      }
+    }
+    'pod'       : {
+      if $enable {
+        $ensure_file = 'file'
+      } else {
+        $ensure_file = 'absent'
+      }
+
+      file { '/etc/kubernetes/manifests/pod_kube-apiserver.yml':
+        ensure  => $ensure_file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        content => template("${module_name}/pods/pod_kube-apiserver.yml.erb"),
+        require => Service['kubelet'],
+      }
+    }
+    'container' : {
+      if $enable {
+        $ensure_container = 'present'
+      } else {
+        $ensure_container = 'absent'
+      }
+      $args = inline_template("<%= scope.function_template(['kubernetes/_apiserver.erb']) %>")
+
+      docker::run { 'kube-apiserver':
+        ensure           => $ensure_container,
+        image            => $container_image,
+        command          => '/hyperkube apiserver ${args}',
+        volumes          => ['/etc/pki:/etc/pki', '/etc/ssl:/etc/ssl', '/etc/kubernetes:/etc/kubernetes',],
+        restart_service  => true,
+        net              => 'host',
+        privileged       => true,
+        detach           => false,
+        extra_parameters => ['--restart=always'],
+      }
+    }
+    default     : {
+    }
   }
 }

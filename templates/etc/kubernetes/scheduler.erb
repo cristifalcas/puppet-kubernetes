@@ -5,33 +5,4 @@
 # default config should be adequate
 
 # Add your own!
-KUBE_SCHEDULER_ARGS="<% -%>
- --address=<%= scope['kubernetes::master::scheduler::address'] -%>
- --algorithm-provider=<%= scope['kubernetes::master::scheduler::algorithm_provider'] -%>
-<% if @google_json_key then -%>
- --google-json-key=<%= scope['kubernetes::master::scheduler::google_json_key'] -%>
-<% end -%>
- --kube-api-burst=<%= scope['kubernetes::master::scheduler::kube_api_burst'] -%>
- --kube-api-qps=<%= scope['kubernetes::master::scheduler::kube_api_qps'] -%>
-<% if @kubeconfig then -%>
- --kubeconfig=<%= scope['kubernetes::master::scheduler::kubeconfig'] -%>
-<% end -%>
-<% if @leader_elect then -%>
- --leader-elect=<%= scope['kubernetes::master::scheduler::leader_elect'] -%>
- --leader-elect-lease-duration=<%= scope['kubernetes::master::scheduler::leader_elect_lease_duration'] -%>
- --leader-elect-renew-deadline=<%= scope['kubernetes::master::scheduler::leader_elect_renew_deadline'] -%>
- --leader-elect-retry-period=<%= scope['kubernetes::master::scheduler::leader_elect_retry_period'] -%>
-<% end -%>
- --log-flush-frequency=<%= scope['kubernetes::master::scheduler::log_flush_frequency'] -%>
- --master=<%= scope['kubernetes::master::scheduler::master'] -%>
-<% if @policy_config_file then -%>
- --policy-config-file=<%= scope['kubernetes::master::scheduler::policy_config_file'] -%>
-<% end -%>
- --port=<%= scope['kubernetes::master::scheduler::port'] -%>
- --profiling=<%= scope['kubernetes::master::scheduler::profiling'] -%>
-<% if @scheduler_name then -%>
- --scheduler-name=<%= scope['kubernetes::master::scheduler::scheduler_name'] -%>
-<% end -%>
- --v=<%= scope['kubernetes::master::scheduler::verbosity'] -%>
- <%= scope['kubernetes::master::scheduler::extra_args'] -%>
-"
+KUBE_SCHEDULER_ARGS="<%= scope.function_template(['kubernetes/_scheduler.erb']) %>"

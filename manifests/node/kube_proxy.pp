@@ -17,6 +17,14 @@
 #   Whether you want to kube_proxy daemon to start up at boot
 #   Defaults to true
 #
+# [*manage_as*]
+#   How to manage the proxy service. Valid values are: service, pod, container
+#   Defaults to service
+#
+# [*container_image*]
+#   From where to pull the image.
+#   Defaults to gcr.io/google_containers/hyperkube-amd64:v1.3.5
+#
 ## Parameters ##
 #
 # [*bind_address*]
@@ -121,6 +129,8 @@ class kubernetes::node::kube_proxy (
   $ensure                            = $kubernetes::node::params::kube_proxy_service_ensure,
   $journald_forward_enable           = $kubernetes::node::params::kube_proxy_journald_forward_enable,
   $enable                            = $kubernetes::node::params::kube_proxy_service_enable,
+  $manage_as                         = $kubernetes::node::params::kube_proxy_manage_as,
+  $container_image                   = $kubernetes::node::params::kube_proxy_container_image,
   $bind_address                      = $kubernetes::node::params::kube_proxy_bind_address,
   $cleanup_iptables                  = $kubernetes::node::params::kube_proxy_cleanup_iptables,
   $config_sync_period                = $kubernetes::node::params::kube_proxy_config_sync_period,
@@ -147,51 +157,95 @@ class kubernetes::node::kube_proxy (
 ) inherits kubernetes::node::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)
+  validate_re($manage_as, '^(service|pod|container)$')
 
-  include ::kubernetes::node
+  case $manage_as {
+    'service'   : {
+      include ::kubernetes::node
 
-  if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
-    file { '/etc/systemd/system/kube-proxy.service.d':
-      ensure => 'directory',
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0755',
-    }
-    file { '/etc/systemd/system/kube-proxy.service.d/journald.conf':
-      ensure  => file,
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0644',
-      content => template("${module_name}/systemd/kubeproxy_journald.conf.erb"),
-    } ~>
-    exec { 'reload systemctl daemon for kube-proxy':
-      command     => '/bin/systemctl daemon-reload',
-      refreshonly => true,
-    } ~> Service['kube-proxy']
-  }
+      case $::osfamily {
+        'redhat' : {
+        }
+        'debian' : {
+          file { '/etc/default/kube-proxy':
+            ensure  => 'file',
+            force   => true,
+            content => template("${module_name}/etc/default/proxy.erb"),
+            notify  => Service[kube-proxy],
+          }
+        }
+        default  : {
+          fail("Unsupport OS: ${::osfamily}")
+        }
+      }
 
-  case $::osfamily {
-    'redhat' : {
-    }
-    'debian' : {
-      file { '/etc/default/kube-proxy':
+      file { '/etc/kubernetes/proxy':
         ensure  => 'file',
-        force   => true,
-        content => template("${module_name}/etc/default/proxy.erb"),
-      } ~> Service['kube-proxy']
-    }
-    default  : {
-      fail("Unsupport OS: ${::osfamily}")
-    }
-  }
+        content => template("${module_name}/etc/kubernetes/proxy.erb"),
+        notify  => Service[kube-proxy],
+      }
 
-  file { '/etc/kubernetes/proxy':
-    ensure  => 'file',
-    content => template("${module_name}/etc/kubernetes/proxy.erb"),
-  } ~> Service['kube-proxy']
+      service { 'kube-proxy':
+        ensure => $ensure,
+        enable => $enable,
+      }
 
-  service { 'kube-proxy':
-    ensure => $ensure,
-    enable => $enable,
+      if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
+        file { '/etc/systemd/system/kube-proxy.service.d':
+          ensure => 'directory',
+          owner  => 'root',
+          group  => 'root',
+          mode   => '0755',
+        } ->
+        file { '/etc/systemd/system/kube-proxy.service.d/journald.conf':
+          ensure  => file,
+          owner   => 'root',
+          group   => 'root',
+          mode    => '0644',
+          content => template("${module_name}/systemd/kubeproxy_journald.conf.erb"),
+        } ~>
+        exec { 'reload systemctl daemon for kube-proxy':
+          command     => '/bin/systemctl daemon-reload',
+          refreshonly => true,
+        } ~> Service['kube-proxy']
+      }
+    }
+    'pod'       : {
+      if $enable {
+        $ensure_file = 'file'
+      } else {
+        $ensure_file = 'absent'
+      }
+
+      file { '/etc/kubernetes/manifests/pod_kube-proxy.yml':
+          ensure  => $ensure_file,
+          owner   => 'root',
+          group   => 'root',
+          mode    => '0644',
+          content => template("${module_name}/pods/pod_kube-proxy.yml.erb"),
+        }
+    }
+    'container' : {
+      if $enable {
+        $ensure_container = 'present'
+      } else {
+        $ensure_container = 'absent'
+      }
+      $args = inline_template("<%= scope.function_template(['kubernetes/_proxy.erb']) %>")
+
+      docker::run { 'kube-proxy':
+        ensure           => $ensure_container,
+        image            => $container_image,
+        command          => '/hyperkube proxy ${args}',
+        volumes          => ['/etc/pki:/etc/pki', '/etc/ssl:/etc/ssl', '/etc/kubernetes:/etc/kubernetes',],
+        restart_service  => true,
+        net              => 'host',
+        privileged       => true,
+        detach           => false,
+        extra_parameters => ['--restart=always'],
+      }
+    }
+    default     : {
+    }
   }
 }

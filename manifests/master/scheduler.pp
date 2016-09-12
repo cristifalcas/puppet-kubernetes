@@ -13,6 +13,14 @@
 #   Whether you want the scheduler daemon to start up at boot
 #   Defaults to true
 #
+# [*manage_as*]
+#   How to manage the apiserver service. Valid values are: service, pod, container
+#   Defaults to service
+#
+# [*container_image*]
+#   From where to pull the image.
+#   Defaults to gcr.io/google_containers/hyperkube-amd64:v1.3.5
+#
 ## Parameters ##
 #
 # [*address*]
@@ -90,6 +98,8 @@ class kubernetes::master::scheduler (
   $ensure                      = $kubernetes::master::params::kube_scheduler_service_ensure,
   $journald_forward_enable     = $kubernetes::master::params::kube_scheduler_journald_forward_enable,
   $enable                      = $kubernetes::master::params::kube_scheduler_service_enable,
+  $manage_as                   = $kubernetes::master::params::kube_scheduler_manage_as,
+  $container_image             = $kubernetes::master::params::kube_scheduler_container_image,
   $address                     = $kubernetes::master::params::kube_scheduler_address,
   $algorithm_provider          = $kubernetes::master::params::kube_scheduler_algorithm_provider,
   $google_json_key             = $kubernetes::master::params::kube_scheduler_google_json_key,
@@ -111,52 +121,96 @@ class kubernetes::master::scheduler (
 ) inherits kubernetes::master::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)
+  validate_re($manage_as, '^(service|pod|container)$')
 
-  include ::kubernetes::master
+  case $manage_as {
+    'service'   : {
+      include ::kubernetes::master
 
-  if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
-    file { '/etc/systemd/system/kube-scheduler.service.d':
-      ensure => 'directory',
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0755',
-    }
-    file { '/etc/systemd/system/kube-scheduler.service.d/journald.conf':
-      ensure  => file,
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0644',
-      content => template("${module_name}/systemd/scheduler_journald.conf.erb"),
-    } ~>
-    exec { 'reload systemctl daemon for kube-scheduler':
-      command     => '/bin/systemctl daemon-reload',
-      refreshonly => true,
-    } ~> Service['kube-scheduler']
-  }
+      case $::osfamily {
+        'redhat' : {
+        }
+        'debian' : {
+          file { '/etc/default/kube-scheduler':
+            ensure  => 'file',
+            force   => true,
+            content => template("${module_name}/etc/default/scheduler.erb"),
+            notify  => Service['kube-scheduler'],
+          }
+        }
+        default  : {
+          fail("Unsupport OS: ${::osfamily}")
+        }
+      }
 
-  case $::osfamily {
-    'redhat' : {
-    }
-    'debian' : {
-      file { '/etc/default/kube-scheduler':
+      file { '/etc/kubernetes/scheduler':
         ensure  => 'file',
         force   => true,
-        content => template("${module_name}/etc/default/scheduler.erb"),
-      } ~> Service['kube-scheduler']
-    }
-    default  : {
-      fail("Unsupport OS: ${::osfamily}")
-    }
-  }
+        content => template("${module_name}/etc/kubernetes/scheduler.erb"),
+        notify  => Service['kube-scheduler'],
+      }
 
-  file { '/etc/kubernetes/scheduler':
-    ensure  => 'file',
-    force   => true,
-    content => template("${module_name}/etc/kubernetes/scheduler.erb"),
-  } ~> Service['kube-scheduler']
+      service { 'kube-scheduler':
+        ensure => $ensure,
+        enable => $enable,
+      }
 
-  service { 'kube-scheduler':
-    ensure => $ensure,
-    enable => $enable,
+      if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
+        file { '/etc/systemd/system/kube-scheduler.service.d':
+          ensure => 'directory',
+          owner  => 'root',
+          group  => 'root',
+          mode   => '0755',
+        } ->
+        file { '/etc/systemd/system/kube-scheduler.service.d/journald.conf':
+          ensure  => file,
+          owner   => 'root',
+          group   => 'root',
+          mode    => '0644',
+          content => template("${module_name}/systemd/scheduler_journald.conf.erb"),
+        } ~>
+        exec { 'reload systemctl daemon for kube-scheduler':
+          command     => '/bin/systemctl daemon-reload',
+          refreshonly => true,
+        } ~> Service['kube-scheduler']
+      }
+    }
+    'pod'       : {
+      if $enable {
+        $ensure_file = 'file'
+      } else {
+        $ensure_file = 'absent'
+      }
+
+      file { '/etc/kubernetes/manifests/pod_kube-scheduler.yml':
+        ensure  => $ensure_file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        content => template("${module_name}/pods/pod_kube-scheduler.yml.erb"),
+      }
+    }
+    'container' : {
+      if $enable {
+        $ensure_container = 'present'
+      } else {
+        $ensure_container = 'absent'
+      }
+      $args = inline_template("<%= scope.function_template(['kubernetes/_scheduler.erb']) %>")
+
+      docker::run { 'kube-scheduler':
+        ensure           => $ensure_container,
+        image            => $container_image,
+        command          => '/hyperkube scheduler ${args}',
+        volumes          => ['/etc/pki:/etc/pki', '/etc/ssl:/etc/ssl', '/etc/kubernetes:/etc/kubernetes',],
+        restart_service  => true,
+        net              => 'host',
+        privileged       => true,
+        detach           => false,
+        extra_parameters => ['--restart=always'],
+      }
+    }
+    default     : {
+    }
   }
 }

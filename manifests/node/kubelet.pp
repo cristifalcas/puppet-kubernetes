@@ -367,6 +367,7 @@ class kubernetes::node::kubelet (
   $cluster_dns                           = $kubernetes::node::params::kubelet_cluster_dns,
   $cluster_domain                        = $kubernetes::node::params::kubelet_cluster_domain,
   $config                                = $kubernetes::node::params::kubelet_config,
+  $config_purge                          = $kubernetes::node::params::kubelet_config_purge,
   $configure_cbr0                        = $kubernetes::node::params::kubelet_container_runtime,
   $container_runtime                     = $kubernetes::node::params::kubelet_container_runtime,
   $containerized                         = $kubernetes::node::params::kubelet_config,
@@ -502,6 +503,17 @@ class kubernetes::node::kubelet (
     ensure  => 'file',
     content => template("${module_name}/etc/kubernetes/kubelet.erb"),
   } ~> Service['kubelet']
+
+  if $config {
+    file { $config:
+      ensure  => directory,
+      recurse => true,
+      purge   => $config_purge,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0755',
+    }
+  }
 
   service { 'kubelet':
     ensure => $ensure,

@@ -14,7 +14,6 @@ describe 'kubernetes::node', :type => :class  do
 
         is_expected.to contain_package('kubernetes-node').with_ensure('present')
         is_expected.to contain_file('/etc/kubernetes/').with({  'ensure'  => 'directory',  })
-        is_expected.to contain_file('/etc/kubernetes/manifests/').with({  'ensure'  => 'directory',  })
         is_expected.to contain_file('/var/run/kubernetes/').with({
           'ensure'  => 'directory',
           'owner'   => 'kube',

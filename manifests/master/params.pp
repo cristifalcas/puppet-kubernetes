@@ -2,6 +2,8 @@
 #
 class kubernetes::master::params {
   # api server config
+  $kube_api_manage_as = 'service'
+  $kube_api_container_image = 'gcr.io/google_containers/hyperkube-amd64:v1.3.5'
   $kube_api_service_ensure = running
   $kube_api_journald_forward_enable = false
   $kube_api_service_enable = true
@@ -69,6 +71,8 @@ class kubernetes::master::params {
   # controller manager config
   $kube_controller_service_ensure = running
   $kube_controller_journald_forward_enable = false
+  $kube_controller_manage_as = 'service'
+  $kube_controller_container_image = 'gcr.io/google_containers/hyperkube-amd64:v1.3.5'
   $kube_controller_service_enable = true
   $kube_controller_address = '127.0.0.1'
   $kube_controller_allocate_node_cidrs = false
@@ -128,6 +132,8 @@ class kubernetes::master::params {
   $kube_scheduler_service_ensure = running
   $kube_scheduler_journald_forward_enable = false
   $kube_scheduler_service_enable = true
+  $kube_scheduler_manage_as = 'service'
+  $kube_scheduler_container_image = 'gcr.io/google_containers/hyperkube-amd64:v1.3.5'
   $kube_scheduler_address = '127.0.0.1'
   $kube_scheduler_algorithm_provider = 'DefaultProvider'
   $kube_scheduler_google_json_key = undef

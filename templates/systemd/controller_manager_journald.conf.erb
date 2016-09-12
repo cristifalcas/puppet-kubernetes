@@ -1,9 +1,7 @@
 [Service]
 ExecStart=
 ExecStart=-/bin/sh -c "/usr/bin/kube-controller-manager \
-	    $KUBE_LOGTOSTDERR \
-	    $KUBE_LOG_LEVEL \
-	    $KUBE_MASTER \
 	    $KUBE_CONTROLLER_MANAGER_ARGS 2>&1 | /usr/bin/forward-journald -tag kube-controller-manager"
 StandardOutput=null
 StandardError=null
+KillMode=control-group

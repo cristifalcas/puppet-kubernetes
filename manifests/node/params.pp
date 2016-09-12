@@ -17,6 +17,7 @@ class kubernetes::node::params {
   $kubelet_cluster_dns = undef
   $kubelet_cluster_domain = undef
   $kubelet_config = undef
+  $kubelet_config_purge = false
   $kubelet_configure_cbr0 = undef
   $kubelet_container_runtime = undef
   $kubelet_containerized = undef
@@ -89,6 +90,8 @@ class kubernetes::node::params {
   $kube_proxy_service_ensure = 'running'
   $kube_proxy_journald_forward_enable = false
   $kube_proxy_service_enable = true
+  $kube_proxy_manage_as = 'service'
+  $kube_proxy_container_image = 'gcr.io/google_containers/hyperkube-amd64:v1.3.5'
   $kube_proxy_bind_address = '127.0.0.1'
   $kube_proxy_cleanup_iptables = false
   $kube_proxy_config_sync_period = undef
@@ -105,7 +108,7 @@ class kubernetes::node::params {
   $kube_proxy_kubeconfig = undef
   $kube_proxy_log_flush_frequency = '5s'
   $kube_proxy_masquerade_all = false
-  $kube_proxy_master = 'http://127.0.0.1:8080'
+  $kube_proxy_master = undef
   $kube_proxy_oom_score_adj = undef
   $kube_proxy_proxy_mode = undef
   $kube_proxy_proxy_port_range = undef
