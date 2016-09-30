@@ -21,6 +21,14 @@
 #   From where to pull the image.
 #   Defaults to gcr.io/google_containers/hyperkube-amd64:v1.3.5
 #
+# [*pod_cpu*]
+#   CPU limits for this pod.
+#   Defaults to 100mi
+#
+# [*pod_memory*]
+#   Memory limits for this pod.
+#   Defaults to 400Mi
+#
 ## Parameters ##
 #
 # [*address*]
@@ -100,6 +108,8 @@ class kubernetes::master::scheduler (
   $enable                      = $kubernetes::master::params::kube_scheduler_service_enable,
   $manage_as                   = $kubernetes::master::params::kube_scheduler_manage_as,
   $container_image             = $kubernetes::master::params::kube_scheduler_container_image,
+  $pod_cpu                     = $kubernetes::master::params::kube_scheduler_pod_cpu,
+  $pod_memory                  = $kubernetes::master::params::kube_scheduler_pod_memory,
   $address                     = $kubernetes::master::params::kube_scheduler_address,
   $algorithm_provider          = $kubernetes::master::params::kube_scheduler_algorithm_provider,
   $google_json_key             = $kubernetes::master::params::kube_scheduler_google_json_key,

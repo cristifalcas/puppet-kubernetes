@@ -14,11 +14,11 @@ spec:
     - /hyperkube scheduler <%= scope.function_template(['kubernetes/_scheduler.erb']) %>
     resources:
       limits:
-        cpu: 500m
-        memory: 700Mi
+        cpu: <%= @pod_cpu %>
+        memory: <%= @pod_memory %>
       requests:
-        cpu: 500m
-        memory: 700Mi
+        cpu: <%= @pod_cpu %>
+        memory: <%= @pod_memory %>
     volumeMounts:
     - mountPath: /etc/pki
       name: etcpki

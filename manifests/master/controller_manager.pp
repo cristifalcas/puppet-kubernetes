@@ -22,6 +22,14 @@
 #   From where to pull the image.
 #   Defaults to gcr.io/google_containers/hyperkube-amd64:v1.3.5
 #
+# [*pod_cpu*]
+#   CPU limits for this pod.
+#   Defaults to 100mi
+#
+# [*pod_memory*]
+#   Memory limits for this pod.
+#   Defaults to 400Mi
+#
 ## Parameters ##
 #
 # [*address*]
@@ -258,6 +266,8 @@ class kubernetes::master::controller_manager (
   $enable                                     = $kubernetes::master::params::kube_controller_service_enable,
   $manage_as                                  = $kubernetes::master::params::kube_controller_manage_as,
   $container_image                            = $kubernetes::master::params::kube_controller_container_image,
+  $pod_cpu                                    = $kubernetes::master::params::kube_controller_pod_cpu,
+  $pod_memory                                 = $kubernetes::master::params::kube_controller_pod_memory,
   $address                                    = $kubernetes::master::params::kube_controller_address,
   $allocate_node_cidrs                        = $kubernetes::master::params::kube_controller_allocate_node_cidrs,
   $cloud_config                               = $kubernetes::master::params::kube_controller_cloud_config,

@@ -25,6 +25,14 @@
 #   From where to pull the image.
 #   Defaults to gcr.io/google_containers/hyperkube-amd64:v1.3.5
 #
+# [*pod_cpu*]
+#   CPU limits for this pod.
+#   Defaults to 100mi
+#
+# [*pod_memory*]
+#   Memory limits for this pod.
+#   Defaults to 400Mi
+#
 ## Parameters ##
 #
 # [*bind_address*]
@@ -131,6 +139,8 @@ class kubernetes::node::kube_proxy (
   $enable                            = $kubernetes::node::params::kube_proxy_service_enable,
   $manage_as                         = $kubernetes::node::params::kube_proxy_manage_as,
   $container_image                   = $kubernetes::node::params::kube_proxy_container_image,
+  $pod_cpu                           = $kubernetes::node::params::kube_proxy_pod_cpu,
+  $pod_memory                        = $kubernetes::node::params::kube_proxy_pod_memory,
   $bind_address                      = $kubernetes::node::params::kube_proxy_bind_address,
   $cleanup_iptables                  = $kubernetes::node::params::kube_proxy_cleanup_iptables,
   $config_sync_period                = $kubernetes::node::params::kube_proxy_config_sync_period,

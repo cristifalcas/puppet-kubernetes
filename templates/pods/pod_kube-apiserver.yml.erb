@@ -14,11 +14,11 @@ spec:
     - /hyperkube apiserver <%= scope.function_template(['kubernetes/_apiserver.erb']) %>
     resources:
       limits:
-        cpu: 500m
-        memory: 700Mi
+        cpu: <%= @pod_cpu %>
+        memory: <%= @pod_memory %>
       requests:
-        cpu: 500m
-        memory: 700Mi
+        cpu: <%= @pod_memory %>
+        memory: <%= @pod_cpu %>
     ports:
     - containerPort: <%= @secure_port %>
       hostPort: <%= @secure_port %>

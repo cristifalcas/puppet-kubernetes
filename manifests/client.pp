@@ -12,12 +12,17 @@
 class kubernetes::client (
   $manage_package = true,
   $ensure         = 'present',
+  $purge_kube_dir = false,
 ) {
   # /etc/kubernetes/config is managed by both master and node rpms
   # so we take care of it here
   validate_string($ensure)
 
-  file { '/etc/kubernetes/': ensure => 'directory', } ->
+  file { '/etc/kubernetes/':
+    ensure  => 'directory',
+    purge   => $purge_kube_dir,
+    recurse => $purge_kube_dir,
+  } ->
   file { '/etc/kubernetes/config':
     ensure  => 'file',
     force   => true,

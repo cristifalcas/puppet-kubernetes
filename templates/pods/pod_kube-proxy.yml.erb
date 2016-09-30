@@ -14,11 +14,11 @@ spec:
     - /hyperkube proxy <%= scope.function_template(['kubernetes/_proxy.erb']) %>
     resources:
       limits:
-        cpu: 500m
-        memory: 700Mi
+        cpu: <%= @pod_cpu %>
+        memory: <%= @pod_memory %>
       requests:
-        cpu: 500m
-        memory: 700Mi
+        cpu: <%= @pod_cpu %>
+        memory: <%= @pod_memory %>
     securityContext:
       privileged: true
     volumeMounts:
