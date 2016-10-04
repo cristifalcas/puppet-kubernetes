@@ -92,7 +92,7 @@ class kubernetes::node::params {
   $kube_proxy_service_enable = true
   $kube_proxy_manage_as = 'service'
   $kube_proxy_container_image = 'gcr.io/google_containers/hyperkube-amd64:v1.3.5'
-  $kube_proxy_pod_cpu = '100mi'
+  $kube_proxy_pod_cpu = '100m'
   $kube_proxy_pod_memory = '400Mi'
   $kube_proxy_bind_address = '127.0.0.1'
   $kube_proxy_cleanup_iptables = false
