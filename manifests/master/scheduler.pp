@@ -43,9 +43,19 @@
 #   The Google Cloud Platform Service Account JSON Key to use for authentication.
 #   Defaults to undef
 #
+# [*hard_pod_affinity_symmetric_weight*]
+#   RequiredDuringScheduling affinity is not symmetric, but there is an implicit PreferredDuringScheduling affinity
+#    rule corresponding to every RequiredDuringScheduling affinity rule. --hard-pod-affinity-symmetric-weight represents
+#    the weight of implicit PreferredDuringScheduling affinity rule.
+#   Defaults to undef. (default 1)
+#
 # [*kube_api_burst*]
 #   Burst to use while talking with kubernetes apiserver
 #   Default 100
+#
+# [*kube_api_content_type*]
+#   Content type of requests sent to apiserver.
+#   Default to undef. (default "application/vnd.kubernetes.protobuf")
 #
 # [*kube_api_qps*]
 #   QPS to use while talking with kubernetes apiserver
@@ -103,31 +113,33 @@
 #   Defaults to undef
 #
 class kubernetes::master::scheduler (
-  $ensure                      = $kubernetes::master::params::kube_scheduler_service_ensure,
-  $journald_forward_enable     = $kubernetes::master::params::kube_scheduler_journald_forward_enable,
-  $enable                      = $kubernetes::master::params::kube_scheduler_service_enable,
-  $manage_as                   = $kubernetes::master::params::kube_scheduler_manage_as,
-  $container_image             = $kubernetes::master::params::kube_scheduler_container_image,
-  $pod_cpu                     = $kubernetes::master::params::kube_scheduler_pod_cpu,
-  $pod_memory                  = $kubernetes::master::params::kube_scheduler_pod_memory,
-  $address                     = $kubernetes::master::params::kube_scheduler_address,
-  $algorithm_provider          = $kubernetes::master::params::kube_scheduler_algorithm_provider,
-  $google_json_key             = $kubernetes::master::params::kube_scheduler_google_json_key,
-  $kube_api_burst              = $kubernetes::master::params::kube_scheduler_kube_api_burst,
-  $kube_api_qps                = $kubernetes::master::params::kube_scheduler_kube_api_qps,
-  $kubeconfig                  = $kubernetes::master::params::kube_scheduler_kubeconfig,
-  $leader_elect                = $kubernetes::master::params::kube_scheduler_leader_elect,
-  $leader_elect_lease_duration = $kubernetes::master::params::kube_scheduler_leader_elect_lease_duration,
-  $leader_elect_renew_deadline = $kubernetes::master::params::kube_scheduler_leader_elect_renew_deadline,
-  $leader_elect_retry_period   = $kubernetes::master::params::kube_scheduler_leader_elect_retry_period,
-  $log_flush_frequency         = $kubernetes::master::params::kube_scheduler_log_flush_frequency,
-  $master                      = $kubernetes::master::params::kube_scheduler_master,
-  $policy_config_file          = $kubernetes::master::params::kube_scheduler_policy_config_file,
-  $port                        = $kubernetes::master::params::kube_scheduler_port,
-  $profiling                   = $kubernetes::master::params::kube_scheduler_profiling,
-  $scheduler_name              = $kubernetes::master::params::kube_scheduler_scheduler_name,
-  $verbosity                   = $kubernetes::master::params::kube_scheduler_verbosity,
-  $extra_args                  = $kubernetes::master::params::kube_scheduler_extra_args,
+  $ensure                             = $kubernetes::master::params::kube_scheduler_service_ensure,
+  $journald_forward_enable            = $kubernetes::master::params::kube_scheduler_journald_forward_enable,
+  $enable                             = $kubernetes::master::params::kube_scheduler_service_enable,
+  $manage_as                          = $kubernetes::master::params::kube_scheduler_manage_as,
+  $container_image                    = $kubernetes::master::params::kube_scheduler_container_image,
+  $pod_cpu                            = $kubernetes::master::params::kube_scheduler_pod_cpu,
+  $pod_memory                         = $kubernetes::master::params::kube_scheduler_pod_memory,
+  $address                            = $kubernetes::master::params::kube_scheduler_address,
+  $algorithm_provider                 = $kubernetes::master::params::kube_scheduler_algorithm_provider,
+  $google_json_key                    = $kubernetes::master::params::kube_scheduler_google_json_key,
+  $hard_pod_affinity_symmetric_weight = $kubernetes::master::params::kube_scheduler_hard_pod_affinity_symmetric_weight,
+  $kube_api_burst                     = $kubernetes::master::params::kube_scheduler_kube_api_burst,
+  $kube_api_content_type              = $kubernetes::master::params::kube_scheduler_kube_api_content_type,
+  $kube_api_qps                       = $kubernetes::master::params::kube_scheduler_kube_api_qps,
+  $kubeconfig                         = $kubernetes::master::params::kube_scheduler_kubeconfig,
+  $leader_elect                       = $kubernetes::master::params::kube_scheduler_leader_elect,
+  $leader_elect_lease_duration        = $kubernetes::master::params::kube_scheduler_leader_elect_lease_duration,
+  $leader_elect_renew_deadline        = $kubernetes::master::params::kube_scheduler_leader_elect_renew_deadline,
+  $leader_elect_retry_period          = $kubernetes::master::params::kube_scheduler_leader_elect_retry_period,
+  $log_flush_frequency                = $kubernetes::master::params::kube_scheduler_log_flush_frequency,
+  $master                             = $kubernetes::master::params::kube_scheduler_master,
+  $policy_config_file                 = $kubernetes::master::params::kube_scheduler_policy_config_file,
+  $port                               = $kubernetes::master::params::kube_scheduler_port,
+  $profiling                          = $kubernetes::master::params::kube_scheduler_profiling,
+  $scheduler_name                     = $kubernetes::master::params::kube_scheduler_scheduler_name,
+  $verbosity                          = $kubernetes::master::params::kube_scheduler_verbosity,
+  $extra_args                         = $kubernetes::master::params::kube_scheduler_extra_args,
 ) inherits kubernetes::master::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)

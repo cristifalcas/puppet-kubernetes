@@ -10,22 +10,46 @@
  --cluster-cidr=<%= scope['kubernetes::master::controller_manager::cluster_cidr'] -%>
 <% end -%>
  --cluster-name=<%= scope['kubernetes::master::controller_manager::cluster_name'] -%>
+<% if @cluster_signing_cert_file then -%>
+ --cluster-signing-cert-file=<%= scope['kubernetes::master::controller_manager::cluster_signing_cert_file'] -%>
+<% end -%>
+<% if @cluster_signing_key_file then -%>
+ --cluster-signing-key-file=<%= scope['kubernetes::master::controller_manager::cluster_signing_key_file'] -%>
+<% end -%>
  --concurrent-deployment-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_deployment_syncs'] -%>
  --concurrent-endpoint-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_endpoint_syncs'] -%>
+<% if @concurrent_gc_syncs then -%>
+ --concurrent-gc-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_gc_syncs'] -%>
+<% end -%>
  --concurrent-namespace-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_namespace_syncs'] -%>
  --concurrent-replicaset-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_replicaset_syncs'] -%>
  --concurrent-resource-quota-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_resource_quota_syncs'] -%>
  --concurrent-rc-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_rc_syncs'] -%>
+<% if @concurrent_service_syncs then -%>
+ --concurrent-service-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_service_syncs'] -%>
+<% end -%>
+<% if @concurrent_serviceaccount_token_syncs then -%>
+ --concurrent-serviceaccount-token-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_serviceaccount_token_syncs'] -%>
+<% end -%>
+<% if @controller_start_interval then -%>
+ --controller-start-interval=<%= scope['kubernetes::master::controller_manager::controller_start_interval'] -%>
+<% end -%>
  --daemonset-lookup-cache-size=<%= scope['kubernetes::master::controller_manager::daemonset_lookup_cache_size'] -%>
- --deleting-pods-burst=<%= scope['kubernetes::master::controller_manager::deleting_pods_burst'] -%>
- --deleting-pods-qps=<%= scope['kubernetes::master::controller_manager::deleting_pods_qps'] -%>
  --deployment-controller-sync-period=<%= scope['kubernetes::master::controller_manager::deployment_controller_sync_period'] -%>
- --enable-hostpath-provisioner=<%= scope['kubernetes::master::controller_manager::enable_hostpath_provisioner'] -%>
+<% if @enable_dynamic_provisioning then -%>
+ --enable_dynamic_provisioning=<%= scope['kubernetes::master::controller_manager::enable_dynamic_provisioning'] -%>
+<% end -%>
+<% if @enable_garbage_collector then -%>
+ --enable-garbage-collector=<%= scope['kubernetes::master::controller_manager::enable_garbage_collector'] -%>
+<% end -%>
 <% if @google_json_key then -%>
  --google-json-key=<%= scope['kubernetes::master::controller_manager::google_json_key'] -%>
 <% end -%>
  --horizontal-pod-autoscaler-sync-period=<%= scope['kubernetes::master::controller_manager::horizontal_pod_autoscaler_sync_period'] -%>
  --kube-api-burst=<%= scope['kubernetes::master::controller_manager::kube_api_burst'] -%>
+<% if @kube_api_content_type then -%>
+ --kube-api-content-type=<%= scope['kubernetes::master::controller_manager::kube_api_content_type'] -%>
+<% end -%>
  --kube-api-qps=<%= scope['kubernetes::master::controller_manager::kube_api_qps'] -%>
 <% if @kubeconfig then -%>
  --kubeconfig=<%= scope['kubernetes::master::controller_manager::kubeconfig'] -%>
@@ -36,12 +60,17 @@
  --leader-elect-renew-deadline=<%= scope['kubernetes::master::controller_manager::leader_elect_renew_deadline'] -%>
  --leader-elect-retry-period=<%= scope['kubernetes::master::controller_manager::leader_elect_retry_period'] -%>
 <% end -%>
- --log-flush-frequency=<%= scope['kubernetes::master::controller_manager::log_flush_frequency'] -%>
  --master=<%= scope['kubernetes::master::controller_manager::master'] -%>
 <% if @min_resync_period then -%>
  --min-resync-period=<%= scope['kubernetes::master::controller_manager::min_resync_period'] -%>
 <% end -%>
  --namespace-sync-period=<%= scope['kubernetes::master::controller_manager::namespace_sync_period'] -%>
+<% if @node_cidr_mask_size then -%>
+ --node-cidr-mask-size=<%= scope['kubernetes::master::controller_manager::node_cidr_mask_size'] -%>
+<% end -%>
+<% if @node_eviction_rate then -%>
+ --node-eviction-rate=<%= scope['kubernetes::master::controller_manager::node_eviction_rate'] -%>
+<% end -%>
  --node-monitor-grace-period=<%= scope['kubernetes::master::controller_manager::node_monitor_grace_period'] -%>
  --node-monitor-period=<%= scope['kubernetes::master::controller_manager::node_monitor_period'] -%>
  --node-startup-grace-period=<%= scope['kubernetes::master::controller_manager::node_startup_grace_period'] -%>
@@ -76,10 +105,19 @@
 <% if @root_ca_file then -%>
  --root-ca-file=<%= scope['kubernetes::master::controller_manager::root_ca_file'] -%>
 <% end -%>
+<% if @secondary_node_eviction_rate then -%>
+ --secondary-node-eviction-rate=<%= scope['kubernetes::master::controller_manager::secondary_node_eviction_rate'] -%>
+<% end -%>
 <% if @service_account_private_key_file then -%>
  --service-account-private-key-file=<%= scope['kubernetes::master::controller_manager::service_account_private_key_file'] -%>
 <% end -%>
+<% if @service_cluster_ip_range then -%>
+ --service-cluster-ip-range=<%= scope['kubernetes::master::controller_manager::service_cluster_ip_range'] -%>
+<% end -%>
  --service-sync-period=<%= scope['kubernetes::master::controller_manager::service_sync_period'] -%>
  --terminated-pod-gc-threshold=<%= scope['kubernetes::master::controller_manager::terminated_pod_gc_threshold'] -%>
+<% if @unhealthy_zone_threshold then -%>
+ --unhealthy-zone-threshold=<%= scope['kubernetes::master::controller_manager::unhealthy_zone_threshold'] -%>
+<% end -%>
  --v=<%= scope['kubernetes::master::controller_manager::verbosity'] -%>
  <%= scope['kubernetes::master::controller_manager::extra_args'] -%>

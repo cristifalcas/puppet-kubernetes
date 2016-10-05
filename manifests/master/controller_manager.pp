@@ -44,6 +44,10 @@
 #   The path to the cloud provider configuration file.  Empty string for no configuration file.
 #   Defaults to undef
 #
+# [*cloud_provider*]
+#   The provider for cloud services.  Empty string for no provider.
+#   Defaults to undef
+#
 # [*cluster_cidr*]
 #   CIDR Range for Pods in cluster.
 #   Defaults to undef
@@ -51,6 +55,14 @@
 # [*cluster_name*]
 #   The instance prefix for the cluster
 #   Defaults to kubernetes
+#
+# [*cluster_signing_cert_file*]
+#   Filename containing a PEM-encoded X509 CA certificate used to issue cluster-scoped certificates
+#   Defaults to undef. (default "/etc/kubernetes/ca/ca.pem")
+#
+# [*cluster_signing_key_file*]
+#   Filename containing a PEM-encoded RSA or ECDSA private key used to sign cluster-scoped certificates
+#   Defaults to undef. (default "/etc/kubernetes/ca/ca.key")
 #
 # [*concurrent_deployment_syncs*]
 #   The number of deployment objects that are allowed to sync concurrently. Larger number = more responsive deployments,
@@ -61,6 +73,10 @@
 #   The number of endpoint syncing operations that will be done concurrently. Larger number =
 #      faster endpoint updating, but more CPU (and network) load
 #   Defaults to 5
+#
+# [*concurrent_gc_syncs*]
+#   The number of garbage collector workers that are allowed to sync concurrently.
+#   Default undef. (default 20)
 #
 # [*concurrent_namespace_syncs*]
 #   The number of namespace objects that are allowed to sync concurrently. Larger number = more responsive namespace
@@ -82,29 +98,35 @@
 #      reponsive replica management, but more CPU (and network) load
 #   Defaults to 5
 #
+# [*concurrent_service_syncs*]
+#   The number of services that are allowed to sync concurrently.
+#   Larger number = more responsive service management, but more CPU (and network) load
+#   Defaults to undef. (default 1)
+#
+# [*concurrent_serviceaccount_token_syncs*]
+#   The number of service account token objects that are allowed to sync concurrently.
+#   Larger number = more responsive token generation, but more CPU (and network) load
+#   Defaults to undef. (default 5)
+#
+# [*controller_start_interval*]
+#   Interval between starting controller managers.
+#   Defaults to undef.
+#
 # [*daemonset_lookup_cache_size*]
 #   The the size of lookup cache for daemonsets. Larger number = more responsive daemonsets, but more MEM load.
 #   Default 1024
-#
-# [*deleting_pods_burst*]
-#   Number of nodes on which pods are bursty deleted in case of node failure. For more details look
-#      into RateLimiter.
-#   Defaults to 10
-#
-# [*deleting_pods_burst*]
-#   Number of nodes per second on which pods are deleted in case of node failure.
-#   Defaults to 0.1
 #
 # [*deployment_controller_sync_period*]
 #   Period for syncing the deployments.
 #   Defaults to 30s
 #
-# [*enable_hostpath_provisioner*]
-#   Enable HostPath PV provisioning when running without a cloud provider.
-#    This allows testing and development of provisioning features.
-#    HostPath provisioning is not supported in any way, won't work in a multi-node cluster,
-#    and should not be used for anything other than testing or development.
-#   Defaults to undef
+# [*enable_dynamic_provisioning*]
+#   Enable dynamic provisioning for environments that support it.
+#   Defaults to undef. (default true)
+#
+# [*enable_garbage_collector*]
+#   Enables the generic garbage collector. MUST be synced with the corresponding flag of the kube-apiserver.
+#   Defaults to undef. (default true)
 #
 # [*google_json_key*]
 #   The Google Cloud Platform Service Account JSON Key to use for authentication.
@@ -118,9 +140,13 @@
 #   Burst to use while talking with kubernetes apiserver
 #   Default 30
 #
-# [*kube_api_qps*]
-#   QPS to use while talking with kubernetes apiserver
-#   Default 20
+# [*kube_api_burst*]
+#   Burst to use while talking with kubernetes apiserver
+#   Default 30
+#
+# [*kube_api_content_type*]
+#   Content type of requests sent to apiserver.
+#   Default to undef. (default "application/vnd.kubernetes.protobuf")
 #
 # [*kubeconfig*]
 #   Path to kubeconfig file with authorization and master location information.
@@ -147,10 +173,6 @@
 #   leader election is enabled.
 #   Default '2s'
 #
-# [*log_flush_frequency*]
-#   Maximum number of seconds between log flushes
-#   Defaults to 5s
-#
 # [*master*]
 #   The address of the Kubernetes API server (overrides any value in kubeconfig)
 #   Defaults to http://127.0.0.1:8080
@@ -162,6 +184,15 @@
 # [*namespace_sync_period*]
 #   The period for syncing namespace life-cycle updates
 #   Defaults to 5m0s
+#
+# [*node_cidr_mask_size*]
+#   Mask size for node cidr in cluster.
+#   Defaults to undef. (default 24)
+#
+# [*node_eviction_rate*]
+#   Number of nodes per second on which pods are deleted in case of node failure when a zone is healthy (see --unhealthy-zone-threshold
+#     for definition of healthy/unhealthy). Zone refers to entire cluster in non-multizone clusters.
+#   Defaults to undef. (default 0.1)
 #
 # [*node_monitor_grace_period*]
 #   Amount of time which we allow running Node to be unresponsive before marking it unhealty.
@@ -247,9 +278,20 @@
 #    This must be a valid PEM-encoded CA bundle.
 #   Defaults to undef
 #
+# [*secondary_node_eviction_rate*]
+#   Number of nodes per second on which pods are deleted in case of node failure when a zone is unhealthy
+#    (see --unhealthy-zone-threshold for definition of healthy/unhealthy). Zone refers to entire cluster
+#    in non-multizone clusters. This value is implicitly overridden to 0 if the cluster size is smaller
+#    than --large-cluster-size-threshold.
+#   Defaults to undef. (default 0.01)
+#
 # [*service_account_private_key_file*]
 #   Filename containing a PEM-encoded private RSA key used to sign service account tokens.
 #   Defaults to undef
+#
+# [*service_cluster_ip_range*]
+#   CIDR Range for Services in cluster.
+#   Defaults to undef.
 #
 # [*service_sync_period*]
 #   The period for syncing services with their external load balancers
@@ -259,6 +301,10 @@
 #   Number of terminated pods that can exist before the terminated pod garbage collector starts
 #      deleting terminated pods. If <= 0, the terminated pod garbage collector is disabled.
 #   Defaults to 0
+#
+# [*unhealthy_zone_threshold*]
+#   Fraction of Nodes in a zone which needs to be not Ready (minimum 3) for zone to be treated as unhealthy.
+#   Defaults to undef. (default 0.55)
 #
 class kubernetes::master::controller_manager (
   $ensure                                     = $kubernetes::master::params::kube_controller_service_ensure,
@@ -274,32 +320,39 @@ class kubernetes::master::controller_manager (
   $cloud_provider                             = $kubernetes::master::params::kube_controller_cloud_provider,
   $cluster_cidr                               = $kubernetes::master::params::kube_controller_cluster_cidr,
   $cluster_name                               = $kubernetes::master::params::kube_controller_cluster_name,
+  $cluster_signing_cert_file                  = $kubernetes::master::params::kube_controller_cluster_signing_cert_file,
+  $cluster_signing_key_file                   = $kubernetes::master::params::kube_controller_cluster_signing_key_file,
   $concurrent_deployment_syncs                = $kubernetes::master::params::kube_controller_concurrent_deployment_syncs,
   $concurrent_endpoint_syncs                  = $kubernetes::master::params::kube_controller_concurrent_endpoint_syncs,
+  $concurrent_gc_syncs                        = $kubernetes::master::params::kube_controller_concurrent_gc_syncs,
   $concurrent_namespace_syncs                 = $kubernetes::master::params::kube_controller_concurrent_namespace_syncs,
   $concurrent_replicaset_syncs                = $kubernetes::master::params::kube_controller_concurrent_replicaset_syncs,
   $concurrent_resource_quota_syncs            = $kubernetes::master::params::kube_controller_concurrent_resource_quota_syncs,
   $concurrent_rc_syncs                        = $kubernetes::master::params::kube_controller_concurrent_rc_syncs,
+  $concurrent_service_syncs                   = $kubernetes::master::params::kube_controller_concurrent_service_syncs,
+  $concurrent_serviceaccount_token_syncs      = $kubernetes::master::params::kube_controller_concurrent_serviceaccount_token_syncs,
+  $controller_start_interval                  = $kubernetes::master::params::kube_controller_controller_start_interval,
   $daemonset_lookup_cache_size                = $kubernetes::master::params::kube_controller_daemonset_lookup_cache_size,
-  $deleting_pods_burst                        = $kubernetes::master::params::kube_controller_deleting_pods_burst,
-  $deleting_pods_qps                          = $kubernetes::master::params::kube_controller_deleting_pods_qps,
   $deployment_controller_sync_period          = $kubernetes::master::params::kube_controller_deployment_controller_sync_period,
-  $enable_hostpath_provisioner                = $kubernetes::master::params::kube_controller_enable_hostpath_provisioner,
+  $enable_dynamic_provisioning                = $kubernetes::master::params::kube_controller_enable_dynamic_provisioning,
+  $enable_garbage_collector                   = $kubernetes::master::params::kube_controller_enable_garbage_collector,
   $google_json_key                            = $kubernetes::master::params::kube_controller_google_json_key,
   $horizontal_pod_autoscaler_sync_period      = $kubernetes::master::params::kube_controller_horizontal_pod_autoscaler_sync_period,
   $kube_api_burst                             = $kubernetes::master::params::kube_controller_kube_api_burst,
+  $kube_api_content_type                      = $kubernetes::master::params::kube_controller_kube_api_content_type,
   $kube_api_qps                               = $kubernetes::master::params::kube_controller_kube_api_qps,
   $kubeconfig                                 = $kubernetes::master::params::kube_controller_kubeconfig,
   $leader_elect                               = $kubernetes::master::params::kube_controller_leader_elect,
   $leader_elect_lease_duration                = $kubernetes::master::params::kube_controller_leader_elect_lease_duration,
   $leader_elect_renew_deadline                = $kubernetes::master::params::kube_controller_leader_elect_renew_deadline,
   $leader_elect_retry_period                  = $kubernetes::master::params::kube_controller_leader_elect_retry_period,
-  $log_flush_frequency                        = $kubernetes::master::params::kube_controller_log_flush_frequency,
   $master                                     = $kubernetes::master::params::kube_controller_master,
   $min_resync_period                          = $kubernetes::master::params::kube_controller_min_resync_period,
   $namespace_sync_period                      = $kubernetes::master::params::kube_controller_namespace_sync_period,
   $node_monitor_grace_period                  = $kubernetes::master::params::kube_controller_node_monitor_grace_period,
   $node_monitor_period                        = $kubernetes::master::params::kube_controller_node_monitor_period,
+  $node_cidr_mask_size                        = $kubernetes::master::params::kube_controller_node_cidr_mask_size,
+  $node_eviction_rate                         = $kubernetes::master::params::kube_controller_node_eviction_rate,
   $node_startup_grace_period                  = $kubernetes::master::params::kube_controller_node_startup_grace_period,
   $node_sync_period                           = $kubernetes::master::params::kube_controller_node_sync_period,
   $pod_eviction_timeout                       = $kubernetes::master::params::kube_controller_pod_eviction_timeout,
@@ -316,9 +369,12 @@ class kubernetes::master::controller_manager (
   $replication_controller_lookup_cache_size   = $kubernetes::master::params::kube_controller_replication_controller_lookup_cache_size,
   $resource_quota_sync_period                 = $kubernetes::master::params::kube_controller_resource_quota_sync_period,
   $root_ca_file                               = $kubernetes::master::params::kube_controller_root_ca_file,
+  $secondary_node_eviction_rate               = $kubernetes::master::params::kube_controller_secondary_node_eviction_rate,
   $service_account_private_key_file           = $kubernetes::master::params::kube_controller_service_account_private_key_file,
+  $service_cluster_ip_range                   = $kubernetes::master::params::kube_controller_service_cluster_ip_range,
   $service_sync_period                        = $kubernetes::master::params::kube_controller_service_sync_period,
   $terminated_pod_gc_threshold                = $kubernetes::master::params::kube_controller_terminated_pod_gc_threshold,
+  $unhealthy_zone_threshold                   = $kubernetes::master::params::kube_controller_unhealthy_zone_threshold,
   $verbosity                                  = $kubernetes::master::params::kube_controller_verbosity,
   $extra_args                                 = $kubernetes::master::params::kube_controller_extra_args,
 ) inherits kubernetes::master::params {

@@ -30,6 +30,10 @@ For each new major kubernetes version (1.1, 1.2, etc.) the puppet modules versio
 have the major number increased. This is mostly because on each version they have
 new parameters, or some parameters are removed.
 
+* Kubernetes 1.0, 1.1, 1.2: module version should be latest 1.x
+* Kubernetes 1.3: module version should be latest 2.x
+* Kubernetes 1.4: module version should be latest 3.x
+
 ## Usage:
 
 Currently, the kubectl and kubelet binaries can only be installed from packages.

@@ -55,6 +55,31 @@
 #   The number of apiservers running in the cluster
 #   Defaults to 1.
 #
+# [*audit_log_maxage*]
+#   The maximum number of days to retain old audit log files based on the timestamp encoded in their filename.
+#   Defaults to undef.
+#
+# [*audit_log_maxbackup*]
+#   The maximum number of old audit log files to retain.
+#   Defaults to undef.
+#
+# [*audit_log_maxsize*]
+#   The maximum size in megabytes of the audit log file before it gets rotated. Defaults to 100MB.
+#   Defaults to undef.
+#
+# [*audit_log_path*]
+#   If set, all requests coming to the apiserver will be logged to this file.
+#   Defaults to undef.
+#
+# [*authentication_token_webhook_cache_ttl*]
+#   The duration to cache responses from the webhook token authenticator.
+#   Defaults to undef. (default 2m0s)
+#
+# [*authentication_token_webhook_config_file*]
+#   File with webhook configuration for token authentication in kubeconfig format.
+#   The API server will query the remote service to determine authentication for bearer tokens.
+#   Defaults to undef.
+#
 # [*authorization_mode*]
 #   Ordered list of plug-ins to do authorization on secure port. Comma-delimited list of: AlwaysAllow,AlwaysDeny,ABAC
 #   Default AlwaysAllow.
@@ -63,9 +88,17 @@
 #   File with authorization policy in csv format, used with --authorization-mode=ABAC, on the secure port.
 #   Default undef.
 #
-# [*authorization_webhook_config*]
-#   File with webhook configuration in kubeconfig format, used with --authorization-mode=Webhook. The API server will query
-#   the remote service to determine access on the API server's secure port.
+# [*authorization_webhook_cache_authorized_ttl*]
+#   The duration to cache 'authorized' responses from the webhook authorizer.
+#   Default undef. (default 5m0s)
+#
+# [*authorization_webhook_cache_unauthorized_ttl*]
+#   The duration to cache 'unauthorized' responses from the webhook authorizer.
+#   Default undef. (default 30s)
+#
+# [*authorization_webhook_config_file*]
+#   File with webhook configuration in kubeconfig format, used with --authorization-mode=Webhook.
+#   The API server will query the remote service to determine access on the API server's secure port.
 #   Default undef
 #
 # [*basic_auth_file*]
@@ -88,9 +121,35 @@
 #    in the client-ca-file is authenticated with an identity corresponding to the CommonName of the client certificate.
 #   Default undef
 #
+# [*cloud_config*]
+#   The path to the cloud provider configuration file. Empty string for no configuration file.
+#   Default undef
+#
+# [*cloud_provider*]
+#   The provider for cloud services. Empty string for no provider.
+#   Default undef
+#
+# [*cors_allowed_origins*]
+#   List of allowed origins for CORS, comma separated.\
+#   An allowed origin can be a regular expression to support subdomain matching.
+#   If this list is empty CORS will not be enabled. (default [])
+#   Default undef
+#
 # [*delete_collection_workers*]
 #   Number of workers spawned for DeleteCollection call. These are used to speed up namespace cleanup.
-#   Default 1
+#   Default undef. (default 1)
+#
+# [*deserialization_cache_size*]
+#   Number of deserialized json objects to cache in memory.
+#   Default undef. (default 50000)
+#
+# [*enable_garbage_collector*]
+#   Enables the generic garbage collector. MUST be synced with the corresponding flag of the kube-controller-manager.
+#   Default undef. (default true)
+#
+# [*enable_swagger_ui*]
+#   Enables swagger ui on the apiserver at /swagger-ui
+#   Default undef.
 #
 # [*etcd_cafile*]
 #   List of ca certificates
@@ -170,10 +229,6 @@
 #   the value of the port. If zero, the Kubernetes master service will be of type ClusterIP.
 #   Default 0
 #
-# [*log_flush_frequency*]
-#   Maximum number of seconds between log flushes
-#   Default 5s
-#
 # [*long_running_request_regexp*]
 #   A regular expression matching long running requests which should be excluded from maximum inflight request handling.
 #      Default to "(/|^)((watch|proxy)(/|$)|(logs?|portforward|exec|attach)/?$)"
@@ -245,6 +300,19 @@
 #   If non-empty, use secure SSH proxy to the nodes, using this user name
 #   Default undef
 #
+# [*storage_backend*]
+#   The storage backend for persistence. Options: 'etcd2' (default), 'etcd3'.
+#   Default undef
+#
+# [*storage_media_type*]
+#   The media type to use to store objects in storage. Defaults to application/json.
+#   Some resources may only support a specific media type and will ignore this setting. (default "application/json")
+#   Default undef
+#
+# [*target_ram_mb*]
+#   Memory limit for apiserver in MB (used to configure sizes of caches, etc.)
+#   Default undef
+#
 # [*tls_cert_file*]
 #   File containing x509 Certificate for HTTPS.  (CA cert, if any, concatenated after server cert). If HTTPS
 #      serving is enabled, and --tls-cert-file and --tls-private-key-file are not provided, a self-signed certificate and key are
@@ -270,66 +338,82 @@
 #
 class kubernetes::master::apiserver (
   $service_cluster_ip_range,
-  $ensure                        = $kubernetes::master::params::kube_api_service_ensure,
-  $journald_forward_enable       = $kubernetes::master::params::kube_api_journald_forward_enable,
-  $enable                        = $kubernetes::master::params::kube_api_service_enable,
-  $manage_as                     = $kubernetes::master::params::kube_api_manage_as,
-  $container_image               = $kubernetes::master::params::kube_api_container_image,
-  $pod_cpu                       = $kubernetes::master::params::kube_api_pod_cpu,
-  $pod_memory                    = $kubernetes::master::params::kube_api_pod_memory,
-  $admission_control             = $kubernetes::master::params::kube_api_admission_control,
-  $admission_control_config_file = $kubernetes::master::params::kube_api_admission_control_config_file,
-  $advertise_address             = $kubernetes::master::params::kube_api_advertise_address,
-  $allow_privileged              = $kubernetes::master::params::kube_api_allow_privileged,
-  $apiserver_count               = $kubernetes::master::params::kube_api_server_count,
-  $authorization_mode            = $kubernetes::master::params::kube_api_authorization_mode,
-  $authorization_policy_file     = $kubernetes::master::params::kube_api_authorization_policy_file,
-  $authorization_webhook_config  = $kubernetes::master::params::kube_api_authorization_webhook_config,
-  $basic_auth_file               = $kubernetes::master::params::kube_api_basic_auth_file,
-  $bind_address                  = $kubernetes::master::params::kube_api_bind_address,
-  $cert_dir                      = $kubernetes::master::params::kube_api_cert_dir,
-  $client_ca_file                = $kubernetes::master::params::kube_api_client_ca_file,
-  $delete_collection_workers     = $kubernetes::master::params::kube_api_delete_collection_workers,
-  $etcd_cafile                   = $kubernetes::master::params::kube_api_etcd_cafile,
-  $etcd_certfile                 = $kubernetes::master::params::kube_api_etcd_certfile,
-  $etcd_keyfile                  = $kubernetes::master::params::kube_api_etcd_keyfile,
-  $etcd_prefix                   = $kubernetes::master::params::kube_api_etcd_prefix,
-  $etcd_quorum_read              = $kubernetes::master::params::kube_api_etcd_quorum_read,
-  $etcd_servers                  = $kubernetes::master::params::kube_api_etcd_servers,
-  $etcd_servers_overrides        = $kubernetes::master::params::kube_api_etcd_servers_overrides,
-  $event_ttl                     = $kubernetes::master::params::kube_api_event_ttl,
-  $external_hostname             = $kubernetes::master::params::kube_api_external_hostname,
-  $google_json_key               = $kubernetes::master::params::kube_api_google_json_key,
-  $insecure_bind_address         = $kubernetes::master::params::kube_api_insecure_bind_address,
-  $insecure_port                 = $kubernetes::master::params::kube_api_insecure_port,
-  $kubelet_certificate_authority = $kubernetes::master::params::kube_api_kubelet_certificate_authority,
-  $kubelet_client_certificate    = $kubernetes::master::params::kube_api_kubelet_client_certificate,
-  $kubelet_client_key            = $kubernetes::master::params::kube_api_kubelet_client_key,
-  $kubelet_https                 = $kubernetes::master::params::kube_api_kubelet_https,
-  $kubelet_timeout               = $kubernetes::master::params::kube_api_kubelet_timeout,
-  $kubernetes_service_node_port  = $kubernetes::master::params::kube_api_kubernetes_service_node_port,
-  $log_flush_frequency           = $kubernetes::master::params::kube_api_log_flush_frequency,
-  $long_running_request_regexp   = $kubernetes::master::params::kube_api_long_running_request_regexp,
-  $master_service_namespace      = $kubernetes::master::params::kube_api_master_service_namespace,
-  $max_connection_bytes_per_sec  = $kubernetes::master::params::kube_api_max_connection_bytes_per_sec,
-  $max_requests_inflight         = $kubernetes::master::params::kube_api_max_requests_inflight,
-  $min_request_timeout           = $kubernetes::master::params::kube_api_min_request_timeout,
-  $profiling                     = $kubernetes::master::params::kube_api_profiling,
-  $repair_malformed_updates      = $kubernetes::master::params::kube_api_repair_malformed_updates,
-  $runtime_config                = $kubernetes::master::params::kube_api_runtime_config,
-  $secure_port                   = $kubernetes::master::params::kube_api_secure_port,
-  $service_account_key_file      = $kubernetes::master::params::kube_api_service_account_key_file,
-  $service_account_lookup        = $kubernetes::master::params::kube_api_service_account_lookup,
-  $service_node_port_range       = $kubernetes::master::params::kube_api_service_node_port_range,
-  $ssh_keyfile                   = $kubernetes::master::params::kube_api_ssh_keyfile,
-  $ssh_user                      = $kubernetes::master::params::kube_api_ssh_user,
-  $tls_cert_file                 = $kubernetes::master::params::kube_api_tls_cert_file,
-  $tls_private_key_file          = $kubernetes::master::params::kube_api_tls_private_key_file,
-  $token_auth_file               = $kubernetes::master::params::kube_api_token_auth_file,
-  $watch_cache                   = $kubernetes::master::params::kube_api_watch_cache,
-  $watch_cache_sizes             = $kubernetes::master::params::kube_api_watch_cache_sizes,
-  $verbosity                     = $kubernetes::master::params::kube_api_verbosity,
-  $extra_args                    = $kubernetes::master::params::kube_api_extra_args,
+  $ensure                                       = $kubernetes::master::params::kube_api_service_ensure,
+  $journald_forward_enable                      = $kubernetes::master::params::kube_api_journald_forward_enable,
+  $enable                                       = $kubernetes::master::params::kube_api_service_enable,
+  $manage_as                                    = $kubernetes::master::params::kube_api_manage_as,
+  $container_image                              = $kubernetes::master::params::kube_api_container_image,
+  $pod_cpu                                      = $kubernetes::master::params::kube_api_pod_cpu,
+  $pod_memory                                   = $kubernetes::master::params::kube_api_pod_memory,
+  $admission_control                            = $kubernetes::master::params::kube_api_admission_control,
+  $admission_control_config_file                = $kubernetes::master::params::kube_api_admission_control_config_file,
+  $advertise_address                            = $kubernetes::master::params::kube_api_advertise_address,
+  $allow_privileged                             = $kubernetes::master::params::kube_api_allow_privileged,
+  $apiserver_count                              = $kubernetes::master::params::kube_api_server_count,
+  $audit_log_maxage                             = $kubernetes::master::params::kube_api_audit_log_maxage,
+  $audit_log_maxbackup                          = $kubernetes::master::params::kube_api_audit_log_maxbackup,
+  $audit_log_maxsize                            = $kubernetes::master::params::kube_api_audit_log_maxsize,
+  $audit_log_path                               = $kubernetes::master::params::kube_api_audit_log_path,
+  $authentication_token_webhook_cache_ttl       = $kubernetes::master::params::kube_api_authentication_token_webhook_cache_ttl,
+  $authentication_token_webhook_config_file     = $kubernetes::master::params::kube_api_authentication_token_webhook_config_file,
+  $authorization_mode                           = $kubernetes::master::params::kube_api_authorization_mode,
+  $authorization_policy_file                    = $kubernetes::master::params::kube_api_authorization_policy_file,
+  $authorization_webhook_cache_authorized_ttl   = $kubernetes::master::params::kube_api_authorization_webhook_cache_authorized_ttl,
+  $authorization_webhook_cache_unauthorized_ttl = $kubernetes::master::params::kube_api_authorization_webhook_cache_unauthorized_ttl,
+  $authorization_webhook_config_file            = $kubernetes::master::params::kube_api_authorization_webhook_config_file,
+  $basic_auth_file                              = $kubernetes::master::params::kube_api_basic_auth_file,
+  $bind_address                                 = $kubernetes::master::params::kube_api_bind_address,
+  $cert_dir                                     = $kubernetes::master::params::kube_api_cert_dir,
+  $client_ca_file                               = $kubernetes::master::params::kube_api_client_ca_file,
+  $cloud_config                                 = $kubernetes::master::params::kube_api_cloud_config,
+  $cloud_provider                               = $kubernetes::master::params::kube_api_cloud_provider,
+  $cors_allowed_origins                         = $kubernetes::master::params::kube_api_cors_allowed_origins,
+  $delete_collection_workers                    = $kubernetes::master::params::kube_api_delete_collection_workers,
+  $deserialization_cache_size                   = $kubernetes::master::params::kube_api_deserialization_cache_size,
+  $enable_garbage_collector                     = $kubernetes::master::params::kube_api_enable_garbage_collector,
+  $enable_swagger_ui                            = $kubernetes::master::params::kube_api_enable_swagger_ui,
+  $etcd_cafile                                  = $kubernetes::master::params::kube_api_etcd_cafile,
+  $etcd_certfile                                = $kubernetes::master::params::kube_api_etcd_certfile,
+  $etcd_keyfile                                 = $kubernetes::master::params::kube_api_etcd_keyfile,
+  $etcd_prefix                                  = $kubernetes::master::params::kube_api_etcd_prefix,
+  $etcd_quorum_read                             = $kubernetes::master::params::kube_api_etcd_quorum_read,
+  $etcd_servers                                 = $kubernetes::master::params::kube_api_etcd_servers,
+  $etcd_servers_overrides                       = $kubernetes::master::params::kube_api_etcd_servers_overrides,
+  $event_ttl                                    = $kubernetes::master::params::kube_api_event_ttl,
+  $external_hostname                            = $kubernetes::master::params::kube_api_external_hostname,
+  $google_json_key                              = $kubernetes::master::params::kube_api_google_json_key,
+  $insecure_bind_address                        = $kubernetes::master::params::kube_api_insecure_bind_address,
+  $insecure_port                                = $kubernetes::master::params::kube_api_insecure_port,
+  $kubelet_certificate_authority                = $kubernetes::master::params::kube_api_kubelet_certificate_authority,
+  $kubelet_client_certificate                   = $kubernetes::master::params::kube_api_kubelet_client_certificate,
+  $kubelet_client_key                           = $kubernetes::master::params::kube_api_kubelet_client_key,
+  $kubelet_https                                = $kubernetes::master::params::kube_api_kubelet_https,
+  $kubelet_timeout                              = $kubernetes::master::params::kube_api_kubelet_timeout,
+  $kubernetes_service_node_port                 = $kubernetes::master::params::kube_api_kubernetes_service_node_port,
+  $long_running_request_regexp                  = $kubernetes::master::params::kube_api_long_running_request_regexp,
+  $master_service_namespace                     = $kubernetes::master::params::kube_api_master_service_namespace,
+  $max_connection_bytes_per_sec                 = $kubernetes::master::params::kube_api_max_connection_bytes_per_sec,
+  $max_requests_inflight                        = $kubernetes::master::params::kube_api_max_requests_inflight,
+  $min_request_timeout                          = $kubernetes::master::params::kube_api_min_request_timeout,
+  $profiling                                    = $kubernetes::master::params::kube_api_profiling,
+  $repair_malformed_updates                     = $kubernetes::master::params::kube_api_repair_malformed_updates,
+  $runtime_config                               = $kubernetes::master::params::kube_api_runtime_config,
+  $secure_port                                  = $kubernetes::master::params::kube_api_secure_port,
+  $service_account_key_file                     = $kubernetes::master::params::kube_api_service_account_key_file,
+  $service_account_lookup                       = $kubernetes::master::params::kube_api_service_account_lookup,
+  $service_node_port_range                      = $kubernetes::master::params::kube_api_service_node_port_range,
+  $ssh_keyfile                                  = $kubernetes::master::params::kube_api_ssh_keyfile,
+  $ssh_user                                     = $kubernetes::master::params::kube_api_ssh_user,
+  $storage_backend                              = $kubernetes::master::params::kube_api_storage_backend,
+  $storage_media_type                           = $kubernetes::master::params::kube_api_storage_media_type,
+  $target_ram_mb                                = $kubernetes::master::params::kube_api_target_ram_mb,
+  $tls_cert_file                                = $kubernetes::master::params::kube_api_tls_cert_file,
+  $tls_private_key_file                         = $kubernetes::master::params::kube_api_tls_private_key_file,
+  $token_auth_file                              = $kubernetes::master::params::kube_api_token_auth_file,
+  $watch_cache                                  = $kubernetes::master::params::kube_api_watch_cache,
+  $watch_cache_sizes                            = $kubernetes::master::params::kube_api_watch_cache_sizes,
+  $verbosity                                    = $kubernetes::master::params::kube_api_verbosity,
+  $extra_args                                   = $kubernetes::master::params::kube_api_extra_args,
 ) inherits kubernetes::master::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)

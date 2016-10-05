@@ -1,5 +1,5 @@
  --admission-control=<%= Array(scope['kubernetes::master::apiserver::admission_control']).join(',') -%>
-<% if @kube_api_admission_control_config_file -%>
+<% if @admission_control_config_file -%>
  --admission-control-config-file=<%= scope['kubernetes::master::apiserver::admission_control_config_file'] -%>
 <% end -%>
 <% if @advertise_address then -%>
@@ -7,12 +7,36 @@
 <% end -%>
  --allow-privileged=<%= scope['kubernetes::master::apiserver::allow_privileged'] -%>
  --apiserver-count=<%= scope['kubernetes::master::apiserver::apiserver_count'] -%>
+<% if @audit_log_maxage -%>
+ --audit-log-maxage=<%= scope['kubernetes::master::apiserver::audit_log_maxage'] -%>
+<% end -%>
+<% if @audit_log_maxbackup -%>
+ --audit-log-maxbackup=<%= scope['kubernetes::master::apiserver::audit_log_maxbackup'] -%>
+<% end -%>
+<% if @audit_log_maxsize -%>
+ --audit-log-maxsize=<%= scope['kubernetes::master::apiserver::audit_log_maxsize'] -%>
+<% end -%>
+<% if @audit_log_path -%>
+ --audit-log-path=<%= scope['kubernetes::master::apiserver::audit_log_path'] -%>
+<% end -%>
+<% if @authentication_token_webhook_cache_ttl -%>
+ --authentication-token-webhook-cache-ttl=<%= scope['kubernetes::master::apiserver::authentication_token_webhook_cache_ttl'] -%>
+<% end -%>
+<% if @authentication_token_webhook_config_file -%>
+ --authentication-token-webhook-config-file=<%= scope['kubernetes::master::apiserver::authentication_token_webhook_config_file'] -%>
+<% end -%>
  --authorization-mode=<%= scope['kubernetes::master::apiserver::authorization_mode'] -%>
 <% if @authorization_policy_file -%>
  --authorization-policy-file=<%= scope['kubernetes::master::apiserver::authorization_policy_file'] -%>
 <% end -%>
-<% if @authorization_webhook_config -%>
- --authorization-webhook-config-file=<%= scope['kubernetes::master::apiserver::authorization_webhook_config'] -%>
+<% if @authorization_webhook_cache_authorized_ttl -%>
+ --authorization-webhook-cache-authorized-ttl=<%= scope['kubernetes::master::apiserver::authorization_webhook_cache_authorized_ttl'] -%>
+<% end -%>
+<% if @authorization_webhook_cache_unauthorized_ttl -%>
+ --authorization-webhook-cache-unauthorized-ttl=<%= scope['kubernetes::master::apiserver::authorization_webhook_cache_unauthorized_ttl'] -%>
+<% end -%>
+<% if @authorization_webhook_config_file -%>
+ --authorization-webhook-config-file=<%= scope['kubernetes::master::apiserver::authorization_webhook_config_file'] -%>
 <% end -%>
 <% if @basic_auth_file -%>
  --basic-auth-file=<%= scope['kubernetes::master::apiserver::basic_auth_file'] -%>
@@ -22,7 +46,27 @@
 <% if @client_ca_file then -%>
  --client-ca-file=<%= scope['kubernetes::master::apiserver::client_ca_file'] -%>
 <% end -%>
+<% if @cloud_config then -%>
+ --cloud-config=<%= scope['kubernetes::master::apiserver::cloud_config'] -%>
+<% end -%>
+<% if @cloud_provider then -%>
+ --cloud-provider=<%= scope['kubernetes::master::apiserver::cloud_provider'] -%>
+<% end -%>
+<% if @cors_allowed_origins then -%>
+ --cors-allowed-origins=<%= scope['kubernetes::master::apiserver::cors_allowed_origins'] -%>
+<% end -%>
+<% if @delete_collection_workers then -%>
  --delete-collection-workers=<%= scope['kubernetes::master::apiserver::delete_collection_workers'] -%>
+<% end -%>
+<% if @deserialization_cache_size then -%>
+ --deserialization-cache-size=<%= scope['kubernetes::master::apiserver::deserialization_cache_size'] -%>
+<% end -%>
+<% if @enable_garbage_collector then -%>
+ --enable-garbage-collector=<%= scope['kubernetes::master::apiserver::enable-garbage-collector'] -%>
+<% end -%>
+<% if @enable_swagger_ui then -%>
+ --enable-swagger-ui=<%= scope['kubernetes::master::apiserver::enable_swagger_ui'] -%>
+<% end -%>
 <% if @etcd_cafile and @etcd_certfile and @etcd_keyfile -%>
  --etcd-cafile=<%= scope['kubernetes::master::apiserver::etcd_cafile'] -%>
  --etcd-certfile=<%= scope['kubernetes::master::apiserver::etcd_certfile'] -%>
@@ -55,7 +99,6 @@
  --kubelet-https=<%= scope['kubernetes::master::apiserver::kubelet_https'] -%>
  --kubelet-timeout=<%= scope['kubernetes::master::apiserver::kubelet_timeout'] -%>
  --kubernetes-service-node-port=<%= scope['kubernetes::master::apiserver::kubernetes_service_node_port'] -%>
- --log-flush-frequency=<%= scope['kubernetes::master::apiserver::log_flush_frequency'] -%>
 <% if @long_running_request_regexp -%>
  --long-running-request-regexp=<%= scope['kubernetes::master::apiserver::long_running_request_regexp'] -%>
 <% end -%>
@@ -82,6 +125,15 @@
 <% end -%>
 <% if @ssh_user -%>
  --ssh-user=<%= scope['kubernetes::master::apiserver::ssh_user'] -%>
+<% end -%>
+<% if @storage_backend -%>
+ --storage-backend=<%= scope['kubernetes::master::apiserver::storage_backend'] -%>
+<% end -%>
+<% if @storage_media_type -%>
+ --storage-media-type=<%= scope['kubernetes::master::apiserver::storage_media_type'] -%>
+<% end -%>
+<% if @target_ram_mb -%>
+ --target-ram-mb=<%= scope['kubernetes::master::apiserver::target_ram_mb'] -%>
 <% end -%>
 <% if @tls_cert_file -%>
  --tls-cert-file=<%= scope['kubernetes::master::apiserver::tls_cert_file'] -%>

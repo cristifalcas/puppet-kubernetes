@@ -43,6 +43,11 @@
 #   If true cleanup iptables rules and exit.
 #   Defaults to false
 #
+# [*cluster_cidr*]
+#   The CIDR range of pods in the cluster. It is used to bridge traffic coming from outside of the cluster.
+#   If not provided, no off-cluster bridging will be performed.
+#   Defaults to undef.
+#
 # [*config_sync_period*]
 #   How often configuration from the apiserver is refreshed.
 #    If undefined, defaults to 15m0s
@@ -52,6 +57,10 @@
 #   Maximum number of NAT connections to track (0 to leave as-is)
 #    If undefined, defaults to 262144
 #   Defaults to undef
+#
+# [*conntrack_max_per_core*]
+#   Maximum number of NAT connections to track per CPU core (0 to leave as-is). This is only considered if conntrack-max is 0.
+#   Defaults to undef. (default 32768)
 #
 # [*conntrack_tcp_timeout_established*]
 #   Idle timeout for established TCP connections (0 to leave as-is)
@@ -88,6 +97,10 @@
 #   Burst to use while talking with kubernetes apiserver
 #   Defaults to undef
 #
+# [*kube_api_content_type*]
+#   Content type of requests sent to apiserver.
+#   Defaults to undef. (default "application/vnd.kubernetes.protobuf")
+#
 # [*kube_api_qps*]
 #   QPS to use while talking with kubernetes apiserver
 #   Defaults to undef
@@ -95,10 +108,6 @@
 # [*kubeconfig*]
 #   Path to kubeconfig file with authorization information (the master location is set by the master flag).
 #   Defaults to undef
-#
-# [*log_flush_frequency*]
-#   Maximum number of seconds between log flushes
-#   Defaults to 5s
 #
 # [*masquerade_all*]
 #   If using the pure iptables proxy, SNAT everything
@@ -145,6 +154,7 @@ class kubernetes::node::kube_proxy (
   $cleanup_iptables                  = $kubernetes::node::params::kube_proxy_cleanup_iptables,
   $config_sync_period                = $kubernetes::node::params::kube_proxy_config_sync_period,
   $conntrack_max                     = $kubernetes::node::params::kube_proxy_conntrack_max,
+  $conntrack_max_per_core            = $kubernetes::node::params::kube_proxy_conntrack_max_per_core,
   $conntrack_tcp_timeout_established = $kubernetes::node::params::kube_proxy_conntrack_tcp_timeout_established,
   $google_json_key                   = $kubernetes::node::params::kube_proxy_google_json_key,
   $healthz_bind_address              = $kubernetes::node::params::kube_proxy_healthz_bind_address,
@@ -153,9 +163,9 @@ class kubernetes::node::kube_proxy (
   $iptables_masquerade_bit           = $kubernetes::node::params::kube_proxy_iptables_masquerade_bit,
   $iptables_sync_period              = $kubernetes::node::params::kube_proxy_iptables_sync_period,
   $kube_api_burst                    = $kubernetes::node::params::kube_proxy_kube_api_burst,
+  $kube_api_content_type             = $kubernetes::node::params::kube_proxy_kube_api_content_type,
   $kube_api_qps                      = $kubernetes::node::params::kube_proxy_kube_api_qps,
   $kubeconfig                        = $kubernetes::node::params::kube_proxy_kubeconfig,
-  $log_flush_frequency               = $kubernetes::node::params::kube_proxy_log_flush_frequency,
   $masquerade_all                    = $kubernetes::node::params::kube_proxy_masquerade_all,
   $master                            = $kubernetes::node::params::kube_proxy_master,
   $oom_score_adj                     = $kubernetes::node::params::kube_proxy_oom_score_adj,

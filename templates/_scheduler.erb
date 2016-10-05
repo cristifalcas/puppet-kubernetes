@@ -3,7 +3,13 @@
 <% if @google_json_key then -%>
  --google-json-key=<%= scope['kubernetes::master::scheduler::google_json_key'] -%>
 <% end -%>
+<% if @hard_pod_affinity_symmetric_weight then -%>
+ --hard-pod-affinity-symmetric-_weight=<%= scope['kubernetes::master::scheduler::hard_pod_affinity_symmetric_weight'] -%>
+<% end -%>
  --kube-api-burst=<%= scope['kubernetes::master::scheduler::kube_api_burst'] -%>
+<% if @kube_api_content_type then -%>
+ --kube-api-content-type=<%= scope['kubernetes::master::scheduler::kube_api_content_type'] -%>
+<% end -%>
  --kube-api-qps=<%= scope['kubernetes::master::scheduler::kube_api_qps'] -%>
 <% if @kubeconfig then -%>
  --kubeconfig=<%= scope['kubernetes::master::scheduler::kubeconfig'] -%>

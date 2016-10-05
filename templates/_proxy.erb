@@ -1,10 +1,16 @@
  --bind-address=<%= scope['kubernetes::node::kube_proxy::bind_address'] -%>
  --cleanup-iptables=<%= scope['kubernetes::node::kube_proxy::cleanup_iptables'] -%>
+<% if @cluster_cidr -%>
+ --cluster-cidr=<%= scope['kubernetes::node::kube_proxy::cluster_cidr'] -%>
+<% end -%>
 <% if @config_sync_period -%>
  --config-sync-period=<%= scope['kubernetes::node::kube_proxy::config_sync_period'] -%>
 <% end -%>
 <% if @conntrack_max -%>
  --conntrack-max=<%= scope['kubernetes::node::kube_proxy::conntrack_max'] -%>
+<% end -%>
+<% if @conntrack_max_per_core -%>
+ --conntrack-max-per-core=<%= scope['kubernetes::node::kube_proxy::conntrack_max_per_core'] -%>
 <% end -%>
 <% if @conntrack_tcp_timeout_established -%>
  --conntrack-tcp-timeout-established=<%= scope['kubernetes::node::kube_proxy::conntrack_tcp_timeout_established'] -%>
@@ -23,13 +29,15 @@
 <% if @kube_api_burst -%>
  --kube-api-burst=<%= scope['kubernetes::node::kube_proxy::kube_api_burst'] -%>
 <% end -%>
+<% if @kube_api_content_type -%>
+ --kube-api-content-type=<%= scope['kubernetes::node::kube_proxy::kube_api_content_type'] -%>
+<% end -%>
 <% if @kube_api_qps -%>
  --kube-api-qps=<%= scope['kubernetes::node::kube_proxy::kube_api_qps'] -%>
 <% end -%>
 <% if @kubeconfig -%>
  --kubeconfig=<%= scope['kubernetes::node::kube_proxy::kubeconfig'] -%>
 <% end -%>
- --log-flush-frequency=<%= scope['kubernetes::node::kube_proxy::log_flush_frequency'] -%>
  --masquerade-all=<%= scope['kubernetes::node::kube_proxy::masquerade_all'] -%>
 <% if @master -%>
  --master=<%= scope['kubernetes::node::kube_proxy::master'] -%>

@@ -17,6 +17,10 @@
 #   Whether you want to kubelet daemon to start up at boot
 #   Defaults to true
 #
+# [*pod_manifest_path_purge*]
+#   Whether to purge to pods dir
+#   Defaults to false
+#
 ## Parameters ##
 #
 # [*address*]
@@ -26,11 +30,6 @@
 # [*allow_privileged*]
 #   If true, allow containers to request privileged mode.
 #   Defaults to false
-#
-# [*api_servers*]
-#   List of Kubernetes API servers for publishing events, and reading pods and services. (ip:port), comma separated.
-#   Type: Array or String
-#   Defaults to 'http://127.0.0.1:8080'
 #
 # [*cadvisor_port*]
 #   The port of the localhost cAdvisor endpoint
@@ -50,17 +49,21 @@
 #   If > 0.0, introduce random client errors and latency. Intended for testing. [default=0.0]
 #   Defaults to undef
 #
+# [*cloud_config*]
+#   The path to the cloud provider configuration file.  Empty string for no configuration file.
+#   Default undef
+#
+# [*cloud_provider*]
+#   The provider for cloud services. By default, kubelet will attempt to auto-detect the cloud provider.
+#   Specify empty string for running with no cloud provider. [default=auto-detect]
+#   Default undef. (default "auto-detect")
+#
 # [*cluster_dns*]
-#   IP address for a cluster DNS server.  If set, kubelet will configure all containers to use this for
-#   DNS resolution in addition to the host's DNS servers
+#   IP address for a cluster DNS server.  This value is used for containers' DNS server in case of Pods with "dnsPolicy=ClusterFirst"
 #   Defaults to undef
 #
 # [*cluster_domain*]
 #   Domain for this cluster.  If set, kubelet will configure all containers to search this domain in addition to the host's search domains
-#   Defaults to undef
-#
-# [*config*]
-#   Path to the config file or directory of files
 #   Defaults to undef
 #
 # [*configure_cbr0*]
@@ -70,6 +73,11 @@
 # [*container_runtime*]
 #   The container runtime to use. Possible values: 'docker', 'rkt'. Default: 'docker'.
 #   Defaults to undef
+#
+# [*container_runtime_endpoint*]
+#   The unix socket endpoint of remote runtime service. If not empty, this option will
+#   override --container-runtime. This is an experimental feature. Intended for testing only.
+#   Defaults to undef.
 #
 # [*containerized*]
 #   Experimental support for running kubelet in a container.  Intended for testing. [default=false]
@@ -88,6 +96,11 @@
 #   Handler to use when executing a command in a container.
 #    Valid values are 'native' and 'nsenter'. Defaults to 'native'.
 #   Defaults to undef
+#
+# [*enable_controller_attach_detach*]
+#   Enables the Attach/Detach controller to manage attachment/detachment of volumes scheduled to this node,
+#   and disables kubelet from executing any attach/detach operations
+#   Defaults to undef. (default true)
 #
 # [*enable_custom_metrics*]
 #   Support for gathering custom metrics.
@@ -115,18 +128,50 @@
 #    If undefined, defaults to 5
 #   Defaults to undef
 #
-# [*experimental_flannel_overlay*]
-#   Experimental support for starting the kubelet with the default overlay network (flannel). Assumes flanneld is already running in client mode.
+# [*eviction_hard*]
+#   A set of eviction thresholds (e.g. memory.available<1Gi) that if met would trigger a pod eviction.
+#   Defaults to undef. (default "memory.available<100Mi")
+#
+# [*eviction_max_pod_grace_period*]
+#   Maximum allowed grace period (in seconds) to use when terminating pods in response to a soft eviction
+#   threshold being met.  If negative, defer to pod specified value.
+#   Defaults to undef.
+#
+# [*eviction_minimum_reclaim*]
+#   A set of minimum reclaims (e.g. imagefs.available=2Gi) that describes the minimum amount of resource
+#   the kubelet will reclaim when performing a pod eviction if that resource is under pressure.
+#   Defaults to undef
+#
+# [*eviction_pressure_transition_period*]
+#   Duration for which the kubelet has to wait before transitioning out of an eviction pressure condition.
+#   Defaults to undef. (default 5m0s)
+#
+# [*eviction_soft*]
+#   A set of eviction thresholds (e.g. memory.available<1.5Gi) that if met over a corresponding grace period would trigger a pod eviction.
+#   Defaults to undef
+#
+# [*eviction_soft_grace_period*]
+#   A set of eviction grace periods (e.g. memory.available=1m30s) that correspond to how long a soft eviction threshold must
+#   hold before triggering a pod eviction.
+#   Defaults to undef
+#
+# [*exit_on_lock_contention*]
+#   Whether kubelet should exit upon lock-file contention.
 #   Defaults to undef
 #
 # [*file_check_frequency*]
 #   Duration between checking config files for new data
 #   Defaults to undef
 #
+# [*google_json_key*]
+#   The Google Cloud Platform Service Account JSON Key to use for authentication.
+#   Default undef
+#
 # [*hairpin_mode*]
-#   How should the kubelet setup hairpin NAT. This allows endpoints of a Service to loadbalance back to themselves if they should
-#   try to access their own Service. Valid values are "promiscuous-bridge", "hairpin-veth" and "none".
-#   Defaults to undef
+#   How should the kubelet setup hairpin NAT. This allows endpoints of a Service to loadbalance back
+#   to themselves if they should try to access their own Service. Valid values are "promiscuous-bridge",
+#   "hairpin-veth" and "none".
+#   Defaults to undef. (default "promiscuous-bridge")
 #
 # [*healthz_bind_address*]
 #   The IP address for the healthz server to serve on, defaulting to 127.0.0.1 (set to 0.0.0.0 for all interfaces)
@@ -135,6 +180,18 @@
 # [*healthz_port*]
 #   The port of the localhost healthz endpoint
 #   Defaults to undef
+#
+# [*host_ipc_sources*]
+#   Comma-separated list of sources from which the Kubelet allows pods to use the host ipc namespace. [default="*"]
+#   Defaults to undef. (default [*])
+#
+# [*host_network_sources*]
+#   Comma-separated list of sources from which the Kubelet allows pods to use of host network. [default="*"]
+#   Defaults to undef. (default [*])
+#
+# [*host_pid_sources*]
+#   Comma-separated list of sources from which the Kubelet allows pods to use the host pid namespace. [default="*"]
+#   Defaults to undef. (default [*])
 #
 # [*hostname_override*]
 #   If non-empty, will use this string as identification instead of the actual hostname.
@@ -153,13 +210,31 @@
 #   The percent of disk usage before which image garbage collection is never run. Lowest disk usage to garbage collect to.
 #   Default=80%
 #
+# [*image_service_endpoint*]
+#   The unix socket endpoint of remote image service. If not specified, it will be the same with container-runtime-endpoint by default.
+#   This is an experimental feature. Intended for testing only.
+#   Defaults to undef.
+#
+# [*iptables_drop_bit*]
+#   The bit of the fwmark space to mark packets for dropping. Must be within the range [0, 31].
+#   Defaults to undef. (default 15)
+#
+# [*iptables_masquerade_bit*]
+#   The bit of the fwmark space to mark packets for SNAT. Must be within the range [0, 31]. Please match this parameter
+#   with corresponding parameter in kube-proxy.
+#   Defaults to undef. (default 14)
+#
 # [*kube_api_burst*]
 #   Burst to use while talking with kubernetes apiserver
-#   Defaults to undef
+#   Defaults to undef. (default 10)
+#
+# [*kube_api_content_type*]
+#   Content type of requests sent to apiserver.
+#   Defaults to undef. (default "application/vnd.kubernetes.protobuf")
 #
 # [*kube_api_qps*]
 #   QPS to use while talking with kubernetes apiserver
-#   Defaults to undef
+#   Defaults to undef. (default 5)
 #
 # [*kube_reserved*]
 #   A set of ResourceName=ResourceQuantity (e.g. cpu=200m,memory=150G) pairs that describe resources reserved for
@@ -179,13 +254,13 @@
 #   Warning: Alpha feature. The path to file for kubelet to use as a lock file.
 #   Defaults to undef
 #
-# [*log_flush_frequency*]
-#   Maximum number of seconds between log flushes
-#   Defaults to 5s
-#
 # [*low_diskspace_threshold_mb*]
 #   The absolute free disk space, in MB, to maintain. When disk space falls below this threshold, new pods would be rejected.
 #   Default=256
+#
+# [*make_iptables_util_chains*]
+#   If true, kubelet will ensure iptables utility rules are present on host.
+#   Defaults to undef. (default true)
 #
 # [*manifest_url*]
 #   URL for accessing the container manifest
@@ -206,19 +281,6 @@
 # [*max_pods*]
 #   Number of Pods that can run on this Kubelet.
 #   Defaults to 110
-#
-# [*maximum_dead_containers*]
-#   Maximum number of old instances of a containers to retain globally.  Each container takes up some disk space.
-#   Defaults to 240
-#
-# [*maximum_dead_containers_per_container*]
-#   Maximum number of old instances of a container to retain per container.
-#   Each container takes up some disk space.
-#   Defaults to 2
-#
-# [*minimum_container_ttl_duration*]
-#   Minimum age for a finished container before it is garbage collected.  Examples: '300ms', '10s' or '2h45m'
-#   Defaults to 1m0s
 #
 # [*minimum_image_ttl_duration*]
 #   Minimum age for a unused image before it is garbage collected.  Examples: '300ms', '10s' or '2h45m'.
@@ -258,9 +320,23 @@
 #   The image whose network/ipc namespaces containers in each pod will use.
 #   Defaults to undef
 #
+# [*pod_manifest_path*]
+#   Path to to the directory containing pod manifest files to run, or the path to a single pod manifest file.
+#   Defaults to undef.
+#
+# [*pods_per_core*]
+#   Number of Pods per core that can run on this Kubelet. The total number of Pods on this Kubelet cannot exceed max-pods,
+#   so max-pods will be used if this calculation results in a larger number of Pods allowed on the Kubelet.
+#   A value of 0 disables this limit.
+#   Defaults to undef.
+#
 # [*port*]
 #   The port for the info server to serve on
 #   Defaults to 10250
+#
+# [*protect_kernel_defaults*]
+#   Default kubelet behaviour for kernel tuning. If set, kubelet errors if any of kernel tunables is different than kubelet defaults.
+#   Defaults to undef.
 #
 # [*read_only_port*]
 #   The read-only port for the Kubelet to serve on (set to 0 to disable)
@@ -289,27 +365,40 @@
 #    If undefined, defaults to 5
 #   Defaults to undef
 #
+# [*require_kubeconfig*]
+#   If true the Kubelet will exit if there are configuration errors, and will ignore the value
+#   of --api-servers in favor of the server defined in the kubeconfig file.
+#   Defaults to undef
+#
 # [*resolv_conf*]
 #   Resolver configuration file used as the basis for the container DNS resolution configuration.
 #    If undefined, defaults to /etc/resolv.conf
 #   Defaults to undef
 #
+# [*rkt_api_endpoint*]
+#   The endpoint of the rkt API service to communicate with. Only used if --container-runtime='rkt'.
+#   Defaults to undef. (default "localhost:15441")
+#
 # [*rkt_path*]
 #   Path of rkt binary. Leave empty to use the first rkt in $PATH.  Only used if --container-runtime='rkt'
-#   Defaults to undef
-#
-# [*rkt_stage1_image*]
-#   image to use as stage1. Local paths and http/https URLs are supported.
-#    If empty, the 'stage1.aci' in the same directory as '--rkt-path' will be used
 #   Defaults to undef
 #
 # [*root_dir*]
 #   Directory path for managing kubelet files (volume mounts,etc).
 #   Defaults to undef
 #
+# [*runonce*]
+#   If true, exit after spawning pods from local manifests or remote urls. Exclusive with --api-servers, and --enable-server
+#   Defaults to undef
+#
 # [*runtime_cgroups*]
 #   Optional absolute name of cgroups to create and run the runtime in.
 #   Defaults to undef
+#
+# [*runtime_request_timeout*]
+#   Timeout of all runtime requests except long running request - pull, logs, exec and attach. When timeout exceeded,
+#   kubelet will cancel the request, throw out an error and retry later.
+#   Defaults to undef. (default 2m0s)
 #
 # [*serialize_image_pulls*]
 #   Pull images one at a time. We recommend *not* changing the default value on nodes that run
@@ -357,53 +446,66 @@ class kubernetes::node::kubelet (
   $ensure                                = $kubernetes::node::params::kubelet_service_ensure,
   $journald_forward_enable               = $kubernetes::node::params::kubelet_journald_forward_enable,
   $enable                                = $kubernetes::node::params::kubelet_service_enable,
+  $pod_manifest_path_purge               = $kubernetes::node::params::kubelet_pod_manifest_path_purge,
   $address                               = $kubernetes::node::params::kubelet_address,
   $allow_privileged                      = $kubernetes::node::params::kubelet_allow_privileged,
-  $api_servers                           = $kubernetes::node::params::kubelet_api_servers,
   $cadvisor_port                         = $kubernetes::node::params::kubelet_cadvisor_port,
   $cert_dir                              = $kubernetes::node::params::kubelet_cert_dir,
   $cgroup_root                           = $kubernetes::node::params::kubelet_cgroup_root,
   $chaos_chance                          = $kubernetes::node::params::kubelet_chaos_chance,
+  $cloud_config                          = $kubernetes::node::params::kubelet_cloud_config,
+  $cloud_provider                        = $kubernetes::node::params::kubelet_cloud_provider,
   $cluster_dns                           = $kubernetes::node::params::kubelet_cluster_dns,
   $cluster_domain                        = $kubernetes::node::params::kubelet_cluster_domain,
-  $config                                = $kubernetes::node::params::kubelet_config,
-  $config_purge                          = $kubernetes::node::params::kubelet_config_purge,
   $configure_cbr0                        = $kubernetes::node::params::kubelet_container_runtime,
   $container_runtime                     = $kubernetes::node::params::kubelet_container_runtime,
+  $container_runtime_endpoint            = $kubernetes::node::params::kubelet_container_runtime_endpoint,
   $containerized                         = $kubernetes::node::params::kubelet_config,
   $cpu_cfs_quota                         = $kubernetes::node::params::kubelet_cpu_cfs_quota,
   $docker_endpoint                       = $kubernetes::node::params::kubelet_docker_endpoint,
   $docker_exec_handler                   = $kubernetes::node::params::kubelet_docker_exec_handler,
+  $enable_controller_attach_detach       = $kubernetes::node::params::kubelet_enable_controller_attach_detach,
   $enable_custom_metrics                 = $kubernetes::node::params::kubelet_enable_custom_metrics,
   $enable_debugging_handlers             = $kubernetes::node::params::kubelet_enable_debugging_handlers,
   $enable_server                         = $kubernetes::node::params::kubelet_enable_server,
   $event_burst                           = $kubernetes::node::params::kubelet_event_burst,
   $event_qps                             = $kubernetes::node::params::kubelet_event_qps,
-  $experimental_flannel_overlay          = $kubernetes::node::params::kubelet_experimental_flannel_overlay,
+  $eviction_hard                         = $kubernetes::node::params::kubelet_eviction_hard,
+  $eviction_max_pod_grace_period         = $kubernetes::node::params::kubelet_eviction_max_pod_grace_period,
+  $eviction_minimum_reclaim              = $kubernetes::node::params::kubelet_eviction_minimum_reclaim,
+  $eviction_pressure_transition_period   = $kubernetes::node::params::kubelet_eviction_pressure_transition_period,
+  $eviction_soft                         = $kubernetes::node::params::kubelet_eviction_soft,
+  $eviction_soft_grace_period            = $kubernetes::node::params::kubelet_eviction_soft_grace_period,
+  $exit_on_lock_contention               = $kubernetes::node::params::kubelet_exit_on_lock_contention,
   $file_check_frequency                  = $kubernetes::node::params::kubelet_file_check_frequency,
+  $google_json_key                       = $kubernetes::node::params::kubelet_google_json_key,
   $hairpin_mode                          = $kubernetes::node::params::kubelet_hairpin_mode,
   $healthz_bind_address                  = $kubernetes::node::params::kubelet_healthz_bind_address,
   $healthz_port                          = $kubernetes::node::params::kubelet_healthz_port,
+  $host_ipc_sources                      = $kubernetes::node::params::kubelet_host_ipc_sources,
+  $host_network_sources                  = $kubernetes::node::params::kubelet_host_network_sources,
+  $host_pid_sources                      = $kubernetes::node::params::kubelet_host_pid_sources,
   $hostname_override                     = $kubernetes::node::params::kubelet_hostname_override,
   $http_check_frequency                  = $kubernetes::node::params::kubelet_http_check_frequency,
   $image_gc_high_threshold               = $kubernetes::node::params::kubelet_image_gc_high_threshold,
   $image_gc_low_threshold                = $kubernetes::node::params::kubelet_image_gc_low_threshold,
+  $image_service_endpoint                = $kubernetes::node::params::kubelet_image_service_endpoint,
+  $iptables_drop_bit                     = $kubernetes::node::params::kubelet_iptables_drop_bit,
+  $iptables_masquerade_bit               = $kubernetes::node::params::kubelet_iptables_masquerade_bit,
   $kube_api_burst                        = $kubernetes::node::params::kubelet_kube_api_burst,
+  $kube_api_content_type                 = $kubernetes::node::params::kubelet_kube_api_content_type,
   $kube_api_qps                          = $kubernetes::node::params::kubelet_kube_api_qps,
   $kube_reserved                         = $kubernetes::node::params::kubelet_kube_reserved,
   $kubeconfig                            = $kubernetes::node::params::kubelet_kubeconfig,
   $kubelet_cgroups                       = $kubernetes::node::params::kubelet_kubelet_cgroups,
   $lock_file                             = $kubernetes::node::params::kubelet_lock_file,
-  $log_flush_frequency                   = $kubernetes::node::params::kubelet_log_flush_frequency,
   $low_diskspace_threshold_mb            = $kubernetes::node::params::kubelet_low_diskspace_threshold_mb,
+  $make_iptables_util_chains             = $kubernetes::node::params::kubelet_make_iptables_util_chains,
   $manifest_url                          = $kubernetes::node::params::kubelet_manifest_url,
   $manifest_url_header                   = $kubernetes::node::params::kubelet_manifest_url_header,
   $master_service_namespace              = $kubernetes::node::params::kubelet_master_service_namespace,
   $max_open_files                        = $kubernetes::node::params::kubelet_max_open_files,
   $max_pods                              = $kubernetes::node::params::kubelet_max_pods,
-  $maximum_dead_containers               = $kubernetes::node::params::kubelet_maximum_dead_containers,
-  $maximum_dead_containers_per_container = $kubernetes::node::params::kubelet_maximum_dead_containers_per_container,
-  $minimum_container_ttl_duration        = $kubernetes::node::params::kubelet_minimum_container_ttl_duration,
   $minimum_image_ttl_duration            = $kubernetes::node::params::kubelet_minimum_image_ttl_duration,
   $node_ip                               = $kubernetes::node::params::kubelet_node_ip,
   $node_labels                           = $kubernetes::node::params::kubelet_node_labels,
@@ -413,18 +515,24 @@ class kubernetes::node::kubelet (
   $outofdisk_transition_frequency        = $kubernetes::node::params::kubelet_outofdisk_transition_frequency,
   $pod_cidr                              = $kubernetes::node::params::kubelet_pod_cidr,
   $pod_infra_container_image             = $kubernetes::node::params::kubelet_pod_infra_container_image,
+  $pod_manifest_path                     = $kubernetes::node::params::kubelet_pod_manifest_path,
+  $pods_per_core                         = $kubernetes::node::params::kubelet_pods_per_core,
   $port                                  = $kubernetes::node::params::kubelet_port,
+  $protect_kernel_defaults               = $kubernetes::node::params::kubelet_protect_kernel_defaults,
   $read_only_port                        = $kubernetes::node::params::kubelet_read_only_port,
   $reconcile_cidr                        = $kubernetes::node::params::kubelet_reconcile_cidr,
   $register_node                         = $kubernetes::node::params::kubelet_register_node,
   $register_schedulable                  = $kubernetes::node::params::kubelet_register_schedulable,
   $registry_burst                        = $kubernetes::node::params::kubelet_registry_burst,
   $registry_qps                          = $kubernetes::node::params::kubelet_registry_qps,
+  $require_kubeconfig                    = $kubernetes::node::params::kubelet_require_kubeconfig,
   $resolv_conf                           = $kubernetes::node::params::kubelet_resolv_conf,
+  $rkt_api_endpoint                      = $kubernetes::node::params::kubelet_rkt_api_endpoint,
   $rkt_path                              = $kubernetes::node::params::kubelet_rkt_path,
-  $rkt_stage1_image                      = $kubernetes::node::params::kubelet_rkt_stage1_image,
   $root_dir                              = $kubernetes::node::params::kubelet_root_dir,
+  $runonce                               = $kubernetes::node::params::kubelet_runonce,
   $runtime_cgroups                       = $kubernetes::node::params::kubelet_runtime_cgroups,
+  $runtime_request_timeout               = $kubernetes::node::params::kubelet_runtime_request_timeout,
   $serialize_image_pulls                 = $kubernetes::node::params::kubelet_serialize_image_pulls,
   $streaming_connection_idle_timeout     = $kubernetes::node::params::kubelet_streaming_connection_idle_timeout,
   $sync_frequency                        = $kubernetes::node::params::kubelet_sync_frequency,
@@ -443,25 +551,6 @@ class kubernetes::node::kubelet (
 
   if $cert_dir and ($tls_cert_file or $tls_private_key_file) {
     fail('You can\'t use both of cert_dir and tls_*.')
-  }
-
-  # Autoregister and create docker bridge
-  if $register_node and $configure_cbr0 {
-    package { ['bridge-utils']: ensure => 'present', } ->
-    file { '/etc/kubernetes/node_initial.yaml':
-      ensure  => 'file',
-      content => template("${module_name}/node.yaml.erb"),
-    } ->
-    exec { 'register node':
-      command => "/bin/kubectl create --server=${api_servers} -f /etc/kubernetes/node_initial.yaml",
-      unless  => "/bin/kubectl describe nodes --server=${api_servers} ${::fqdn}",
-    } ->
-    # if we configure cbr0, most probably docker will have to wait for this first to be configured,
-    exec { 'force kubelet to create cbr0':
-      command => "/bin/kubelet --runonce=true --api_servers=${api_servers} --configure-cbr0=true --enable-server=false",
-      creates => '/sys/class/net/cbr0/',
-      returns => 1,
-    } ~> Service['docker']
   }
 
   if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
@@ -504,11 +593,11 @@ class kubernetes::node::kubelet (
     content => template("${module_name}/etc/kubernetes/kubelet.erb"),
   } ~> Service['kubelet']
 
-  if $config {
-    file { $config:
+  if $pod_manifest_path {
+    file { $pod_manifest_path:
       ensure  => directory,
       recurse => true,
-      purge   => $config_purge,
+      purge   => $pod_manifest_path_purge,
       owner   => 'root',
       group   => 'root',
       mode    => '0755',
