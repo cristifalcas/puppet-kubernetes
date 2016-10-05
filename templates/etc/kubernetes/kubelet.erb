@@ -144,7 +144,6 @@ KUBELET_ARGS="<% -%>
 <% if @kube_api_content_type -%>
  --kube-api-content-type=<%= scope['kubernetes::node::kubelet::kube_api_content_type'] -%>
 <% end -%>
-
 <% if @kube_api_qps -%>
  --kube-api-qps=<%= scope['kubernetes::node::kubelet::kube_api_qps'] -%>
 <% end -%>
