@@ -10,6 +10,9 @@ KUBELET_PORT="--port=<%= scope['kubernetes::node::kubelet::port'] %>"
 # You may leave this blank to use the actual hostname
 KUBELET_HOSTNAME="--hostname-override=<%= scope['kubernetes::node::kubelet::hostname_override'] %>"
 
+# location of the api-server
+KUBELET_API_SERVER="--api-servers=<%= Array(scope['kubernetes::node::kubelet::api_servers']).join(',') %>" 
+
 # Add your own!
 KUBELET_ARGS="<% -%>
  --allow-privileged=<%= scope['kubernetes::node::kubelet::allow_privileged'] -%>

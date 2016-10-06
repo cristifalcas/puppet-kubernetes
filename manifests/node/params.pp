@@ -10,6 +10,7 @@ class kubernetes::node::params {
   $kubelet_pod_manifest_path_purge = false
   $kubelet_address = '0.0.0.0'
   $kubelet_allow_privileged = false
+  $kubelet_api_servers = ['http://127.0.0.1:8080']
   $kubelet_cadvisor_port = undef
   $kubelet_cert_dir = undef
   $kubelet_cgroup_root = undef

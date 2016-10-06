@@ -31,6 +31,11 @@
 #   If true, allow containers to request privileged mode.
 #   Defaults to false
 #
+# [*api_servers*]
+#   List of Kubernetes API servers for publishing events, and reading pods and services. (ip:port), comma separated.
+#   Type: Array or String
+#   Defaults to 'http://127.0.0.1:8080'
+#
 # [*cadvisor_port*]
 #   The port of the localhost cAdvisor endpoint
 #   Defaults to undef
@@ -449,6 +454,7 @@ class kubernetes::node::kubelet (
   $pod_manifest_path_purge               = $kubernetes::node::params::kubelet_pod_manifest_path_purge,
   $address                               = $kubernetes::node::params::kubelet_address,
   $allow_privileged                      = $kubernetes::node::params::kubelet_allow_privileged,
+  $api_servers                           = $kubernetes::node::params::kubelet_api_servers,
   $cadvisor_port                         = $kubernetes::node::params::kubelet_cadvisor_port,
   $cert_dir                              = $kubernetes::node::params::kubelet_cert_dir,
   $cgroup_root                           = $kubernetes::node::params::kubelet_cgroup_root,
