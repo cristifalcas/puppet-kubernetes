@@ -19,6 +19,13 @@ spec:
       requests:
         cpu: <%= @pod_cpu %>
         memory: <%= @pod_memory %>
+    livenessProbe:
+      httpGet:
+        host: 127.0.0.1
+        path: /healthz
+        port: <%= @insecure_port %>
+      initialDelaySeconds: 30
+      timeoutSeconds: 3
     ports:
     - containerPort: <%= @secure_port %>
       hostPort: <%= @secure_port %>
