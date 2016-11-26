@@ -112,6 +112,14 @@
 #    If not defined, defaults to default-scheduler
 #   Defaults to undef
 #
+# [*verbosity*]
+#   Set logger verbosity
+#   Defaults to 2
+#
+# [*extra_args*]
+#   Add your own
+#   Defaults to undef
+#
 class kubernetes::master::scheduler (
   $ensure                             = $kubernetes::master::params::kube_scheduler_service_ensure,
   $journald_forward_enable            = $kubernetes::master::params::kube_scheduler_journald_forward_enable,
@@ -177,7 +185,7 @@ class kubernetes::master::scheduler (
         enable => $enable,
       }
 
-      if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
+      if $journald_forward_enable and $::operatingsystemmajrelease == '7' {
         file { '/etc/systemd/system/kube-scheduler.service.d':
           ensure => 'directory',
           owner  => 'root',

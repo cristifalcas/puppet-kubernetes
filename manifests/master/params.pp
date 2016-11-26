@@ -16,7 +16,7 @@ class kubernetes::master::params {
     'SecurityContextDeny',
     'ServiceAccount',
     'ResourceQuota',
-    ]
+  ]
   $kube_api_admission_control_config_file = undef
   $kube_api_advertise_address = undef
   $kube_api_allow_privileged = false

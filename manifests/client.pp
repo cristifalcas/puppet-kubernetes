@@ -5,9 +5,17 @@
 #
 # Parameters:
 #
+# [*manage_package*]
+#   If the module should take care of installing the package
+#   Defaults to true
+#
 # [*ensure*]
 #   Set package version to be installed or use 'installed'/'latest'
 #   Defaults to installed
+#
+# [*purge_kube_dir*]
+#   If we should purge the kubernetes config directory
+#   Defaults to false
 #
 class kubernetes::client (
   $manage_package = true,

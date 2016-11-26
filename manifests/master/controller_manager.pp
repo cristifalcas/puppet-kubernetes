@@ -306,6 +306,18 @@
 #   Fraction of Nodes in a zone which needs to be not Ready (minimum 3) for zone to be treated as unhealthy.
 #   Defaults to undef. (default 0.55)
 #
+# [*kube_api_qps*]
+#  QPS to use while talking with kubernetes apiserver
+#   Defaults to 20
+#
+# [*verbosity*]
+#   Set log verbosity
+#   Defaults to 2
+#
+# [*extra_args*]
+#   Add your own
+#   Defaults to undef.
+#
 class kubernetes::master::controller_manager (
   $ensure                                     = $kubernetes::master::params::kube_controller_service_ensure,
   $journald_forward_enable                    = $kubernetes::master::params::kube_controller_journald_forward_enable,
@@ -414,7 +426,7 @@ class kubernetes::master::controller_manager (
         enable => $enable,
       }
 
-      if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
+      if $journald_forward_enable and $::operatingsystemmajrelease == '7' {
         file { '/etc/systemd/system/kube-controller-manager.service.d':
           ensure => 'directory',
           owner  => 'root',

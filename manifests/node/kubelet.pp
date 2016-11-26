@@ -444,6 +444,10 @@
 #     To disable volume calculations, set to 0.  Default: '1m'
 #   Default to '1m0s'
 #
+# [*verbosity*]
+#   Set logger verbosity
+#   Defaults to 2
+#
 # [*extra_args*]
 #   Add your own!
 #
@@ -559,7 +563,7 @@ class kubernetes::node::kubelet (
     fail('You can\'t use both of cert_dir and tls_*.')
   }
 
-  if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
+  if $journald_forward_enable and $::operatingsystemmajrelease == '7' {
     file { '/etc/systemd/system/kubelet.service.d':
       ensure => 'directory',
       owner  => 'root',

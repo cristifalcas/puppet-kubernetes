@@ -56,7 +56,7 @@ Install the node or master from packages with the latest version:
 	    master => 'http://127.0.0.1:8080',
 	  }
 
-	  class { 'kubernetes::master::kube_proxy':
+	  class { 'kubernetes::node::kube_proxy':
 	    master => 'http://127.0.0.1:8080',
 	  }
 

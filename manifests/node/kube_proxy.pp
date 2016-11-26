@@ -139,8 +139,13 @@
 #   Only applicable for proxy-mode=userspace
 #   Defaults to undef
 #
-# [*args*]
-#   Add your own!
+# [*verbosity*]
+#   Set logger verbosity
+#   Defaults to 2
+#
+# [*extra_args*]
+#   Add your own
+#   Defaults to undef
 #
 class kubernetes::node::kube_proxy (
   $ensure                            = $kubernetes::node::params::kube_proxy_service_ensure,
@@ -191,7 +196,7 @@ class kubernetes::node::kube_proxy (
             ensure  => 'file',
             force   => true,
             content => template("${module_name}/etc/default/proxy.erb"),
-            notify  => Service[kube-proxy],
+            notify  => Service['kube-proxy'],
           }
         }
         default  : {
@@ -202,7 +207,7 @@ class kubernetes::node::kube_proxy (
       file { '/etc/kubernetes/proxy':
         ensure  => 'file',
         content => template("${module_name}/etc/kubernetes/proxy.erb"),
-        notify  => Service[kube-proxy],
+        notify  => Service['kube-proxy'],
       }
 
       service { 'kube-proxy':
@@ -210,7 +215,7 @@ class kubernetes::node::kube_proxy (
         enable => $enable,
       }
 
-      if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
+      if $journald_forward_enable and $::operatingsystemmajrelease == '7' {
         file { '/etc/systemd/system/kube-proxy.service.d':
           ensure => 'directory',
           owner  => 'root',
@@ -238,12 +243,12 @@ class kubernetes::node::kube_proxy (
       }
 
       file { '/etc/kubernetes/manifests/pod_kube-proxy.yml':
-          ensure  => $ensure_file,
-          owner   => 'root',
-          group   => 'root',
-          mode    => '0644',
-          content => template("${module_name}/pods/pod_kube-proxy.yml.erb"),
-        }
+        ensure  => $ensure_file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        content => template("${module_name}/pods/pod_kube-proxy.yml.erb"),
+      }
     }
     'container' : {
       if $enable {

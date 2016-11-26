@@ -336,6 +336,14 @@
 #   where size is a number. It takes effect when watch-cache is enabled.
 #   Default undef
 #
+# [*verbosity*]
+#   Set the log verbosity
+#   Default 2
+#
+# [*extra_args*]
+#   Set your own 
+#   Default undef
+#
 class kubernetes::master::apiserver (
   $service_cluster_ip_range,
   $ensure                                       = $kubernetes::master::params::kube_api_service_ensure,
@@ -450,7 +458,7 @@ class kubernetes::master::apiserver (
         enable => $enable,
       }
 
-      if $journald_forward_enable and $::operatingsystemmajrelease == 7 {
+      if $journald_forward_enable and $::operatingsystemmajrelease == '7' {
         file { '/etc/systemd/system/kube-apiserver.service.d':
           ensure => 'directory',
           owner  => 'root',
