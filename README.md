@@ -160,7 +160,7 @@ same with flannel:
 		  etcd_prefix => "/company/kubernetes/${::organization}",
 		}
 		class { '::flannel':
-		  etcd_prefix => "/optymyze/network/${::organization}",
+		  etcd_prefix => "/company/network/${::organization}",
 		}
 
 We use a "bootstrap" role that installs the classes from this module like this:
