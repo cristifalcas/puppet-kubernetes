@@ -261,7 +261,7 @@ class kubernetes::node::kube_proxy (
       docker::run { 'kube-proxy':
         ensure           => $ensure_container,
         image            => $container_image,
-        command          => '/hyperkube proxy ${args}',
+        command          => "/hyperkube proxy ${args}",
         volumes          => ['/etc/pki:/etc/pki', '/etc/ssl:/etc/ssl', '/etc/kubernetes:/etc/kubernetes',],
         restart_service  => true,
         net              => 'host',

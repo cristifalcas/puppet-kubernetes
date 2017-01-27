@@ -231,7 +231,7 @@ class kubernetes::master::scheduler (
       docker::run { 'kube-scheduler':
         ensure           => $ensure_container,
         image            => $container_image,
-        command          => '/hyperkube scheduler ${args}',
+        command          => "/hyperkube scheduler ${args}",
         volumes          => ['/etc/pki:/etc/pki', '/etc/ssl:/etc/ssl', '/etc/kubernetes:/etc/kubernetes',],
         restart_service  => true,
         net              => 'host',
