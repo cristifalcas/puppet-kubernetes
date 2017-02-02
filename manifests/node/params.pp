@@ -64,6 +64,8 @@ class kubernetes::node::params {
   $kubelet_lock_file = undef
   $kubelet_low_diskspace_threshold_mb = 256
   $kubelet_make_iptables_util_chains = undef
+  $kubelet_manage_package_client = true
+  $kubelet_manage_package_node = true
   $kubelet_manifest_url = undef
   $kubelet_manifest_url_header = undef
   $kubelet_master_service_namespace = undef
