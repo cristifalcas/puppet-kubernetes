@@ -96,7 +96,7 @@ to each node a subnet from the same ip class. You can self register a node with 
 by setting the parameter register_node => true and the desired subnet in pod_cidr parameter:
 
 		class { 'kubernetes::node::kubelet':
-		  ensure         => 'latest',
+		  ensure         => 'running',
 		  address        => '0.0.0.0',
 		  api_servers    => 'http://k-api.company.net:8080',
 		  configure_cbr0 => true,

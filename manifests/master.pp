@@ -16,7 +16,7 @@ class kubernetes::master (
   $manage_package = true,
   $ensure         = 'present',
 ) {
-  validate_string($ensure)
+  validate_legacy("NotUndef[String]", "validate_re", "${ensure}", ["."])
 
   include ::kubernetes::client
 
