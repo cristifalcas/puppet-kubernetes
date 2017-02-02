@@ -505,7 +505,7 @@ class kubernetes::master::apiserver (
       docker::run { 'kube-apiserver':
         ensure           => $ensure_container,
         image            => $container_image,
-        command          => "/hyperkube apiserver ${args}",
+        command          => '/hyperkube apiserver ${args}',
         volumes          => ['/etc/pki:/etc/pki', '/etc/ssl:/etc/ssl', '/etc/kubernetes:/etc/kubernetes',],
         restart_service  => true,
         net              => 'host',

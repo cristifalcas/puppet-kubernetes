@@ -4,7 +4,7 @@ class kubernetes::master::params {
   # api server config
   $kube_api_manage_as = 'service'
   $kube_api_container_image = 'gcr.io/google_containers/hyperkube-amd64:v1.4.0'
-  $kube_api_pod_cpu = '100m'
+  $kube_api_pod_cpu = '300m'
   $kube_api_pod_memory = '700Mi'
   $kube_api_service_ensure = running
   $kube_api_journald_forward_enable = false

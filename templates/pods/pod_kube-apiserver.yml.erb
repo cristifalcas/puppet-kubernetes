@@ -26,13 +26,6 @@ spec:
         port: <%= @insecure_port %>
       initialDelaySeconds: 30
       timeoutSeconds: 3
-    ports:
-    - containerPort: <%= @secure_port %>
-      hostPort: <%= @secure_port %>
-      name: https
-    - containerPort: <%= @insecure_port %>
-      hostPort: <%= @insecure_port %>
-      name: local
     volumeMounts:
     - mountPath: /etc/pki
       name: etcpki

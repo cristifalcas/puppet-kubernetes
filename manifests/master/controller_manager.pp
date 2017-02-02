@@ -472,7 +472,7 @@ class kubernetes::master::controller_manager (
       docker::run { 'kube-controller-manager':
         ensure           => $ensure_container,
         image            => $container_image,
-        command          => "/hyperkube controller-manager ${args}",
+        command          => '/hyperkube controller-manager ${args}',
         volumes          => ['/etc/pki:/etc/pki', '/etc/ssl:/etc/ssl', '/etc/kubernetes:/etc/kubernetes',],
         restart_service  => true,
         net              => 'host',
