@@ -569,11 +569,11 @@ class kubernetes::node::kubelet (
   validate_bool($manage_package_node)
   validate_bool($manage_package_client)
 
-  class { ':kubernetes::node':
+  class { '::kubernetes::node':
     manage_package => $manage_package_node,
   }
 
-  class { ':kubernetes::node':
+  class { '::kubernetes::client':
     manage_package => $manage_package_client,
   }
 
