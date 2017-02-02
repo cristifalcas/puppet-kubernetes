@@ -267,6 +267,14 @@
 #   If true, kubelet will ensure iptables utility rules are present on host.
 #   Defaults to undef. (default true)
 #
+# [*manage_package_client*]
+#   Wether to manage installation of kubernetes-client package
+#   Defaults to true
+#
+# [*manage_package_node*]
+#   Wether to manage installation of kubernetes-node package
+#   Defaults to true
+#
 # [*manifest_url*]
 #   URL for accessing the container manifest
 #   Defaults to undef
@@ -511,6 +519,8 @@ class kubernetes::node::kubelet (
   $lock_file                             = $kubernetes::node::params::kubelet_lock_file,
   $low_diskspace_threshold_mb            = $kubernetes::node::params::kubelet_low_diskspace_threshold_mb,
   $make_iptables_util_chains             = $kubernetes::node::params::kubelet_make_iptables_util_chains,
+  $manage_package_client                 = $kubernetes::node::params::kubelet_manage_package_client,
+  $manage_package_node                   = $kubernetes::node::params::kubelet_manage_package_node,
   $manifest_url                          = $kubernetes::node::params::kubelet_manifest_url,
   $manifest_url_header                   = $kubernetes::node::params::kubelet_manifest_url_header,
   $master_service_namespace              = $kubernetes::node::params::kubelet_master_service_namespace,
@@ -556,6 +566,16 @@ class kubernetes::node::kubelet (
 ) inherits kubernetes::node::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)
+  validate_bool($manage_package_node)
+  validate_bool($manage_package_client)
+
+  class { '::kubernetes::node':
+    manage_package => $manage_package_node,
+  }
+
+  class { '::kubernetes::client':
+    manage_package => $manage_package_client,
+  }
 
   include ::kubernetes::node
 
