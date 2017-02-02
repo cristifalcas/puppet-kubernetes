@@ -577,8 +577,6 @@ class kubernetes::node::kubelet (
     manage_package => $manage_package_client,
   }
 
-  include ::kubernetes::node
-
   if $cert_dir and ($tls_cert_file or $tls_private_key_file) {
     fail('You can\'t use both of cert_dir and tls_*.')
   }
