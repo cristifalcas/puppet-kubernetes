@@ -61,7 +61,7 @@
 # [*cloud_provider*]
 #   The provider for cloud services. By default, kubelet will attempt to auto-detect the cloud provider.
 #   Specify empty string for running with no cloud provider. [default=auto-detect]
-#   Default undef. (default "auto-detect")
+#   Default undef.
 #
 # [*cluster_dns*]
 #   IP address for a cluster DNS server.  This value is used for containers' DNS server in case of Pods with "dnsPolicy=ClusterFirst"
@@ -556,6 +556,18 @@ class kubernetes::node::kubelet (
 ) inherits kubernetes::node::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)
+  if $allow_privileged { validate_bool($allow_privileged) }
+  if $containerized { validate_bool($containerized) }
+  if $cpu_cfs_quota { validate_bool($cpu_cfs_quota) }
+  if $enable_controller_attach_detach { validate_bool($enable_controller_attach_detach) }
+  if $enable_custom_metrics { validate_bool($enable_custom_metrics) }
+  if $enable_debugging_handlers { validate_bool($enable_debugging_handlers) }
+  if $enable_server { validate_bool($enable_server) }
+  if $register_node { validate_bool($register_node) }
+  if $register_schedulable { validate_bool($register_schedulable) }
+  if $require_kubeconfig { validate_bool($require_kubeconfig) }
+  if $runonce { validate_bool($runonce) }
+  if $serialize_image_pulls { validate_bool($serialize_image_pulls) }
 
   include ::kubernetes::node
 
