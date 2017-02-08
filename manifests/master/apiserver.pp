@@ -51,6 +51,12 @@
 #   If true, allow privileged containers.
 #   Defaults to false.
 #
+# [*anonymous_auth*]
+#   Enables anonymous requests to the secure port of the API server.
+#   Requests that are not rejected by another authentication method are treated as anonymous requests.
+#   Anonymous requests have a username of system:anonymous, and a group name of system:unauthenticated. (default true)
+#   Defaults to undef.
+#
 # [*apiserver_count*]
 #   The number of apiservers running in the cluster
 #   Defaults to 1.
@@ -86,6 +92,11 @@
 #
 # [*authorization_policy_file*]
 #   File with authorization policy in csv format, used with --authorization-mode=ABAC, on the secure port.
+#   Default undef.
+#
+# [*authorization_rbac_super_user*]
+#   If specified, a username which avoids RBAC authorization checks and role binding privilege escalation checks,
+#   to be used with --authorization-mode=RBAC.
 #   Default undef.
 #
 # [*authorization_webhook_cache_authorized_ttl*]
@@ -168,8 +179,8 @@
 #   Default /registry
 #
 # [*etcd_quorum_read*]
-#   If true, enable quorum read
-#   Default false
+#   If true, enable quorum read (default true)
+#   Default undef
 #
 # [*etcd_servers*]
 #   List of etcd servers to watch (http://ip:port), comma separated.
@@ -185,12 +196,25 @@
 #   Amount of time to retain events. Default 1 hour.
 #   Default 1h0m0s
 #
+# [*experimental_keystone_ca_file*]
+#   If set, the Keystone server's certificate will be verified by one of the authorities in the
+#   experimental-keystone-ca-file, otherwise the host's root CA set will be used.
+#   Default undef
+#
+# [*experimental_keystone_url*]
+#   If passed, activates the keystone authentication plugin.
+#   Default undef
+#
 # [*external_hostname*]
 #   The hostname to use when generating externalized URLs for this master (e.g. Swagger API Docs.)
 #   Default undef
 #
 # [*google_json_key*]
 #   The Google Cloud Platform Service Account JSON Key to use for authentication.
+#   Default undef
+#
+# [*insecure_allow_any_token*]
+#   If set, your server will be INSECURE.  Any token will be allowed and user information will be parsed from the token as username/group1,group2
 #   Default undef
 #
 # [*insecure_bind_address*]
@@ -219,6 +243,10 @@
 # [*kubelet_https*]
 #   Use https for kubelet connections
 #   Default true
+#
+# [*kubelet_preferred_address_types*]
+#   List of the preferred NodeAddressTypes to use for kubelet connections. (default [Hostname,InternalIP,ExternalIP,LegacyHostIP])
+#   Default undef
 #
 # [*kubelet_timeout*]
 #   Timeout for kubelet operations
@@ -260,8 +288,22 @@
 #
 # [*repair_malformed_updates*]
 #   If true, server will do its best to fix the update request to pass the validation, e.g., setting empty UID in update request
-#   to its existing value. This flag can be turned off after we fix all the clients that send malformed updates.
-#   Default true
+#   to its existing value. This flag can be turned off after we fix all the clients that send malformed updates. (default true)
+#   Default undef
+#
+# [*requestheader_allowed_names*]
+#   List of client certificate common names to allow to provide usernames in headers specified by --requestheader-username-headers.
+#   If empty, any client certificate validated by the authorities in --requestheader-client-ca-file is allowed.
+#   Default undef
+#
+# [*requestheader_client_ca_file*]
+#   Root certificate bundle to use to verify client certificates on incoming requests before trusting usernames in headers specified
+#   by --requestheader-username-headers
+#   Default undef
+#
+# [*requestheader_username_headers*]
+#   List of request headers to inspect for usernames. X-Remote-User is common.
+#   Default undef
 #
 # [*runtime_config*]
 #   A set of key=value pairs that describe runtime configuration that may be passed to apiserver.
@@ -279,8 +321,8 @@
 #   Default undef
 #
 # [*service_account_lookup*]
-#   If true, validate ServiceAccount tokens exist in etcd as part of authentication.
-#   Default false
+#   If true, validate ServiceAccount tokens exist in etcd as part of authentication. (default false)
+#   Default undef
 #
 # [*service_cluster_ip_range*]
 #   A CIDR notation IP range from which to assign service cluster IPs. This must not overlap
@@ -309,8 +351,22 @@
 #   Some resources may only support a specific media type and will ignore this setting. (default "application/json")
 #   Default undef
 #
+# [*storage_versions*]
+#   The per-group version to store resources in. Specified in the format "group1/version1,group2/version2,...".
+#   In the case where objects are moved from one group to the other, you may specify the format
+#   "group1=group2/v1beta1,group3/v1beta1,...". You only need to pass the groups you wish to change from the defaults.
+#   It defaults to a list of preferred versions of all registered groups, which is derived from the KUBE_API_VERSIONS
+#   environment variable.
+#  (default "apps/v1beta1,authentication.k8s.io/v1beta1,authorization.k8s.io/v1beta1,autoscaling/v1,batch/v1,certificates.k8s.io/v1alpha1,
+#  componentconfig/v1alpha1,extensions/v1beta1,imagepolicy.k8s.io/v1alpha1,policy/v1beta1,rbac.authorization.k8s.io/v1alpha1,storage.k8s.io/v1beta1,v1")
+#   Default undef
+#
 # [*target_ram_mb*]
 #   Memory limit for apiserver in MB (used to configure sizes of caches, etc.)
+#   Default undef
+#
+# [*tls_ca_file*]
+#   f set, this certificate authority will used for secure access from Admission Controllers. This must be a valid PEM-encoded CA bundle.
 #   Default undef
 #
 # [*tls_cert_file*]
@@ -323,13 +379,20 @@
 #   File containing x509 private key matching --tls-cert-file.
 #   Default undef
 #
+# [*tls_sni_cert_key*]
+#   A pair of x509 certificate and private key file paths, optionally suffixed with a list of domain patterns which are fully qualified
+#   domain names, possibly with prefixed wildcard segments. If no domain patterns are provided, the names of the certificate are extracted.
+#   Non-wildcard matches trump over wildcard matches, explicit domain patterns trump over extracted names. For multiple key/certificate pairs,
+#   use the --tls-sni-cert-key multiple times. Examples: "example.key,example.crt" or "*.foo.com,foo.com:foo.key,foo.crt". (default [])
+#   Default undef
+#
 # [*token_auth_file*]
 #   If set, the file that will be used to secure the secure port of the API server via token authentication.
 #   Default undef
 #
 # [*watch_cache*]
-#   Enable watch caching in the apiserver
-#   Default true
+#   Enable watch caching in the apiserver (default true)
+#   Default undef
 #
 # [*watch_cache_sizes*]
 #   List of watch cache sizes for every resource (pods, nodes, etc.), comma separated. The individual override format: resource#size,
@@ -357,6 +420,7 @@ class kubernetes::master::apiserver (
   $admission_control_config_file                = $kubernetes::master::params::kube_api_admission_control_config_file,
   $advertise_address                            = $kubernetes::master::params::kube_api_advertise_address,
   $allow_privileged                             = $kubernetes::master::params::kube_api_allow_privileged,
+  $anonymous_auth                               = $kubernetes::master::params::kube_api_anonymous_auth,
   $apiserver_count                              = $kubernetes::master::params::kube_api_server_count,
   $audit_log_maxage                             = $kubernetes::master::params::kube_api_audit_log_maxage,
   $audit_log_maxbackup                          = $kubernetes::master::params::kube_api_audit_log_maxbackup,
@@ -366,6 +430,7 @@ class kubernetes::master::apiserver (
   $authentication_token_webhook_config_file     = $kubernetes::master::params::kube_api_authentication_token_webhook_config_file,
   $authorization_mode                           = $kubernetes::master::params::kube_api_authorization_mode,
   $authorization_policy_file                    = $kubernetes::master::params::kube_api_authorization_policy_file,
+  $authorization_rbac_super_user                = $kubernetes::master::params::kube_api_authorization_rbac_super_user,
   $authorization_webhook_cache_authorized_ttl   = $kubernetes::master::params::kube_api_authorization_webhook_cache_authorized_ttl,
   $authorization_webhook_cache_unauthorized_ttl = $kubernetes::master::params::kube_api_authorization_webhook_cache_unauthorized_ttl,
   $authorization_webhook_config_file            = $kubernetes::master::params::kube_api_authorization_webhook_config_file,
@@ -388,14 +453,18 @@ class kubernetes::master::apiserver (
   $etcd_servers                                 = $kubernetes::master::params::kube_api_etcd_servers,
   $etcd_servers_overrides                       = $kubernetes::master::params::kube_api_etcd_servers_overrides,
   $event_ttl                                    = $kubernetes::master::params::kube_api_event_ttl,
+  $experimental_keystone_ca_file                = $kubernetes::master::params::kube_api_experimental_keystone_ca_file,
+  $experimental_keystone_url                    = $kubernetes::master::params::kube_api_experimental_keystone_url,
   $external_hostname                            = $kubernetes::master::params::kube_api_external_hostname,
   $google_json_key                              = $kubernetes::master::params::kube_api_google_json_key,
+  $insecure_allow_any_token                     = $kubernetes::master::params::kube_api_insecure_allow_any_token,
   $insecure_bind_address                        = $kubernetes::master::params::kube_api_insecure_bind_address,
   $insecure_port                                = $kubernetes::master::params::kube_api_insecure_port,
   $kubelet_certificate_authority                = $kubernetes::master::params::kube_api_kubelet_certificate_authority,
   $kubelet_client_certificate                   = $kubernetes::master::params::kube_api_kubelet_client_certificate,
   $kubelet_client_key                           = $kubernetes::master::params::kube_api_kubelet_client_key,
   $kubelet_https                                = $kubernetes::master::params::kube_api_kubelet_https,
+  $kubelet_preferred_address_types              = $kubernetes::master::params::kube_api_kubelet_preferred_address_types,
   $kubelet_timeout                              = $kubernetes::master::params::kube_api_kubelet_timeout,
   $kubernetes_service_node_port                 = $kubernetes::master::params::kube_api_kubernetes_service_node_port,
   $long_running_request_regexp                  = $kubernetes::master::params::kube_api_long_running_request_regexp,
@@ -404,6 +473,9 @@ class kubernetes::master::apiserver (
   $max_requests_inflight                        = $kubernetes::master::params::kube_api_max_requests_inflight,
   $min_request_timeout                          = $kubernetes::master::params::kube_api_min_request_timeout,
   $profiling                                    = $kubernetes::master::params::kube_api_profiling,
+  $requestheader_allowed_names                  = $kubernetes::master::params::kube_api_requestheader_allowed_names,
+  $requestheader_client_ca_file                 = $kubernetes::master::params::kube_api_requestheader_client_ca_file,
+  $requestheader_username_headers               = $kubernetes::master::params::kube_api_requestheader_username_headers,
   $repair_malformed_updates                     = $kubernetes::master::params::kube_api_repair_malformed_updates,
   $runtime_config                               = $kubernetes::master::params::kube_api_runtime_config,
   $secure_port                                  = $kubernetes::master::params::kube_api_secure_port,
@@ -414,9 +486,12 @@ class kubernetes::master::apiserver (
   $ssh_user                                     = $kubernetes::master::params::kube_api_ssh_user,
   $storage_backend                              = $kubernetes::master::params::kube_api_storage_backend,
   $storage_media_type                           = $kubernetes::master::params::kube_api_storage_media_type,
+  $storage_versions                             = $kubernetes::master::params::kube_api_storage_versions,
   $target_ram_mb                                = $kubernetes::master::params::kube_api_target_ram_mb,
+  $tls_ca_file                                  = $kubernetes::master::params::kube_api_tls_ca_file,
   $tls_cert_file                                = $kubernetes::master::params::kube_api_tls_cert_file,
   $tls_private_key_file                         = $kubernetes::master::params::kube_api_tls_private_key_file,
+  $tls_sni_cert_key                             = $kubernetes::master::params::kube_api_tls_sni_cert_key,
   $token_auth_file                              = $kubernetes::master::params::kube_api_token_auth_file,
   $watch_cache                                  = $kubernetes::master::params::kube_api_watch_cache,
   $watch_cache_sizes                            = $kubernetes::master::params::kube_api_watch_cache_sizes,
@@ -425,6 +500,15 @@ class kubernetes::master::apiserver (
 ) inherits kubernetes::master::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)
+  if $allow_privileged { validate_bool($allow_privileged) }
+  if $anonymous_auth { validate_bool($anonymous_auth) }
+  if $enable_garbage_collector { validate_bool($enable_garbage_collector) }
+  if $etcd_quorum_read { validate_bool($etcd_quorum_read) }
+  if $kubelet_https { validate_bool($kubelet_https) }
+  if $profiling { validate_bool($profiling) }
+  if $repair_malformed_updates { validate_bool($repair_malformed_updates) }
+  if $service_account_lookup { validate_bool($service_account_lookup) }
+  if $watch_cache { validate_bool($watch_cache) }
   validate_re($manage_as, '^(service|pod|container)$')
 
   case $manage_as {

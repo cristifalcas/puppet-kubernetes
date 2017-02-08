@@ -1,16 +1,21 @@
  --bind-address=<%= scope['kubernetes::node::kube_proxy::bind_address'] -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::node::kube_proxy::cleanup_iptables')) -%>
  --cleanup-iptables=<%= scope['kubernetes::node::kube_proxy::cleanup_iptables'] -%>
+<% end -%>
 <% if @cluster_cidr -%>
  --cluster-cidr=<%= scope['kubernetes::node::kube_proxy::cluster_cidr'] -%>
 <% end -%>
 <% if @config_sync_period -%>
  --config-sync-period=<%= scope['kubernetes::node::kube_proxy::config_sync_period'] -%>
 <% end -%>
-<% if @conntrack_max -%>
- --conntrack-max=<%= scope['kubernetes::node::kube_proxy::conntrack_max'] -%>
-<% end -%>
 <% if @conntrack_max_per_core -%>
  --conntrack-max-per-core=<%= scope['kubernetes::node::kube_proxy::conntrack_max_per_core'] -%>
+<% end -%>
+<% if @conntrack_min -%>
+ --conntrack-min=<%= scope['kubernetes::node::kube_proxy::conntrack_min'] -%>
+<% end -%>
+<% if @conntrack_tcp_timeout_close_wait -%>
+ --conntrack-tcp-timeout-close-wait=<%= scope['kubernetes::node::kube_proxy::conntrack_tcp_timeout_close_wait'] -%>
 <% end -%>
 <% if @conntrack_tcp_timeout_established -%>
  --conntrack-tcp-timeout-established=<%= scope['kubernetes::node::kube_proxy::conntrack_tcp_timeout_established'] -%>
@@ -22,6 +27,9 @@
 <% end -%>
 <% if @iptables_masquerade_bit -%>
  --iptables-masquerade-bit=<%= scope['kubernetes::node::kube_proxy::iptables_masquerade_bit'] -%>
+<% end -%>
+<% if @iptables_min_sync_period -%>
+ --iptables-min-sync-period=<%= scope['kubernetes::node::kube_proxy::iptables_min_sync_period'] -%>
 <% end -%>
 <% if @iptables_sync_period -%>
  --iptables-sync-period=<%= scope['kubernetes::node::kube_proxy::iptables_sync_period'] -%>
@@ -38,7 +46,9 @@
 <% if @kubeconfig -%>
  --kubeconfig=<%= scope['kubernetes::node::kube_proxy::kubeconfig'] -%>
 <% end -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::node::kube_proxy::masquerade_all')) -%>
  --masquerade-all=<%= scope['kubernetes::node::kube_proxy::masquerade_all'] -%>
+<% end -%>
 <% if @master -%>
  --master=<%= scope['kubernetes::node::kube_proxy::master'] -%>
 <% end -%>

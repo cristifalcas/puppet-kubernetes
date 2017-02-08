@@ -36,11 +36,14 @@
 <% end -%>
  --daemonset-lookup-cache-size=<%= scope['kubernetes::master::controller_manager::daemonset_lookup_cache_size'] -%>
  --deployment-controller-sync-period=<%= scope['kubernetes::master::controller_manager::deployment_controller_sync_period'] -%>
-<% if @enable_dynamic_provisioning then -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::controller_manager::enable_dynamic_provisioning')) -%>
  --enable_dynamic_provisioning=<%= scope['kubernetes::master::controller_manager::enable_dynamic_provisioning'] -%>
 <% end -%>
-<% if @enable_garbage_collector then -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::controller_manager::enable_garbage_collector')) -%>
  --enable-garbage-collector=<%= scope['kubernetes::master::controller_manager::enable_garbage_collector'] -%>
+<% end -%>
+<% if @flex_volume_plugin_dir then -%>
+ --flex-volume-plugin-dir=<%= scope['kubernetes::master::controller_manager::flex_volume_plugin_dir'] -%>
 <% end -%>
 <% if @google_json_key then -%>
  --google-json-key=<%= scope['kubernetes::master::controller_manager::google_json_key'] -%>
@@ -54,7 +57,10 @@
 <% if @kubeconfig then -%>
  --kubeconfig=<%= scope['kubernetes::master::controller_manager::kubeconfig'] -%>
 <% end -%>
-<% if @leader_elect then -%>
+<% if @large_cluster_size_threshold then -%>
+ --large-cluster-size-threshold=<%= scope['kubernetes::master::controller_manager::large_cluster_size_threshold'] -%>
+<% end -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::controller_manager::leader_elect')) -%>
  --leader-elect=<%= scope['kubernetes::master::controller_manager::leader_elect'] -%>
  --leader-elect-lease-duration=<%= scope['kubernetes::master::controller_manager::leader_elect_lease_duration'] -%>
  --leader-elect-renew-deadline=<%= scope['kubernetes::master::controller_manager::leader_elect_renew_deadline'] -%>
@@ -74,10 +80,11 @@
  --node-monitor-grace-period=<%= scope['kubernetes::master::controller_manager::node_monitor_grace_period'] -%>
  --node-monitor-period=<%= scope['kubernetes::master::controller_manager::node_monitor_period'] -%>
  --node-startup-grace-period=<%= scope['kubernetes::master::controller_manager::node_startup_grace_period'] -%>
- --node-sync-period=<%= scope['kubernetes::master::controller_manager::node_sync_period'] -%>
  --pod-eviction-timeout=<%= scope['kubernetes::master::controller_manager::pod_eviction_timeout'] -%>
  --port=<%= scope['kubernetes::master::controller_manager::port'] -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::controller_manager::profiling')) -%>
  --profiling=<%= scope['kubernetes::master::controller_manager::profiling'] -%>
+<% end -%>
 <% if @pv_recycler_increment_timeout_nfs then -%>
  --pv-recycler-increment-timeout-nfs=<%= scope['kubernetes::master::controller_manager::pv_recycler_increment_timeout_nfs'] -%>
 <% end -%>
@@ -102,6 +109,9 @@
  --replicaset-lookup-cache-size=<%= scope['kubernetes::master::controller_manager::replicaset_lookup_cache_size'] -%>
  --replication-controller-lookup-cache-size=<%= scope['kubernetes::master::controller_manager::replication_controller_lookup_cache_size'] -%>
  --resource-quota-sync-period=<%= scope['kubernetes::master::controller_manager::resource_quota_sync_period'] -%>
+<% if @route_reconciliation_period then -%>
+ --route-reconciliation-period=<%= scope['kubernetes::master::controller_manager::route_reconciliation_period'] -%>
+<% end -%>
 <% if @root_ca_file then -%>
  --root-ca-file=<%= scope['kubernetes::master::controller_manager::root_ca_file'] -%>
 <% end -%>
@@ -118,6 +128,9 @@
  --terminated-pod-gc-threshold=<%= scope['kubernetes::master::controller_manager::terminated_pod_gc_threshold'] -%>
 <% if @unhealthy_zone_threshold then -%>
  --unhealthy-zone-threshold=<%= scope['kubernetes::master::controller_manager::unhealthy_zone_threshold'] -%>
+<% end -%>
+<% if @use_service_account_credentials then -%>
+ --use-service-account-credentials=<%= scope['kubernetes::master::controller_manager::use_service_account_credentials'] -%>
 <% end -%>
  --v=<%= scope['kubernetes::master::controller_manager::verbosity'] -%>
  <%= scope['kubernetes::master::controller_manager::extra_args'] -%>

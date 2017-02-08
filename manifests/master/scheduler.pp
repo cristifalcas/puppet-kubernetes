@@ -39,6 +39,11 @@
 #   The scheduling algorithm provider to use, one of: DefaultProvider
 #   Defaults to DefaultProvider
 #
+# [*failure_domains*]
+#   Indicate the "all topologies" set for an empty topologyKey when it's used for PreferredDuringScheduling pod anti-affinity.
+#   (default "kubernetes.io/hostname,failure-domain.beta.kubernetes.io/zone,failure-domain.beta.kubernetes.io/region")
+#   Defaults to undef
+#
 # [*google_json_key*]
 #   The Google Cloud Platform Service Account JSON Key to use for authentication.
 #   Defaults to undef
@@ -130,6 +135,7 @@ class kubernetes::master::scheduler (
   $pod_memory                         = $kubernetes::master::params::kube_scheduler_pod_memory,
   $address                            = $kubernetes::master::params::kube_scheduler_address,
   $algorithm_provider                 = $kubernetes::master::params::kube_scheduler_algorithm_provider,
+  $failure_domains                    = $kubernetes::master::params::kube_scheduler_failure_domains,
   $google_json_key                    = $kubernetes::master::params::kube_scheduler_google_json_key,
   $hard_pod_affinity_symmetric_weight = $kubernetes::master::params::kube_scheduler_hard_pod_affinity_symmetric_weight,
   $kube_api_burst                     = $kubernetes::master::params::kube_scheduler_kube_api_burst,

@@ -53,14 +53,18 @@
 #    If undefined, defaults to 15m0s
 #   Defaults to undef
 #
-# [*conntrack_max*]
-#   Maximum number of NAT connections to track (0 to leave as-is)
-#    If undefined, defaults to 262144
-#   Defaults to undef
-#
 # [*conntrack_max_per_core*]
 #   Maximum number of NAT connections to track per CPU core (0 to leave as-is). This is only considered if conntrack-max is 0.
 #   Defaults to undef. (default 32768)
+#
+# [*conntrack_min*]
+#   Minimum number of conntrack entries to allocate, regardless of conntrack-max-per-core (set conntrack-max-per-core=0
+#   to leave the limit as-is). (default 131072)
+#   Defaults to undef
+#
+# [*conntrack_tcp_timeout_close_wait*]
+#   NAT timeout for TCP connections in the CLOSE_WAIT state (default 1h0m0s)
+#   Defaults to undef
 #
 # [*conntrack_tcp_timeout_established*]
 #   Idle timeout for established TCP connections (0 to leave as-is)
@@ -86,6 +90,10 @@
 # [*iptables_masquerade_bit*]
 #   If using the pure iptables proxy, the bit of the fwmark space to mark packets requiring SNAT with.  Must be within the range [0, 31].
 #    If undefined, defaults to 14
+#   Defaults to undef
+#
+# [*iptables_min_sync_period*]
+#   The minimum interval of how often the iptables rules can be refreshed as endpoints and services change (e.g. '5s', '1m', '2h22m').
 #   Defaults to undef
 #
 # [*iptables_sync_period*]
@@ -158,14 +166,16 @@ class kubernetes::node::kube_proxy (
   $bind_address                      = $kubernetes::node::params::kube_proxy_bind_address,
   $cleanup_iptables                  = $kubernetes::node::params::kube_proxy_cleanup_iptables,
   $config_sync_period                = $kubernetes::node::params::kube_proxy_config_sync_period,
-  $conntrack_max                     = $kubernetes::node::params::kube_proxy_conntrack_max,
   $conntrack_max_per_core            = $kubernetes::node::params::kube_proxy_conntrack_max_per_core,
+  $conntrack_min                     = $kubernetes::node::params::kube_proxy_conntrack_min,
+  $conntrack_tcp_timeout_close_wait  = $kubernetes::node::params::kube_proxy_conntrack_tcp_timeout_close_wait,
   $conntrack_tcp_timeout_established = $kubernetes::node::params::kube_proxy_conntrack_tcp_timeout_established,
   $google_json_key                   = $kubernetes::node::params::kube_proxy_google_json_key,
   $healthz_bind_address              = $kubernetes::node::params::kube_proxy_healthz_bind_address,
   $healthz_port                      = $kubernetes::node::params::kube_proxy_healthz_port,
   $hostname_override                 = $kubernetes::node::params::kube_proxy_hostname_override,
   $iptables_masquerade_bit           = $kubernetes::node::params::kube_proxy_iptables_masquerade_bit,
+  $iptables_min_sync_period          = $kubernetes::node::params::kube_proxy_iptables_min_sync_period,
   $iptables_sync_period              = $kubernetes::node::params::kube_proxy_iptables_sync_period,
   $kube_api_burst                    = $kubernetes::node::params::kube_proxy_kube_api_burst,
   $kube_api_content_type             = $kubernetes::node::params::kube_proxy_kube_api_content_type,
@@ -182,6 +192,8 @@ class kubernetes::node::kube_proxy (
 ) inherits kubernetes::node::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)
+  if $cleanup_iptables { validate_bool($cleanup_iptables) }
+  if $masquerade_all { validate_bool($masquerade_all) }
   validate_re($manage_as, '^(service|pod|container)$')
 
   case $manage_as {

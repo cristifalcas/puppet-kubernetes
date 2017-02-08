@@ -33,6 +33,7 @@ new parameters, or some parameters are removed.
 * Kubernetes 1.0, 1.1, 1.2: module version should be latest 1.x
 * Kubernetes 1.3: module version should be latest 2.x
 * Kubernetes 1.4: module version should be latest 3.x
+* Kubernetes 1.5: module version should be latest 4.x
 
 ## Usage:
 

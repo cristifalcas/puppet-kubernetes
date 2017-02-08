@@ -1,5 +1,8 @@
  --address=<%= scope['kubernetes::master::scheduler::address'] -%>
  --algorithm-provider=<%= scope['kubernetes::master::scheduler::algorithm_provider'] -%>
+<% if @failure_domains then -%>
+ --failure-domains string=<%= scope['kubernetes::master::scheduler::failure_domains'] -%>
+<% end -%>
 <% if @google_json_key then -%>
  --google-json-key=<%= scope['kubernetes::master::scheduler::google_json_key'] -%>
 <% end -%>

@@ -128,6 +128,11 @@
 #   Enables the generic garbage collector. MUST be synced with the corresponding flag of the kube-apiserver.
 #   Defaults to undef. (default true)
 #
+# [*flex_volume_plugin_dir*]
+#   Full path of the directory in which the flex volume plugin should search for additional third party volume plugins.
+#   (default "/usr/libexec/kubernetes/kubelet-plugins/volume/exec/")
+#   Defaults to undef
+#
 # [*google_json_key*]
 #   The Google Cloud Platform Service Account JSON Key to use for authentication.
 #   Defaults to undef
@@ -140,16 +145,21 @@
 #   Burst to use while talking with kubernetes apiserver
 #   Default 30
 #
-# [*kube_api_burst*]
-#   Burst to use while talking with kubernetes apiserver
-#   Default 30
-#
 # [*kube_api_content_type*]
 #   Content type of requests sent to apiserver.
 #   Default to undef. (default "application/vnd.kubernetes.protobuf")
 #
+# [*kube_api_qps*]
+#   QPS to use while talking with Kubernetes apiserver (default 20)
+#   Default undef
+#
 # [*kubeconfig*]
 #   Path to kubeconfig file with authorization and master location information.
+#   Defaults to undef
+#
+# [*large_cluster_size_threshold*]
+#   Number of nodes from which NodeController treats the cluster as large for the eviction logic purposes.
+#   --secondary-node-eviction-rate is implicitly overridden to 0 for clusters this size or smaller. (default 50)
 #   Defaults to undef
 #
 # [*leader_elect*]
@@ -207,11 +217,6 @@
 # [*node_startup_grace_period*]
 #   Amount of time which we allow starting Node to be unresponsive before marking it unhealty.
 #   Defaults to 1m0s
-#
-# [*node_sync_period*]
-#   The period for syncing nodes from cloudprovider. Longer periods will result in fewer calls to cloud
-#      provider, but may delay addition of new nodes to cluster.
-#   Defaults to 10s
 #
 # [*pod_eviction_timeout*]
 #   The grace period for deleting pods on failed nodes.
@@ -278,6 +283,10 @@
 #    This must be a valid PEM-encoded CA bundle.
 #   Defaults to undef
 #
+# [*route_reconciliation_period*]
+#   The period for reconciling routes created for Nodes by cloud provider. (default 10s)
+#   Defaults to undef
+#
 # [*secondary_node_eviction_rate*]
 #   Number of nodes per second on which pods are deleted in case of node failure when a zone is unhealthy
 #    (see --unhealthy-zone-threshold for definition of healthy/unhealthy). Zone refers to entire cluster
@@ -306,9 +315,9 @@
 #   Fraction of Nodes in a zone which needs to be not Ready (minimum 3) for zone to be treated as unhealthy.
 #   Defaults to undef. (default 0.55)
 #
-# [*kube_api_qps*]
-#  QPS to use while talking with kubernetes apiserver
-#   Defaults to 20
+# [*use_service_account_credentials*]
+#   If true, use individual service account credentials for each controller.
+#   Defaults to undef.
 #
 # [*verbosity*]
 #   Set log verbosity
@@ -348,12 +357,14 @@ class kubernetes::master::controller_manager (
   $deployment_controller_sync_period          = $kubernetes::master::params::kube_controller_deployment_controller_sync_period,
   $enable_dynamic_provisioning                = $kubernetes::master::params::kube_controller_enable_dynamic_provisioning,
   $enable_garbage_collector                   = $kubernetes::master::params::kube_controller_enable_garbage_collector,
+  $flex_volume_plugin_dir                     = $kubernetes::master::params::kube_controller_flex_volume_plugin_dir,
   $google_json_key                            = $kubernetes::master::params::kube_controller_google_json_key,
   $horizontal_pod_autoscaler_sync_period      = $kubernetes::master::params::kube_controller_horizontal_pod_autoscaler_sync_period,
   $kube_api_burst                             = $kubernetes::master::params::kube_controller_kube_api_burst,
   $kube_api_content_type                      = $kubernetes::master::params::kube_controller_kube_api_content_type,
   $kube_api_qps                               = $kubernetes::master::params::kube_controller_kube_api_qps,
   $kubeconfig                                 = $kubernetes::master::params::kube_controller_kubeconfig,
+  $large_cluster_size_threshold               = $kubernetes::master::params::kube_controller_large_cluster_size_threshold,
   $leader_elect                               = $kubernetes::master::params::kube_controller_leader_elect,
   $leader_elect_lease_duration                = $kubernetes::master::params::kube_controller_leader_elect_lease_duration,
   $leader_elect_renew_deadline                = $kubernetes::master::params::kube_controller_leader_elect_renew_deadline,
@@ -366,7 +377,6 @@ class kubernetes::master::controller_manager (
   $node_cidr_mask_size                        = $kubernetes::master::params::kube_controller_node_cidr_mask_size,
   $node_eviction_rate                         = $kubernetes::master::params::kube_controller_node_eviction_rate,
   $node_startup_grace_period                  = $kubernetes::master::params::kube_controller_node_startup_grace_period,
-  $node_sync_period                           = $kubernetes::master::params::kube_controller_node_sync_period,
   $pod_eviction_timeout                       = $kubernetes::master::params::kube_controller_pod_eviction_timeout,
   $port                                       = $kubernetes::master::params::kube_controller_port,
   $profiling                                  = $kubernetes::master::params::kube_controller_profiling,
@@ -380,6 +390,7 @@ class kubernetes::master::controller_manager (
   $replicaset_lookup_cache_size               = $kubernetes::master::params::kube_controller_replicaset_lookup_cache_size,
   $replication_controller_lookup_cache_size   = $kubernetes::master::params::kube_controller_replication_controller_lookup_cache_size,
   $resource_quota_sync_period                 = $kubernetes::master::params::kube_controller_resource_quota_sync_period,
+  $route_reconciliation_period                = $kubernetes::master::params::kube_controller_route_reconciliation_period,
   $root_ca_file                               = $kubernetes::master::params::kube_controller_root_ca_file,
   $secondary_node_eviction_rate               = $kubernetes::master::params::kube_controller_secondary_node_eviction_rate,
   $service_account_private_key_file           = $kubernetes::master::params::kube_controller_service_account_private_key_file,
@@ -387,11 +398,16 @@ class kubernetes::master::controller_manager (
   $service_sync_period                        = $kubernetes::master::params::kube_controller_service_sync_period,
   $terminated_pod_gc_threshold                = $kubernetes::master::params::kube_controller_terminated_pod_gc_threshold,
   $unhealthy_zone_threshold                   = $kubernetes::master::params::kube_controller_unhealthy_zone_threshold,
+  $use_service_account_credentials            = $kubernetes::master::params::kube_controller_use_service_account_credentials,
   $verbosity                                  = $kubernetes::master::params::kube_controller_verbosity,
   $extra_args                                 = $kubernetes::master::params::kube_controller_extra_args,
 ) inherits kubernetes::master::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)
+  if $enable_dynamic_provisioning { validate_bool($enable_dynamic_provisioning) }
+  if $enable_garbage_collector { validate_bool($enable_garbage_collector) }
+  if $leader_elect { validate_bool($leader_elect) }
+  if $profiling { validate_bool($profiling) }
   validate_re($manage_as, '^(service|pod|container)$')
 
   case $manage_as {

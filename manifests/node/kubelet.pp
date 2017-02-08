@@ -31,19 +31,50 @@
 #   If true, allow containers to request privileged mode.
 #   Defaults to false
 #
+# [*anonymous_auth*]
+#   Enables anonymous requests to the Kubelet server. Requests that are not rejected by another authentication method
+#   are treated as anonymous requests. Anonymous requests have a username of system:anonymous, and a group name of
+#   system:unauthenticated. (default true)
+#   Defaults to undef
+#
 # [*api_servers*]
 #   List of Kubernetes API servers for publishing events, and reading pods and services. (ip:port), comma separated.
 #   Type: Array or String
 #   Defaults to 'http://127.0.0.1:8080'
 #
+# [*authentication_token_webhook*]
+#   Use the TokenReview API to determine authentication for bearer tokens.
+#   Defaults to undef
+#
+# [*authentication_token_webhook_cache_ttl*]
+#   The duration to cache responses from the webhook token authenticator. (default 2m0s)
+#   Defaults to undef
+#
+# [*authorization_mode*]
+#   Authorization mode for Kubelet server. Valid options are AlwaysAllow or Webhook.
+#   Webhook mode uses the SubjectAccessReview API to determine authorization. (default "AlwaysAllow")
+#   Defaults to undef
+#
+# [*authorization_webhook_cache_authorized_ttl*]
+#   The duration to cache 'authorized' responses from the webhook authorizer. (default 5m0s)
+#   Defaults to undef
+#
+# [*authorization_webhook_cache_unauthorized_ttl*]
+#   The duration to cache 'unauthorized' responses from the webhook authorizer. (default 30s)
+#   Defaults to undef
+#
 # [*cadvisor_port*]
-#   The port of the localhost cAdvisor endpoint
+#   The port of the localhost cAdvisor endpoint (default 4194)
 #   Defaults to undef
 #
 # [*cert_dir*]
 #   The directory where the TLS certs are located (by default /var/run/kubernetes).
 #   If --tls_cert_file and --tls_private_key_file are provided, this flag will be ignored.
 #   Defaults to /var/run/kubernetes
+#
+# [*cgroup_driver*]
+#   Driver that the kubelet uses to manipulate cgroups on the host.  Possible values: 'cgroupfs', 'systemd' (default "cgroupfs")
+#   Defaults to undef
 #
 # [*cgroup_root*]
 #   Optional root cgroup to use for pods. This is handled by the container runtime on a best effort basis.
@@ -53,6 +84,11 @@
 # [*chaos_chance*]
 #   If > 0.0, introduce random client errors and latency. Intended for testing. [default=0.0]
 #   Defaults to undef
+#
+# [*client_ca_file*]
+#   If set, any request presenting a client certificate signed by one of the authorities in the client-ca-file
+#   is authenticated with an identity corresponding to the CommonName of the client certificate.
+#   Default undef
 #
 # [*cloud_config*]
 #   The path to the cloud provider configuration file.  Empty string for no configuration file.
@@ -69,10 +105,6 @@
 #
 # [*cluster_domain*]
 #   Domain for this cluster.  If set, kubelet will configure all containers to search this domain in addition to the host's search domains
-#   Defaults to undef
-#
-# [*configure_cbr0*]
-#   If true, kubelet will configure cbr0 based on Node.Spec.PodCIDR.
 #   Defaults to undef
 #
 # [*container_runtime*]
@@ -162,6 +194,46 @@
 #
 # [*exit_on_lock_contention*]
 #   Whether kubelet should exit upon lock-file contention.
+#   Defaults to undef
+#
+# [*experimental_allowed_unsafe_sysctls*]
+#   Comma-separated whitelist of unsafe sysctls or unsafe sysctl patterns (ending in *). Use these at your own risk.
+#   Defaults to undef
+#
+# [*experimental_bootstrap_kubeconfig*]
+#   <Warning: Experimental feature> Path to a kubeconfig file that will be used to get client certificate for kubelet.
+#   If the file specified by --kubeconfig does not exist, the bootstrap kubeconfig is used to request a client certificate
+#   from the API server. On success, a kubeconfig file referencing the generated key and obtained certificate is written
+#   to the path specified by --kubeconfig. The certificate and key file will be stored in the directory pointed by --cert-dir.
+#   Defaults to undef
+#
+# [*experimental_cgroups_per_qos*]
+#   Enable creation of QoS cgroup hierarchy, if true top level QoS and pod cgroups are created.
+#   Defaults to undef
+#
+# [*experimental_check_node_capabilities_before_mount*]
+#   [Experimental] if set true, the kubelet will check the underlying node for required components (binaries, etc.) before performing the mount
+#   Defaults to undef
+#
+# [*experimental_cri*]
+#   [Experimental] Enable the Container Runtime Interface (CRI) integration. If --container-runtime is set to "remote",
+#   Kubelet will communicate with the runtime/image CRI server listening on the endpoint specified by
+#   --remote-runtime-endpoint/--remote-image-endpoint. If --container-runtime is set to "docker", Kubelet will launch
+#   a in-process CRI server on behalf of docker, and communicate over a default endpoint.
+#   Defaults to undef
+#
+# [*experimental_fail_swap_on*]
+#   Makes the Kubelet fail to start if swap is enabled on the node. This is a temporary option to maintain legacy behavior,
+#   failing due to swap enabled will happen by default in v1.6.
+#   Defaults to undef
+#
+# [*experimental_kernel_memcg_notification*]
+#   If enabled, the kubelet will integrate with the kernel memcg notification to determine if memory eviction
+#   thresholds are crossed rather than polling.
+#   Defaults to undef
+#
+# [*experimental_mounter_path*]
+#   [Experimental] Path of mounter binary. Leave empty to use the default mount.
 #   Defaults to undef
 #
 # [*file_check_frequency*]
@@ -343,14 +415,6 @@
 #   Default kubelet behaviour for kernel tuning. If set, kubelet errors if any of kernel tunables is different than kubelet defaults.
 #   Defaults to undef.
 #
-# [*read_only_port*]
-#   The read-only port for the Kubelet to serve on (set to 0 to disable)
-#   Defaults to undef
-#
-# [*reconcile_cidr*]
-#   Reconcile node CIDR with the CIDR specified by the API server. No-op if register-node or configure-cbr0 is false.
-#   Defaults to undef
-#
 # [*register_node*]
 #   Register the node with the apiserver (defaults to true if --api-server is set)
 #   Defaults to true
@@ -405,6 +469,10 @@
 #   kubelet will cancel the request, throw out an error and retry later.
 #   Defaults to undef. (default 2m0s)
 #
+# [*seccomp_profile_root*]
+#   Directory path for seccomp profiles. (default "/var/lib/kubelet/seccomp")
+#   Defaults to undef
+#
 # [*serialize_image_pulls*]
 #   Pull images one at a time. We recommend *not* changing the default value on nodes that run
 #    docker daemon with version < 1.9 or an Aufs storage backend. Issue #10959 has more details. [default=true]
@@ -452,111 +520,126 @@
 #   Add your own!
 #
 class kubernetes::node::kubelet (
-  $ensure                                = $kubernetes::node::params::kubelet_service_ensure,
-  $journald_forward_enable               = $kubernetes::node::params::kubelet_journald_forward_enable,
-  $enable                                = $kubernetes::node::params::kubelet_service_enable,
-  $pod_manifest_path_purge               = $kubernetes::node::params::kubelet_pod_manifest_path_purge,
-  $address                               = $kubernetes::node::params::kubelet_address,
-  $allow_privileged                      = $kubernetes::node::params::kubelet_allow_privileged,
-  $api_servers                           = $kubernetes::node::params::kubelet_api_servers,
-  $cadvisor_port                         = $kubernetes::node::params::kubelet_cadvisor_port,
-  $cert_dir                              = $kubernetes::node::params::kubelet_cert_dir,
-  $cgroup_root                           = $kubernetes::node::params::kubelet_cgroup_root,
-  $chaos_chance                          = $kubernetes::node::params::kubelet_chaos_chance,
-  $cloud_config                          = $kubernetes::node::params::kubelet_cloud_config,
-  $cloud_provider                        = $kubernetes::node::params::kubelet_cloud_provider,
-  $cluster_dns                           = $kubernetes::node::params::kubelet_cluster_dns,
-  $cluster_domain                        = $kubernetes::node::params::kubelet_cluster_domain,
-  $configure_cbr0                        = $kubernetes::node::params::kubelet_container_runtime,
-  $container_runtime                     = $kubernetes::node::params::kubelet_container_runtime,
-  $container_runtime_endpoint            = $kubernetes::node::params::kubelet_container_runtime_endpoint,
-  $containerized                         = $kubernetes::node::params::kubelet_config,
-  $cpu_cfs_quota                         = $kubernetes::node::params::kubelet_cpu_cfs_quota,
-  $docker_endpoint                       = $kubernetes::node::params::kubelet_docker_endpoint,
-  $docker_exec_handler                   = $kubernetes::node::params::kubelet_docker_exec_handler,
-  $enable_controller_attach_detach       = $kubernetes::node::params::kubelet_enable_controller_attach_detach,
-  $enable_custom_metrics                 = $kubernetes::node::params::kubelet_enable_custom_metrics,
-  $enable_debugging_handlers             = $kubernetes::node::params::kubelet_enable_debugging_handlers,
-  $enable_server                         = $kubernetes::node::params::kubelet_enable_server,
-  $event_burst                           = $kubernetes::node::params::kubelet_event_burst,
-  $event_qps                             = $kubernetes::node::params::kubelet_event_qps,
-  $eviction_hard                         = $kubernetes::node::params::kubelet_eviction_hard,
-  $eviction_max_pod_grace_period         = $kubernetes::node::params::kubelet_eviction_max_pod_grace_period,
-  $eviction_minimum_reclaim              = $kubernetes::node::params::kubelet_eviction_minimum_reclaim,
-  $eviction_pressure_transition_period   = $kubernetes::node::params::kubelet_eviction_pressure_transition_period,
-  $eviction_soft                         = $kubernetes::node::params::kubelet_eviction_soft,
-  $eviction_soft_grace_period            = $kubernetes::node::params::kubelet_eviction_soft_grace_period,
-  $exit_on_lock_contention               = $kubernetes::node::params::kubelet_exit_on_lock_contention,
-  $file_check_frequency                  = $kubernetes::node::params::kubelet_file_check_frequency,
-  $google_json_key                       = $kubernetes::node::params::kubelet_google_json_key,
-  $hairpin_mode                          = $kubernetes::node::params::kubelet_hairpin_mode,
-  $healthz_bind_address                  = $kubernetes::node::params::kubelet_healthz_bind_address,
-  $healthz_port                          = $kubernetes::node::params::kubelet_healthz_port,
-  $host_ipc_sources                      = $kubernetes::node::params::kubelet_host_ipc_sources,
-  $host_network_sources                  = $kubernetes::node::params::kubelet_host_network_sources,
-  $host_pid_sources                      = $kubernetes::node::params::kubelet_host_pid_sources,
-  $hostname_override                     = $kubernetes::node::params::kubelet_hostname_override,
-  $http_check_frequency                  = $kubernetes::node::params::kubelet_http_check_frequency,
-  $image_gc_high_threshold               = $kubernetes::node::params::kubelet_image_gc_high_threshold,
-  $image_gc_low_threshold                = $kubernetes::node::params::kubelet_image_gc_low_threshold,
-  $image_service_endpoint                = $kubernetes::node::params::kubelet_image_service_endpoint,
-  $iptables_drop_bit                     = $kubernetes::node::params::kubelet_iptables_drop_bit,
-  $iptables_masquerade_bit               = $kubernetes::node::params::kubelet_iptables_masquerade_bit,
-  $kube_api_burst                        = $kubernetes::node::params::kubelet_kube_api_burst,
-  $kube_api_content_type                 = $kubernetes::node::params::kubelet_kube_api_content_type,
-  $kube_api_qps                          = $kubernetes::node::params::kubelet_kube_api_qps,
-  $kube_reserved                         = $kubernetes::node::params::kubelet_kube_reserved,
-  $kubeconfig                            = $kubernetes::node::params::kubelet_kubeconfig,
-  $kubelet_cgroups                       = $kubernetes::node::params::kubelet_kubelet_cgroups,
-  $lock_file                             = $kubernetes::node::params::kubelet_lock_file,
-  $low_diskspace_threshold_mb            = $kubernetes::node::params::kubelet_low_diskspace_threshold_mb,
-  $make_iptables_util_chains             = $kubernetes::node::params::kubelet_make_iptables_util_chains,
-  $manifest_url                          = $kubernetes::node::params::kubelet_manifest_url,
-  $manifest_url_header                   = $kubernetes::node::params::kubelet_manifest_url_header,
-  $master_service_namespace              = $kubernetes::node::params::kubelet_master_service_namespace,
-  $max_open_files                        = $kubernetes::node::params::kubelet_max_open_files,
-  $max_pods                              = $kubernetes::node::params::kubelet_max_pods,
-  $minimum_image_ttl_duration            = $kubernetes::node::params::kubelet_minimum_image_ttl_duration,
-  $node_ip                               = $kubernetes::node::params::kubelet_node_ip,
-  $node_labels                           = $kubernetes::node::params::kubelet_node_labels,
-  $node_status_update_frequency          = $kubernetes::node::params::kubelet_node_status_update_frequency,
-  $non_masquerade_cidr                   = $kubernetes::node::params::kubelet_non_masquerade_cidr,
-  $oom_score_adj                         = $kubernetes::node::params::kubelet_oom_score_adj,
-  $outofdisk_transition_frequency        = $kubernetes::node::params::kubelet_outofdisk_transition_frequency,
-  $pod_cidr                              = $kubernetes::node::params::kubelet_pod_cidr,
-  $pod_infra_container_image             = $kubernetes::node::params::kubelet_pod_infra_container_image,
-  $pod_manifest_path                     = $kubernetes::node::params::kubelet_pod_manifest_path,
-  $pods_per_core                         = $kubernetes::node::params::kubelet_pods_per_core,
-  $port                                  = $kubernetes::node::params::kubelet_port,
-  $protect_kernel_defaults               = $kubernetes::node::params::kubelet_protect_kernel_defaults,
-  $read_only_port                        = $kubernetes::node::params::kubelet_read_only_port,
-  $reconcile_cidr                        = $kubernetes::node::params::kubelet_reconcile_cidr,
-  $register_node                         = $kubernetes::node::params::kubelet_register_node,
-  $register_schedulable                  = $kubernetes::node::params::kubelet_register_schedulable,
-  $registry_burst                        = $kubernetes::node::params::kubelet_registry_burst,
-  $registry_qps                          = $kubernetes::node::params::kubelet_registry_qps,
-  $require_kubeconfig                    = $kubernetes::node::params::kubelet_require_kubeconfig,
-  $resolv_conf                           = $kubernetes::node::params::kubelet_resolv_conf,
-  $rkt_api_endpoint                      = $kubernetes::node::params::kubelet_rkt_api_endpoint,
-  $rkt_path                              = $kubernetes::node::params::kubelet_rkt_path,
-  $root_dir                              = $kubernetes::node::params::kubelet_root_dir,
-  $runonce                               = $kubernetes::node::params::kubelet_runonce,
-  $runtime_cgroups                       = $kubernetes::node::params::kubelet_runtime_cgroups,
-  $runtime_request_timeout               = $kubernetes::node::params::kubelet_runtime_request_timeout,
-  $serialize_image_pulls                 = $kubernetes::node::params::kubelet_serialize_image_pulls,
-  $streaming_connection_idle_timeout     = $kubernetes::node::params::kubelet_streaming_connection_idle_timeout,
-  $sync_frequency                        = $kubernetes::node::params::kubelet_sync_frequency,
-  $system_cgroups                        = $kubernetes::node::params::kubelet_system_cgroups,
-  $system_reserved                       = $kubernetes::node::params::kubelet_system_reserved,
-  $tls_cert_file                         = $kubernetes::node::params::kubelet_tls_cert_file,
-  $tls_private_key_file                  = $kubernetes::node::params::kubelet_tls_private_key_file,
-  $volume_stats_agg_period               = $kubernetes::node::params::kubelet_volume_stats_agg_period,
-  $verbosity                             = $kubernetes::node::params::kubelet_verbosity,
-  $extra_args                            = $kubernetes::node::params::kubelet_extra_args,
+  $ensure                                            = $kubernetes::node::params::kubelet_service_ensure,
+  $journald_forward_enable                           = $kubernetes::node::params::kubelet_journald_forward_enable,
+  $enable                                            = $kubernetes::node::params::kubelet_service_enable,
+  $pod_manifest_path_purge                           = $kubernetes::node::params::kubelet_pod_manifest_path_purge,
+  $address                                           = $kubernetes::node::params::kubelet_address,
+  $allow_privileged                                  = $kubernetes::node::params::kubelet_allow_privileged,
+  $anonymous_auth                                    = $kubernetes::node::params::kubelet_anonymous_auth,
+  $api_servers                                       = $kubernetes::node::params::kubelet_api_servers,
+  $authentication_token_webhook                      = $kubernetes::node::params::kubelet_authentication_token_webhook,
+  $authentication_token_webhook_cache_ttl            = $kubernetes::node::params::kubelet_authentication_token_webhook_cache_ttl,
+  $authorization_mode                                = $kubernetes::node::params::kubelet_authorization_mode,
+  $authorization_webhook_cache_authorized_ttl        = $kubernetes::node::params::kubelet_authorization_webhook_cache_authorized_ttl,
+  $authorization_webhook_cache_unauthorized_ttl      = $kubernetes::node::params::kubelet_authorization_webhook_cache_unauthorized_ttl,
+  $cadvisor_port                                     = $kubernetes::node::params::kubelet_cadvisor_port,
+  $cert_dir                                          = $kubernetes::node::params::kubelet_cert_dir,
+  $cgroup_driver                                     = $kubernetes::node::params::kubelet_cgroup_driver,
+  $cgroup_root                                       = $kubernetes::node::params::kubelet_cgroup_root,
+  $chaos_chance                                      = $kubernetes::node::params::kubelet_chaos_chance,
+  $client_ca_file                                    = $kubernetes::node::params::kubelet_client_ca_file,
+  $cloud_config                                      = $kubernetes::node::params::kubelet_cloud_config,
+  $cloud_provider                                    = $kubernetes::node::params::kubelet_cloud_provider,
+  $cluster_dns                                       = $kubernetes::node::params::kubelet_cluster_dns,
+  $cluster_domain                                    = $kubernetes::node::params::kubelet_cluster_domain,
+  $container_runtime                                 = $kubernetes::node::params::kubelet_container_runtime,
+  $container_runtime_endpoint                        = $kubernetes::node::params::kubelet_container_runtime_endpoint,
+  $containerized                                     = $kubernetes::node::params::kubelet_config,
+  $cpu_cfs_quota                                     = $kubernetes::node::params::kubelet_cpu_cfs_quota,
+  $docker_endpoint                                   = $kubernetes::node::params::kubelet_docker_endpoint,
+  $docker_exec_handler                               = $kubernetes::node::params::kubelet_docker_exec_handler,
+  $enable_controller_attach_detach                   = $kubernetes::node::params::kubelet_enable_controller_attach_detach,
+  $enable_custom_metrics                             = $kubernetes::node::params::kubelet_enable_custom_metrics,
+  $enable_debugging_handlers                         = $kubernetes::node::params::kubelet_enable_debugging_handlers,
+  $enable_server                                     = $kubernetes::node::params::kubelet_enable_server,
+  $event_burst                                       = $kubernetes::node::params::kubelet_event_burst,
+  $event_qps                                         = $kubernetes::node::params::kubelet_event_qps,
+  $eviction_hard                                     = $kubernetes::node::params::kubelet_eviction_hard,
+  $eviction_max_pod_grace_period                     = $kubernetes::node::params::kubelet_eviction_max_pod_grace_period,
+  $eviction_minimum_reclaim                          = $kubernetes::node::params::kubelet_eviction_minimum_reclaim,
+  $eviction_pressure_transition_period               = $kubernetes::node::params::kubelet_eviction_pressure_transition_period,
+  $eviction_soft                                     = $kubernetes::node::params::kubelet_eviction_soft,
+  $eviction_soft_grace_period                        = $kubernetes::node::params::kubelet_eviction_soft_grace_period,
+  $exit_on_lock_contention                           = $kubernetes::node::params::kubelet_exit_on_lock_contention,
+  $experimental_allowed_unsafe_sysctls               = $kubernetes::node::params::kubelet_experimental_allowed_unsafe_sysctls,
+  $experimental_bootstrap_kubeconfig                 = $kubernetes::node::params::kubelet_experimental_bootstrap_kubeconfig,
+  $experimental_cgroups_per_qos                      = $kubernetes::node::params::kubelet_experimental_cgroups_per_qos,
+  $experimental_check_node_capabilities_before_mount = $kubernetes::node::params::kubelet_experimental_check_node_capabilities_before_mount,
+  $experimental_cri                                  = $kubernetes::node::params::kubelet_experimental_cri,
+  $experimental_fail_swap_on                         = $kubernetes::node::params::kubelet_experimental_fail_swap_on,
+  $experimental_kernel_memcg_notification            = $kubernetes::node::params::kubelet_experimental_kernel_memcg_notification,
+  $experimental_mounter_path                         = $kubernetes::node::params::kubelet_experimental_mounter_path,
+  $file_check_frequency                              = $kubernetes::node::params::kubelet_file_check_frequency,
+  $google_json_key                                   = $kubernetes::node::params::kubelet_google_json_key,
+  $hairpin_mode                                      = $kubernetes::node::params::kubelet_hairpin_mode,
+  $healthz_bind_address                              = $kubernetes::node::params::kubelet_healthz_bind_address,
+  $healthz_port                                      = $kubernetes::node::params::kubelet_healthz_port,
+  $host_ipc_sources                                  = $kubernetes::node::params::kubelet_host_ipc_sources,
+  $host_network_sources                              = $kubernetes::node::params::kubelet_host_network_sources,
+  $host_pid_sources                                  = $kubernetes::node::params::kubelet_host_pid_sources,
+  $hostname_override                                 = $kubernetes::node::params::kubelet_hostname_override,
+  $http_check_frequency                              = $kubernetes::node::params::kubelet_http_check_frequency,
+  $image_gc_high_threshold                           = $kubernetes::node::params::kubelet_image_gc_high_threshold,
+  $image_gc_low_threshold                            = $kubernetes::node::params::kubelet_image_gc_low_threshold,
+  $image_service_endpoint                            = $kubernetes::node::params::kubelet_image_service_endpoint,
+  $iptables_drop_bit                                 = $kubernetes::node::params::kubelet_iptables_drop_bit,
+  $iptables_masquerade_bit                           = $kubernetes::node::params::kubelet_iptables_masquerade_bit,
+  $kube_api_burst                                    = $kubernetes::node::params::kubelet_kube_api_burst,
+  $kube_api_content_type                             = $kubernetes::node::params::kubelet_kube_api_content_type,
+  $kube_api_qps                                      = $kubernetes::node::params::kubelet_kube_api_qps,
+  $kube_reserved                                     = $kubernetes::node::params::kubelet_kube_reserved,
+  $kubeconfig                                        = $kubernetes::node::params::kubelet_kubeconfig,
+  $kubelet_cgroups                                   = $kubernetes::node::params::kubelet_kubelet_cgroups,
+  $lock_file                                         = $kubernetes::node::params::kubelet_lock_file,
+  $low_diskspace_threshold_mb                        = $kubernetes::node::params::kubelet_low_diskspace_threshold_mb,
+  $make_iptables_util_chains                         = $kubernetes::node::params::kubelet_make_iptables_util_chains,
+  $manifest_url                                      = $kubernetes::node::params::kubelet_manifest_url,
+  $manifest_url_header                               = $kubernetes::node::params::kubelet_manifest_url_header,
+  $master_service_namespace                          = $kubernetes::node::params::kubelet_master_service_namespace,
+  $max_open_files                                    = $kubernetes::node::params::kubelet_max_open_files,
+  $max_pods                                          = $kubernetes::node::params::kubelet_max_pods,
+  $minimum_image_ttl_duration                        = $kubernetes::node::params::kubelet_minimum_image_ttl_duration,
+  $node_ip                                           = $kubernetes::node::params::kubelet_node_ip,
+  $node_labels                                       = $kubernetes::node::params::kubelet_node_labels,
+  $node_status_update_frequency                      = $kubernetes::node::params::kubelet_node_status_update_frequency,
+  $non_masquerade_cidr                               = $kubernetes::node::params::kubelet_non_masquerade_cidr,
+  $oom_score_adj                                     = $kubernetes::node::params::kubelet_oom_score_adj,
+  $outofdisk_transition_frequency                    = $kubernetes::node::params::kubelet_outofdisk_transition_frequency,
+  $pod_cidr                                          = $kubernetes::node::params::kubelet_pod_cidr,
+  $pod_infra_container_image                         = $kubernetes::node::params::kubelet_pod_infra_container_image,
+  $pod_manifest_path                                 = $kubernetes::node::params::kubelet_pod_manifest_path,
+  $pods_per_core                                     = $kubernetes::node::params::kubelet_pods_per_core,
+  $port                                              = $kubernetes::node::params::kubelet_port,
+  $protect_kernel_defaults                           = $kubernetes::node::params::kubelet_protect_kernel_defaults,
+  $register_node                                     = $kubernetes::node::params::kubelet_register_node,
+  $register_schedulable                              = $kubernetes::node::params::kubelet_register_schedulable,
+  $registry_burst                                    = $kubernetes::node::params::kubelet_registry_burst,
+  $registry_qps                                      = $kubernetes::node::params::kubelet_registry_qps,
+  $require_kubeconfig                                = $kubernetes::node::params::kubelet_require_kubeconfig,
+  $resolv_conf                                       = $kubernetes::node::params::kubelet_resolv_conf,
+  $rkt_api_endpoint                                  = $kubernetes::node::params::kubelet_rkt_api_endpoint,
+  $rkt_path                                          = $kubernetes::node::params::kubelet_rkt_path,
+  $root_dir                                          = $kubernetes::node::params::kubelet_root_dir,
+  $runonce                                           = $kubernetes::node::params::kubelet_runonce,
+  $runtime_cgroups                                   = $kubernetes::node::params::kubelet_runtime_cgroups,
+  $runtime_request_timeout                           = $kubernetes::node::params::kubelet_runtime_request_timeout,
+  $seccomp_profile_root                              = $kubernetes::node::params::kubelet_seccomp_profile_root,
+  $serialize_image_pulls                             = $kubernetes::node::params::kubelet_serialize_image_pulls,
+  $streaming_connection_idle_timeout                 = $kubernetes::node::params::kubelet_streaming_connection_idle_timeout,
+  $sync_frequency                                    = $kubernetes::node::params::kubelet_sync_frequency,
+  $system_cgroups                                    = $kubernetes::node::params::kubelet_system_cgroups,
+  $system_reserved                                   = $kubernetes::node::params::kubelet_system_reserved,
+  $tls_cert_file                                     = $kubernetes::node::params::kubelet_tls_cert_file,
+  $tls_private_key_file                              = $kubernetes::node::params::kubelet_tls_private_key_file,
+  $volume_stats_agg_period                           = $kubernetes::node::params::kubelet_volume_stats_agg_period,
+  $verbosity                                         = $kubernetes::node::params::kubelet_verbosity,
+  $extra_args                                        = $kubernetes::node::params::kubelet_extra_args,
 ) inherits kubernetes::node::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)
   if $allow_privileged { validate_bool($allow_privileged) }
+  if $anonymous_auth { validate_bool($anonymous_auth) }
   if $containerized { validate_bool($containerized) }
   if $cpu_cfs_quota { validate_bool($cpu_cfs_quota) }
   if $enable_controller_attach_detach { validate_bool($enable_controller_attach_detach) }

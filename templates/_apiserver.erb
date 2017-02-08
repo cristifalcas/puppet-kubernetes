@@ -5,7 +5,12 @@
 <% if @advertise_address then -%>
  --advertise-address=<%= scope['kubernetes::master::apiserver::advertise_address'] -%>
 <% end -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::apiserver::allow_privileged')) -%>
  --allow-privileged=<%= scope['kubernetes::master::apiserver::allow_privileged'] -%>
+<% end -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::apiserver::anonymous_auth')) -%>
+ --anonymous-auth=<%= scope['kubernetes::master::apiserver::anonymous_auth'] -%>
+<% end -%>
  --apiserver-count=<%= scope['kubernetes::master::apiserver::apiserver_count'] -%>
 <% if @audit_log_maxage -%>
  --audit-log-maxage=<%= scope['kubernetes::master::apiserver::audit_log_maxage'] -%>
@@ -28,6 +33,9 @@
  --authorization-mode=<%= scope['kubernetes::master::apiserver::authorization_mode'] -%>
 <% if @authorization_policy_file -%>
  --authorization-policy-file=<%= scope['kubernetes::master::apiserver::authorization_policy_file'] -%>
+<% end -%>
+<% if @authorization_rbac_super_user -%>
+ --authorization-rbac-super-user=<%= scope['kubernetes::master::apiserver::authorization_rbac_super_user'] -%>
 <% end -%>
 <% if @authorization_webhook_cache_authorized_ttl -%>
  --authorization-webhook-cache-authorized-ttl=<%= scope['kubernetes::master::apiserver::authorization_webhook_cache_authorized_ttl'] -%>
@@ -61,7 +69,7 @@
 <% if @deserialization_cache_size then -%>
  --deserialization-cache-size=<%= scope['kubernetes::master::apiserver::deserialization_cache_size'] -%>
 <% end -%>
-<% if @enable_garbage_collector then -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::apiserver::enable_garbage_collector')) -%>
  --enable-garbage-collector=<%= scope['kubernetes::master::apiserver::enable-garbage-collector'] -%>
 <% end -%>
 <% if @enable_swagger_ui then -%>
@@ -73,17 +81,28 @@
  --etcd-keyfile=<%= scope['kubernetes::master::apiserver::etcd_keyfile'] -%>
 <% end -%>
  --etcd-prefix=<%= scope['kubernetes::master::apiserver::etcd_prefix'] -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::apiserver::etcd_quorum_read')) -%>
  --etcd-quorum-read=<%= Array(scope['kubernetes::master::apiserver::etcd_quorum_read']).join(',') -%>
+<% end -%>
  --etcd-servers=<%= Array(scope['kubernetes::master::apiserver::etcd_servers']).join(',') -%>
 <% if not Array(@etcd_servers_overrides).flatten.empty? -%>
  --etcd-servers-overrides=<%= Array(scope['kubernetes::master::apiserver::etcd_servers_overrides']).join(',') -%>
 <% end -%>
  --event-ttl=<%= scope['kubernetes::master::apiserver::event_ttl'] -%>
+<% if @experimental_keystone_ca_file -%>
+ --experimental-keystone-ca-file=<%= scope['kubernetes::master::apiserver::experimental_keystone_ca_file'] -%>
+<% end -%>
+<% if @experimental_keystone_url -%>
+ --experimental-keystone-url=<%= scope['kubernetes::master::apiserver::experimental_keystone_url'] -%>
+<% end -%>
 <% if @external_hostname -%>
  --external-hostname=<%= scope['kubernetes::master::apiserver::external_hostname'] -%>
 <% end -%>
 <% if @google_json_key -%>
  --google-json-key=<%= scope['kubernetes::master::apiserver::google_json_key'] -%>
+<% end -%>
+<% if @insecure_allow_any_token -%>
+ --insecure-allow-any-token=<%= scope['kubernetes::master::apiserver::insecure_allow_any_token'] -%>
 <% end -%>
  --insecure-bind-address=<%= scope['kubernetes::master::apiserver::insecure_bind_address'] -%>
  --insecure-port=<%= scope['kubernetes::master::apiserver::insecure_port'] -%>
@@ -96,7 +115,12 @@
 <% if @kubelet_client_key -%>
  --kubelet-client-key=<%= scope['kubernetes::master::apiserver::kubelet_client_key'] -%>
 <% end -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::apiserver::kubelet_https')) -%>
  --kubelet-https=<%= scope['kubernetes::master::apiserver::kubelet_https'] -%>
+<% end -%>
+<% if @kubelet_preferred_address_types -%>
+ --kubelet-preferred-address-types=<%= scope['kubernetes::master::apiserver::kubelet_preferred_address_types'] -%>
+<% end -%>
  --kubelet-timeout=<%= scope['kubernetes::master::apiserver::kubelet_timeout'] -%>
  --kubernetes-service-node-port=<%= scope['kubernetes::master::apiserver::kubernetes_service_node_port'] -%>
 <% if @long_running_request_regexp -%>
@@ -106,8 +130,21 @@
  --max-connection-bytes-per-sec=<%= scope['kubernetes::master::apiserver::max_connection_bytes_per_sec'] -%>
  --max-requests-inflight=<%= scope['kubernetes::master::apiserver::max_requests_inflight'] -%>
  --min-request-timeout=<%= scope['kubernetes::master::apiserver::min_request_timeout'] -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::apiserver::profiling')) -%>
  --profiling=<%= scope['kubernetes::master::apiserver::profiling'] -%>
+<% end -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::apiserver::repair_malformed_updates')) -%>
  --repair-malformed-updates=<%= scope['kubernetes::master::apiserver::repair_malformed_updates'] -%>
+<% end -%>
+<% if @requestheader_allowed_names -%>
+ --requestheader-allowed-names=<%= scope['kubernetes::master::apiserver::requestheader_allowed_names'] -%>
+<% end -%>
+<% if @requestheader_client_ca_file -%>
+ --requestheader-client-ca-file=<%= scope['kubernetes::master::apiserver::requestheader_client_ca_file'] -%>
+<% end -%>
+<% if @requestheader_username_headers -%>
+ --requestheader-username-headers=<%= scope['kubernetes::master::apiserver::requestheader_username_headers'] -%>
+<% end -%>
 <% if @runtime_config -%>
  --runtime-config=<%= scope['kubernetes::master::apiserver::runtime_config'] -%>
 <% end -%>
@@ -116,7 +153,9 @@
 <% if @service_account_key_file -%>
  --service-account-key-file=<%= scope['kubernetes::master::apiserver::service_account_key_file'] -%>
 <% end -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::apiserver::service_account_lookup')) -%>
  --service-account-lookup=<%= scope['kubernetes::master::apiserver::service_account_lookup'] -%>
+<% end -%>
 <% if @service_node_port_range -%>
  --service-node-port-range=<%= scope['kubernetes::master::apiserver::service_node_port_range'] -%>
 <% end -%>
@@ -132,8 +171,14 @@
 <% if @storage_media_type -%>
  --storage-media-type=<%= scope['kubernetes::master::apiserver::storage_media_type'] -%>
 <% end -%>
+<% if @storage_versions -%>
+ --storage-versions=<%= scope['kubernetes::master::apiserver::storage_versions'] -%>
+<% end -%>
 <% if @target_ram_mb -%>
  --target-ram-mb=<%= scope['kubernetes::master::apiserver::target_ram_mb'] -%>
+<% end -%>
+<% if @tls_ca_file -%>
+ --tls-ca-file=<%= scope['kubernetes::master::apiserver::tls_ca_file'] -%>
 <% end -%>
 <% if @tls_cert_file -%>
  --tls-cert-file=<%= scope['kubernetes::master::apiserver::tls_cert_file'] -%>
@@ -141,10 +186,15 @@
 <% if @tls_private_key_file -%>
  --tls-private-key-file=<%= scope['kubernetes::master::apiserver::tls_private_key_file'] -%>
 <% end -%>
+<% if @tls_sni_cert_key -%>
+ --tls-sni-cert-key=<%= scope['kubernetes::master::apiserver::tls_sni_cert_key'] -%>
+<% end -%>
 <% if @token_auth_file -%>
  --token-auth-file=<%= scope['kubernetes::master::apiserver::token_auth_file'] -%>
 <% end -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::apiserver::watch_cache')) -%>
  --watch-cache=<%= scope['kubernetes::master::apiserver::watch_cache'] -%>
+<% end -%>
 <% if @watch_cache_sizes -%>
  --watch-cache-sizes=<%= scope['kubernetes::master::apiserver::watch_cache_sizes'] -%>
 <% end -%>
