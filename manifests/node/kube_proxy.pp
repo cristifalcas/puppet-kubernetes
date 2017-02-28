@@ -165,6 +165,7 @@ class kubernetes::node::kube_proxy (
   $pod_memory                        = $kubernetes::node::params::kube_proxy_pod_memory,
   $bind_address                      = $kubernetes::node::params::kube_proxy_bind_address,
   $cleanup_iptables                  = $kubernetes::node::params::kube_proxy_cleanup_iptables,
+  $cluster_cidr                      = $kubernetes::node::params::kube_proxy_cluster_cidr,
   $config_sync_period                = $kubernetes::node::params::kube_proxy_config_sync_period,
   $conntrack_max_per_core            = $kubernetes::node::params::kube_proxy_conntrack_max_per_core,
   $conntrack_min                     = $kubernetes::node::params::kube_proxy_conntrack_min,
