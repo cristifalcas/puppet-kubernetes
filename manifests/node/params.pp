@@ -11,7 +11,7 @@ class kubernetes::node::params {
   $kubelet_address = '0.0.0.0'
   $kubelet_allow_privileged = false
   $kubelet_anonymous_auth = undef
-  $kubelet_api_servers = ['http://127.0.0.1:8080']
+  #  $kubelet_api_servers = ['http://127.0.0.1:8080']
   $kubelet_authentication_token_webhook = undef
   $kubelet_authentication_token_webhook_cache_ttl = undef
   $kubelet_authorization_mode = undef
@@ -77,7 +77,7 @@ class kubernetes::node::params {
   $kubelet_kubeconfig = undef
   $kubelet_kubelet_cgroups = undef
   $kubelet_lock_file = undef
-  $kubelet_low_diskspace_threshold_mb = 256
+  #  $kubelet_low_diskspace_threshold_mb = 256
   $kubelet_make_iptables_util_chains = undef
   $kubelet_manifest_url = undef
   $kubelet_manifest_url_header = undef
@@ -90,7 +90,7 @@ class kubernetes::node::params {
   $kubelet_node_status_update_frequency = '10s'
   $kubelet_non_masquerade_cidr = undef
   $kubelet_oom_score_adj = undef
-  $kubelet_outofdisk_transition_frequency = '5m0s'
+  #  $kubelet_outofdisk_transition_frequency = '5m0s'
   $kubelet_pod_cidr = undef
   $kubelet_pod_infra_container_image = undef
   $kubelet_pod_manifest_path = undef
@@ -130,7 +130,7 @@ class kubernetes::node::params {
   $kube_proxy_pod_cpu = '100m'
   $kube_proxy_pod_memory = '200Mi'
   $kube_proxy_bind_address = '127.0.0.1'
-  $kube_proxy_cleanup_iptables = false
+  #  $kube_proxy_cleanup_iptables = false
   $kube_proxy_cluster_cidr = undef
   $kube_proxy_config_sync_period = undef
   $kube_proxy_conntrack_max_per_core = undef
@@ -147,6 +147,7 @@ class kubernetes::node::params {
   $kube_proxy_kube_api_burst = undef
   $kube_proxy_kube_api_content_type = undef
   $kube_proxy_kube_api_qps = undef
+  $kube_proxy_config = undef
   $kube_proxy_kubeconfig = undef
   $kube_proxy_masquerade_all = false
   $kube_proxy_master = undef

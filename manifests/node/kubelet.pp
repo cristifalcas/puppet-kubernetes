@@ -41,6 +41,7 @@
 #   List of Kubernetes API servers for publishing events, and reading pods and services. (ip:port), comma separated.
 #   Type: Array or String
 #   Defaults to 'http://127.0.0.1:8080'
+#   Deteleted in new version of K8s.
 #
 # [*authentication_token_webhook*]
 #   Use the TokenReview API to determine authentication for bearer tokens.
@@ -334,6 +335,7 @@
 # [*low_diskspace_threshold_mb*]
 #   The absolute free disk space, in MB, to maintain. When disk space falls below this threshold, new pods would be rejected.
 #   Default=256
+#   Deleted in new version of K8s.
 #
 # [*make_iptables_util_chains*]
 #   If true, kubelet will ensure iptables utility rules are present on host.
@@ -387,6 +389,7 @@
 # [*outofdisk_transition_frequency*]
 #   Duration for which the kubelet has to wait before transitioning out of out-of-disk node condition status. Default: 5m0s
 #   Defaults to '5m0s'
+#   Deleted in new version of K8s.
 #
 # [*pod_cidr*]
 #   The CIDR to use for pod IP addresses, only used in standalone mode.
@@ -527,7 +530,7 @@ class kubernetes::node::kubelet (
   $address                                           = $kubernetes::node::params::kubelet_address,
   $allow_privileged                                  = $kubernetes::node::params::kubelet_allow_privileged,
   $anonymous_auth                                    = $kubernetes::node::params::kubelet_anonymous_auth,
-  $api_servers                                       = $kubernetes::node::params::kubelet_api_servers,
+  #  $api_servers                                       = $kubernetes::node::params::kubelet_api_servers,
   $authentication_token_webhook                      = $kubernetes::node::params::kubelet_authentication_token_webhook,
   $authentication_token_webhook_cache_ttl            = $kubernetes::node::params::kubelet_authentication_token_webhook_cache_ttl,
   $authorization_mode                                = $kubernetes::node::params::kubelet_authorization_mode,
@@ -592,7 +595,7 @@ class kubernetes::node::kubelet (
   $kubeconfig                                        = $kubernetes::node::params::kubelet_kubeconfig,
   $kubelet_cgroups                                   = $kubernetes::node::params::kubelet_kubelet_cgroups,
   $lock_file                                         = $kubernetes::node::params::kubelet_lock_file,
-  $low_diskspace_threshold_mb                        = $kubernetes::node::params::kubelet_low_diskspace_threshold_mb,
+  #  $low_diskspace_threshold_mb                        = $kubernetes::node::params::kubelet_low_diskspace_threshold_mb,
   $make_iptables_util_chains                         = $kubernetes::node::params::kubelet_make_iptables_util_chains,
   $manifest_url                                      = $kubernetes::node::params::kubelet_manifest_url,
   $manifest_url_header                               = $kubernetes::node::params::kubelet_manifest_url_header,
@@ -605,7 +608,7 @@ class kubernetes::node::kubelet (
   $node_status_update_frequency                      = $kubernetes::node::params::kubelet_node_status_update_frequency,
   $non_masquerade_cidr                               = $kubernetes::node::params::kubelet_non_masquerade_cidr,
   $oom_score_adj                                     = $kubernetes::node::params::kubelet_oom_score_adj,
-  $outofdisk_transition_frequency                    = $kubernetes::node::params::kubelet_outofdisk_transition_frequency,
+  #  $outofdisk_transition_frequency                    = $kubernetes::node::params::kubelet_outofdisk_transition_frequency,
   $pod_cidr                                          = $kubernetes::node::params::kubelet_pod_cidr,
   $pod_infra_container_image                         = $kubernetes::node::params::kubelet_pod_infra_container_image,
   $pod_manifest_path                                 = $kubernetes::node::params::kubelet_pod_manifest_path,

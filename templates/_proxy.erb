@@ -1,6 +1,8 @@
- --bind-address=<%= scope['kubernetes::node::kube_proxy::bind_address'] -%>
+--bind-address=<%= scope['kubernetes::node::kube_proxy::bind_address'] -%>
+<% if false -%>
 <% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::node::kube_proxy::cleanup_iptables')) -%>
  --cleanup-iptables=<%= scope['kubernetes::node::kube_proxy::cleanup_iptables'] -%>
+<% end -%>
 <% end -%>
 <% if @cluster_cidr -%>
  --cluster-cidr=<%= scope['kubernetes::node::kube_proxy::cluster_cidr'] -%>
@@ -42,6 +44,9 @@
 <% end -%>
 <% if @kube_api_qps -%>
  --kube-api-qps=<%= scope['kubernetes::node::kube_proxy::kube_api_qps'] -%>
+<% end -%>
+<% if @config -%>
+ --config=<%= scope['kubernetes::node::kube_proxy::config'] -%>
 <% end -%>
 <% if @kubeconfig -%>
  --kubeconfig=<%= scope['kubernetes::node::kube_proxy::kubeconfig'] -%>
