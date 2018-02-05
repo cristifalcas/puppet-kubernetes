@@ -1,4 +1,6 @@
+<% if @bind_address -%>
 --bind-address=<%= scope['kubernetes::node::kube_proxy::bind_address'] -%>
+<% end -%>
 <% if false -%>
 <% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::node::kube_proxy::cleanup_iptables')) -%>
  --cleanup-iptables=<%= scope['kubernetes::node::kube_proxy::cleanup_iptables'] -%>
@@ -22,8 +24,12 @@
 <% if @conntrack_tcp_timeout_established -%>
  --conntrack-tcp-timeout-established=<%= scope['kubernetes::node::kube_proxy::conntrack_tcp_timeout_established'] -%>
 <% end -%>
+<% if @healthz_bind_address -%>
  --healthz-bind-address=<%= scope['kubernetes::node::kube_proxy::healthz_bind_address'] -%>
+<% end -%>
+<% if @healthz_port -%>
  --healthz-port=<%= scope['kubernetes::node::kube_proxy::healthz_port'] -%>
+<% end -%>
 <% if @hostname_override -%>
  --hostname-override=<%= scope['kubernetes::node::kube_proxy::hostname_override'] -%>
 <% end -%>
@@ -51,8 +57,10 @@
 <% if @kubeconfig -%>
  --kubeconfig=<%= scope['kubernetes::node::kube_proxy::kubeconfig'] -%>
 <% end -%>
+<% if @masquerade_all -%>
 <% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::node::kube_proxy::masquerade_all')) -%>
  --masquerade-all=<%= scope['kubernetes::node::kube_proxy::masquerade_all'] -%>
+<% end -%>
 <% end -%>
 <% if @master -%>
  --master=<%= scope['kubernetes::node::kube_proxy::master'] -%>
@@ -69,5 +77,7 @@
 <% if @udp_timeout -%>
  --udp-timeout=<%= scope['kubernetes::node::kube_proxy::udp_timeout'] -%>
 <% end -%>
+<% if @verbosity -%>
  --v=<%= scope['kubernetes::node::kube_proxy::verbosity'] -%>
+<% end -%>
  <%= scope['kubernetes::node::kube_proxy::extra_args'] -%>
