@@ -201,8 +201,8 @@
 #   Comma-separated whitelist of unsafe sysctls or unsafe sysctl patterns (ending in *). Use these at your own risk.
 #   Defaults to undef
 #
-# [*experimental_bootstrap_kubeconfig*]
-#   <Warning: Experimental feature> Path to a kubeconfig file that will be used to get client certificate for kubelet.
+# [*bootstrap_kubeconfig*]
+#   Path to a kubeconfig file that will be used to get client certificate for kubelet.
 #   If the file specified by --kubeconfig does not exist, the bootstrap kubeconfig is used to request a client certificate
 #   from the API server. On success, a kubeconfig file referencing the generated key and obtained certificate is written
 #   to the path specified by --kubeconfig. The certificate and key file will be stored in the directory pointed by --cert-dir.
@@ -566,7 +566,7 @@ class kubernetes::node::kubelet (
   $eviction_soft_grace_period                        = $kubernetes::node::params::kubelet_eviction_soft_grace_period,
   $exit_on_lock_contention                           = $kubernetes::node::params::kubelet_exit_on_lock_contention,
   $experimental_allowed_unsafe_sysctls               = $kubernetes::node::params::kubelet_experimental_allowed_unsafe_sysctls,
-  $experimental_bootstrap_kubeconfig                 = $kubernetes::node::params::kubelet_experimental_bootstrap_kubeconfig,
+  $bootstrap_kubeconfig                              = $kubernetes::node::params::kubelet_bootstrap_kubeconfig,
   $experimental_cgroups_per_qos                      = $kubernetes::node::params::kubelet_experimental_cgroups_per_qos,
   $experimental_check_node_capabilities_before_mount = $kubernetes::node::params::kubelet_experimental_check_node_capabilities_before_mount,
   $experimental_cri                                  = $kubernetes::node::params::kubelet_experimental_cri,

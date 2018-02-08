@@ -131,8 +131,8 @@ KUBELET_ARGS="<% -%>
 <% if @experimental_allowed_unsafe_sysctls -%>
   --experimental-allowed-unsafe-sysctls=<%= scope['kubernetes::node::kubelet::experimental_allowed_unsafe_sysctls'] -%>
 <% end -%>
-<% if @experimental_bootstrap_kubeconfig -%>
-  --experimental-bootstrap-kubeconfig=<%= scope['kubernetes::node::kubelet::experimental_bootstrap_kubeconfig'] -%>
+<% if @bootstrap_kubeconfig -%>
+  --bootstrap-kubeconfig=<%= scope['kubernetes::node::kubelet::bootstrap_kubeconfig'] -%>
 <% end -%>
 <% if @experimental_cgroups_per_qos -%>
   --experimental-cgroups-per-qos=<%= scope['kubernetes::node::kubelet::experimental_cgroups_per_qos'] -%>

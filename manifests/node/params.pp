@@ -48,7 +48,7 @@ class kubernetes::node::params {
   $kubelet_eviction_soft_grace_period = undef
   $kubelet_exit_on_lock_contention = undef
   $kubelet_experimental_allowed_unsafe_sysctls = undef
-  $kubelet_experimental_bootstrap_kubeconfig = undef
+  $kubelet_bootstrap_kubeconfig = undef
   $kubelet_experimental_cgroups_per_qos = undef
   $kubelet_experimental_check_node_capabilities_before_mount = undef
   $kubelet_experimental_cri = undef
