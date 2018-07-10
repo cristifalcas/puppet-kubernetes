@@ -11,7 +11,9 @@ KUBELET_PORT="--port=<%= scope['kubernetes::node::kubelet::port'] %>"
 KUBELET_HOSTNAME="--hostname-override=<%= scope['kubernetes::node::kubelet::hostname_override'] %>"
 
 # location of the api-server
+<% if @api_servers -%>
 KUBELET_API_SERVER="--api-servers=<%= Array(scope['kubernetes::node::kubelet::api_servers']).join(',') %>" 
+<% end -%>
 
 # Add your own!
 KUBELET_ARGS="<% -%>
@@ -129,8 +131,8 @@ KUBELET_ARGS="<% -%>
 <% if @experimental_allowed_unsafe_sysctls -%>
   --experimental-allowed-unsafe-sysctls=<%= scope['kubernetes::node::kubelet::experimental_allowed_unsafe_sysctls'] -%>
 <% end -%>
-<% if @experimental_bootstrap_kubeconfig -%>
-  --experimental-bootstrap-kubeconfig=<%= scope['kubernetes::node::kubelet::experimental_bootstrap_kubeconfig'] -%>
+<% if @bootstrap_kubeconfig -%>
+  --bootstrap-kubeconfig=<%= scope['kubernetes::node::kubelet::bootstrap_kubeconfig'] -%>
 <% end -%>
 <% if @experimental_cgroups_per_qos -%>
   --experimental-cgroups-per-qos=<%= scope['kubernetes::node::kubelet::experimental_cgroups_per_qos'] -%>
@@ -209,7 +211,9 @@ KUBELET_ARGS="<% -%>
 <% if @lock_file -%>
  --lock-file=<%= scope['kubernetes::node::kubelet::lock_file'] -%>
 <% end -%>
+<% if @low_diskspace_threshold_mb -%>
  --low-diskspace-threshold-mb=<%= scope['kubernetes::node::kubelet::low_diskspace_threshold_mb'] -%>
+<% end -%>
 <% if @make_iptables_util_chains -%>
  --make-iptables-util-chains=<%= scope['kubernetes::node::kubelet::make_iptables_util_chains'] -%>
 <% end -%>
@@ -238,7 +242,9 @@ KUBELET_ARGS="<% -%>
 <% if @oom_score_adj -%>
  --oom-score-adj=<%= scope['kubernetes::node::kubelet::oom_score_adj'] -%>
 <% end -%>
+<%if @outofdisk_transition_frequency -%>
  --outofdisk-transition-frequency=<%= scope['kubernetes::node::kubelet::outofdisk_transition_frequency'] -%>
+<% end -%>
 <% if @pod_cidr -%>
  --pod-cidr=<%= scope['kubernetes::node::kubelet::pod_cidr'] -%>
 <% end -%>

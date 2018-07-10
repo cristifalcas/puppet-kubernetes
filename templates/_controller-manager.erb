@@ -34,7 +34,9 @@
 <% if @controller_start_interval then -%>
  --controller-start-interval=<%= scope['kubernetes::master::controller_manager::controller_start_interval'] -%>
 <% end -%>
+<% if @daemonset_lookup_cache_size then -%>
  --daemonset-lookup-cache-size=<%= scope['kubernetes::master::controller_manager::daemonset_lookup_cache_size'] -%>
+<% end -%>
  --deployment-controller-sync-period=<%= scope['kubernetes::master::controller_manager::deployment_controller_sync_period'] -%>
 <% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::controller_manager::enable_dynamic_provisioning')) -%>
  --enable_dynamic_provisioning=<%= scope['kubernetes::master::controller_manager::enable_dynamic_provisioning'] -%>
@@ -106,8 +108,12 @@
 <% if @pvclaimbinder_sync_period then -%>
  --pvclaimbinder-sync-period=<%= scope['kubernetes::master::controller_manager::pvclaimbinder_sync_period'] -%>
 <% end -%>
+<% if @replicaset_lookup_cache_size then -%>
  --replicaset-lookup-cache-size=<%= scope['kubernetes::master::controller_manager::replicaset_lookup_cache_size'] -%>
+<% end -%>
+<% if @replication_controller_lookup_cache_size then -%>
  --replication-controller-lookup-cache-size=<%= scope['kubernetes::master::controller_manager::replication_controller_lookup_cache_size'] -%>
+<% end -%>
  --resource-quota-sync-period=<%= scope['kubernetes::master::controller_manager::resource_quota_sync_period'] -%>
 <% if @route_reconciliation_period then -%>
  --route-reconciliation-period=<%= scope['kubernetes::master::controller_manager::route_reconciliation_period'] -%>

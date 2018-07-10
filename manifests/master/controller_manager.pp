@@ -115,6 +115,7 @@
 # [*daemonset_lookup_cache_size*]
 #   The the size of lookup cache for daemonsets. Larger number = more responsive daemonsets, but more MEM load.
 #   Default 1024
+#   --== It was deleted in new version K8s. ==--
 #
 # [*deployment_controller_sync_period*]
 #   Period for syncing the deployments.
@@ -269,10 +270,12 @@
 # [*replicaset_lookup_cache_size*]
 #   The the size of lookup cache for replicatsets. Larger number = more responsive replica management, but more MEM load.
 #   Default 4096
+#   --== It was deleted in new version K8s. ==--
 #
 # [*replication_controller_lookup_cache_size*]
 #   The the size of lookup cache for replication controllers. Larger number = more responsive replica management, but more MEM load.
 #   Default 4096
+#   --== It was deleted in new version K8s. ==--
 #
 # [*resource_quota_sync_period*]
 #   The period for syncing quota usage status in the system
@@ -353,7 +356,7 @@ class kubernetes::master::controller_manager (
   $concurrent_service_syncs                   = $kubernetes::master::params::kube_controller_concurrent_service_syncs,
   $concurrent_serviceaccount_token_syncs      = $kubernetes::master::params::kube_controller_concurrent_serviceaccount_token_syncs,
   $controller_start_interval                  = $kubernetes::master::params::kube_controller_controller_start_interval,
-  $daemonset_lookup_cache_size                = $kubernetes::master::params::kube_controller_daemonset_lookup_cache_size,
+  #  $daemonset_lookup_cache_size                = $kubernetes::master::params::kube_controller_daemonset_lookup_cache_size,
   $deployment_controller_sync_period          = $kubernetes::master::params::kube_controller_deployment_controller_sync_period,
   $enable_dynamic_provisioning                = $kubernetes::master::params::kube_controller_enable_dynamic_provisioning,
   $enable_garbage_collector                   = $kubernetes::master::params::kube_controller_enable_garbage_collector,
@@ -387,8 +390,8 @@ class kubernetes::master::controller_manager (
   $pv_recycler_pod_template_filepath_nfs      = $kubernetes::master::params::kube_controller_pv_recycler_pod_template_filepath_nfs,
   $pv_recycler_timeout_increment_hostpath     = $kubernetes::master::params::kube_controller_pv_recycler_timeout_increment_hostpath,
   $pvclaimbinder_sync_period                  = $kubernetes::master::params::kube_controller_pvclaimbinder_sync_period,
-  $replicaset_lookup_cache_size               = $kubernetes::master::params::kube_controller_replicaset_lookup_cache_size,
-  $replication_controller_lookup_cache_size   = $kubernetes::master::params::kube_controller_replication_controller_lookup_cache_size,
+  #  $replicaset_lookup_cache_size               = $kubernetes::master::params::kube_controller_replicaset_lookup_cache_size,
+  #  $replication_controller_lookup_cache_size   = $kubernetes::master::params::kube_controller_replication_controller_lookup_cache_size,
   $resource_quota_sync_period                 = $kubernetes::master::params::kube_controller_resource_quota_sync_period,
   $route_reconciliation_period                = $kubernetes::master::params::kube_controller_route_reconciliation_period,
   $root_ca_file                               = $kubernetes::master::params::kube_controller_root_ca_file,

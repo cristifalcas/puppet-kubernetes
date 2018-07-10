@@ -124,7 +124,7 @@ class kubernetes::master::params {
   $kube_controller_concurrent_service_syncs = undef
   $kube_controller_concurrent_serviceaccount_token_syncs = undef
   $kube_controller_controller_start_interval = undef
-  $kube_controller_daemonset_lookup_cache_size = 1024
+  #  $kube_controller_daemonset_lookup_cache_size = 1024
   $kube_controller_deployment_controller_sync_period = '30s'
   $kube_controller_enable_dynamic_provisioning = undef
   $kube_controller_enable_garbage_collector = undef
@@ -158,8 +158,8 @@ class kubernetes::master::params {
   $kube_controller_pv_recycler_pod_template_filepath_nfs = undef
   $kube_controller_pv_recycler_timeout_increment_hostpath = undef
   $kube_controller_pvclaimbinder_sync_period = undef
-  $kube_controller_replicaset_lookup_cache_size = 4096
-  $kube_controller_replication_controller_lookup_cache_size = 4096
+  #  $kube_controller_replicaset_lookup_cache_size = 4096
+  #  $kube_controller_replication_controller_lookup_cache_size = 4096
   $kube_controller_resource_quota_sync_period = '5m0s'
   $kube_controller_route_reconciliation_period = undef
   $kube_controller_root_ca_file = undef

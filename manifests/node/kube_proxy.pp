@@ -42,6 +42,7 @@
 # [*cleanup_iptables*]
 #   If true cleanup iptables rules and exit.
 #   Defaults to false
+#   It deleted in the new version of K8s.
 #
 # [*cluster_cidr*]
 #   The CIDR range of pods in the cluster. It is used to bridge traffic coming from outside of the cluster.
@@ -113,6 +114,10 @@
 #   QPS to use while talking with kubernetes apiserver
 #   Defaults to undef
 #
+# [*config*]
+#   Config for kube-proxy
+#   Defaults to undef
+#
 # [*kubeconfig*]
 #   Path to kubeconfig file with authorization information (the master location is set by the master flag).
 #   Defaults to undef
@@ -164,8 +169,7 @@ class kubernetes::node::kube_proxy (
   $pod_cpu                           = $kubernetes::node::params::kube_proxy_pod_cpu,
   $pod_memory                        = $kubernetes::node::params::kube_proxy_pod_memory,
   $bind_address                      = $kubernetes::node::params::kube_proxy_bind_address,
-  $cleanup_iptables                  = $kubernetes::node::params::kube_proxy_cleanup_iptables,
-  $cluster_cidr                      = $kubernetes::node::params::kube_proxy_cluster_cidr,
+  #  $cleanup_iptables                  = $kubernetes::node::params::kube_proxy_cleanup_iptables,
   $config_sync_period                = $kubernetes::node::params::kube_proxy_config_sync_period,
   $conntrack_max_per_core            = $kubernetes::node::params::kube_proxy_conntrack_max_per_core,
   $conntrack_min                     = $kubernetes::node::params::kube_proxy_conntrack_min,
@@ -181,6 +185,7 @@ class kubernetes::node::kube_proxy (
   $kube_api_burst                    = $kubernetes::node::params::kube_proxy_kube_api_burst,
   $kube_api_content_type             = $kubernetes::node::params::kube_proxy_kube_api_content_type,
   $kube_api_qps                      = $kubernetes::node::params::kube_proxy_kube_api_qps,
+  $config                            = $kubernetes::node::params::kube_proxy_config,
   $kubeconfig                        = $kubernetes::node::params::kube_proxy_kubeconfig,
   $masquerade_all                    = $kubernetes::node::params::kube_proxy_masquerade_all,
   $master                            = $kubernetes::node::params::kube_proxy_master,
@@ -193,7 +198,7 @@ class kubernetes::node::kube_proxy (
 ) inherits kubernetes::node::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)
-  if $cleanup_iptables { validate_bool($cleanup_iptables) }
+  #  if $cleanup_iptables { validate_bool($cleanup_iptables) }
   if $masquerade_all { validate_bool($masquerade_all) }
   validate_re($manage_as, '^(service|pod|container)$')
 
