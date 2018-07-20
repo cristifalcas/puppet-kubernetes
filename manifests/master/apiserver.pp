@@ -31,7 +31,7 @@
 #
 ## Parameters ##
 #
-# [*admission_control*]
+# [*admission_control*] # DEPRECATED
 #   Ordered list of plug-ins to do admission control of resources into cluster.
 #   Comma-delimited list of: LimitRanger, AlwaysAdmit, ServiceAccount, ResourceQuota,
 #   NamespaceExists, NamespaceAutoProvision, DenyExecOnPrivileged, AlwaysDeny, SecurityContextDeny, NamespaceLifecycle
@@ -40,6 +40,12 @@
 # [*admission_control_config_file*]
 #   File with admission control configuration.
 #   Defaults to undef
+#
+# [*enable_admission_plugins*]
+# admission plugins that should be enabled in addition to default enabled ones. Comma-delimited list of admission plugins: AlwaysAdmit, AlwaysDeny, AlwaysPullImages, DefaultStorageClass, DefaultTolerationSeconds, DenyEscalatingExec, DenyExecOnPrivileged, EventRateLimit, ExtendedResourceToleration, ImagePolicyWebhook, Initializers, LimitPodHardAntiAffinityTopology, LimitRanger, MutatingAdmissionWebhook, NamespaceAutoProvision, NamespaceExists, NamespaceLifecycle, NodeRestriction, OwnerReferencesPermissionEnforcement, PersistentVolumeClaimResize, PersistentVolumeLabel, PodNodeSelector, PodPreset, PodSecurityPolicy, PodTolerationRestriction, Priority, ResourceQuota, SecurityContextDeny, ServiceAccount, StorageObjectInUseProtection, ValidatingAdmissionWebhook. The order of plugins in this flag does not matter.
+# 
+# [*disable_admission_plugins*]
+# admission plugins that should be disabled although they are in the default enabled plugins list. Comma-delimited list of admission plugins: AlwaysAdmit, AlwaysDeny, AlwaysPullImages, DefaultStorageClass, DefaultTolerationSeconds, DenyEscalatingExec, DenyExecOnPrivileged, EventRateLimit, ExtendedResourceToleration, ImagePolicyWebhook, Initializers, LimitPodHardAntiAffinityTopology, LimitRanger, MutatingAdmissionWebhook, NamespaceAutoProvision, NamespaceExists, NamespaceLifecycle, NodeRestriction, OwnerReferencesPermissionEnforcement, PersistentVolumeClaimResize, PersistentVolumeLabel, PodNodeSelector, PodPreset, PodSecurityPolicy, PodTolerationRestriction, Priority, ResourceQuota, SecurityContextDeny, ServiceAccount, StorageObjectInUseProtection, ValidatingAdmissionWebhook. The order of plugins in this flag does not matter.
 #
 # [*advertise_address*]
 #   The IP address on which to advertise the apiserver to members of the cluster.
@@ -217,11 +223,11 @@
 #   If set, your server will be INSECURE.  Any token will be allowed and user information will be parsed from the token as username/group1,group2
 #   Default undef
 #
-# [*insecure_bind_address*]
+# [*insecure_bind_address*] #DEPRECATED
 #   The IP address on which to serve the --insecure-port (set to 0.0.0.0 for all interfaces). Defaults to localhost.
 #   Default 127.0.0.1
 #
-# [*insecure_port*]
+# [*insecure_port*] #DEPRECATED
 #   The port on which to serve unsecured, unauthenticated access. Default 8080.
 #     It is assumed that firewall rules are set up such that this port is not
 #     reachable from outside of the cluster and that port 443 on the cluster's
@@ -365,10 +371,6 @@
 #   Memory limit for apiserver in MB (used to configure sizes of caches, etc.)
 #   Default undef
 #
-# [*tls_ca_file*]
-#   f set, this certificate authority will used for secure access from Admission Controllers. This must be a valid PEM-encoded CA bundle.
-#   Default undef
-#
 # [*tls_cert_file*]
 #   File containing x509 Certificate for HTTPS.  (CA cert, if any, concatenated after server cert). If HTTPS
 #      serving is enabled, and --tls-cert-file and --tls-private-key-file are not provided, a self-signed certificate and key are
@@ -418,6 +420,8 @@ class kubernetes::master::apiserver (
   $pod_memory                                   = $kubernetes::master::params::kube_api_pod_memory,
   $admission_control                            = $kubernetes::master::params::kube_api_admission_control,
   $admission_control_config_file                = $kubernetes::master::params::kube_api_admission_control_config_file,
+  $enable_admission_plugins                     = $kubernetes::master::params::kube_api_enable_admission_plugins,
+  $disable_admission_plugins                    = $kubernetes::master::params::kube_api_disable_admission_plugins,
   $advertise_address                            = $kubernetes::master::params::kube_api_advertise_address,
   $allow_privileged                             = $kubernetes::master::params::kube_api_allow_privileged,
   $anonymous_auth                               = $kubernetes::master::params::kube_api_anonymous_auth,
@@ -488,7 +492,6 @@ class kubernetes::master::apiserver (
   $storage_media_type                           = $kubernetes::master::params::kube_api_storage_media_type,
   $storage_versions                             = $kubernetes::master::params::kube_api_storage_versions,
   $target_ram_mb                                = $kubernetes::master::params::kube_api_target_ram_mb,
-  $tls_ca_file                                  = $kubernetes::master::params::kube_api_tls_ca_file,
   $tls_cert_file                                = $kubernetes::master::params::kube_api_tls_cert_file,
   $tls_private_key_file                         = $kubernetes::master::params::kube_api_tls_private_key_file,
   $tls_sni_cert_key                             = $kubernetes::master::params::kube_api_tls_sni_cert_key,

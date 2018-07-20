@@ -111,6 +111,9 @@
 # [*container_runtime*]
 #   The container runtime to use. Possible values: 'docker', 'rkt'. Default: 'docker'.
 #   Defaults to undef
+# 
+# [*config*]
+#   The config file for kubelet.
 #
 # [*container_runtime_endpoint*]
 #   The unix socket endpoint of remote runtime service. If not empty, this option will
@@ -546,6 +549,7 @@ class kubernetes::node::kubelet (
   $cloud_provider                                    = $kubernetes::node::params::kubelet_cloud_provider,
   $cluster_dns                                       = $kubernetes::node::params::kubelet_cluster_dns,
   $cluster_domain                                    = $kubernetes::node::params::kubelet_cluster_domain,
+  $config                                            = $kubernetes::node::params::kubelet_config,
   $container_runtime                                 = $kubernetes::node::params::kubelet_container_runtime,
   $container_runtime_endpoint                        = $kubernetes::node::params::kubelet_container_runtime_endpoint,
   $containerized                                     = $kubernetes::node::params::kubelet_config,
@@ -638,6 +642,10 @@ class kubernetes::node::kubelet (
   $volume_stats_agg_period                           = $kubernetes::node::params::kubelet_volume_stats_agg_period,
   $verbosity                                         = $kubernetes::node::params::kubelet_verbosity,
   $extra_args                                        = $kubernetes::node::params::kubelet_extra_args,
+  $cni_bin_dir                                       = $kubernetes::node::params::kubelet_cni_bin_dir,
+  $cni_conf_dir                                      = $kubernetes::node::params::kubelet_cni_conf_dir,
+  $network_plugin                                    = $kubernetes::node::params::kubelet_network_plugin,
+
 ) inherits kubernetes::node::params {
   validate_re($ensure, '^(running|stopped)$')
   validate_bool($enable)

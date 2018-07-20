@@ -9,15 +9,10 @@ class kubernetes::master::params {
   $kube_api_service_ensure = running
   $kube_api_journald_forward_enable = false
   $kube_api_service_enable = true
-  $kube_api_admission_control = [
-    'NamespaceLifecycle',
-    'NamespaceExists',
-    'LimitRanger',
-    'SecurityContextDeny',
-    'ServiceAccount',
-    'ResourceQuota',
-  ]
+  $kube_api_admission_control = undef
   $kube_api_admission_control_config_file = undef
+  $kube_api_enable_admission_plugins = undef
+  $kube_api_disable_admission_plugins = undef
   $kube_api_advertise_address = undef
   $kube_api_allow_privileged = false
   $kube_api_anonymous_auth = undef
@@ -87,7 +82,6 @@ class kubernetes::master::params {
   $kube_api_storage_media_type = undef
   $kube_api_storage_versions = undef
   $kube_api_target_ram_mb = undef
-  $kube_api_tls_ca_file = undef
   $kube_api_tls_cert_file = undef
   $kube_api_tls_private_key_file = undef
   $kube_api_tls_sni_cert_key = undef
@@ -120,7 +114,6 @@ class kubernetes::master::params {
   $kube_controller_concurrent_namespace_syncs = 2
   $kube_controller_concurrent_replicaset_syncs = 5
   $kube_controller_concurrent_resource_quota_syncs = 5
-  $kube_controller_concurrent_rc_syncs = 5
   $kube_controller_concurrent_service_syncs = undef
   $kube_controller_concurrent_serviceaccount_token_syncs = undef
   $kube_controller_controller_start_interval = undef
@@ -166,11 +159,12 @@ class kubernetes::master::params {
   $kube_controller_secondary_node_eviction_rate = undef
   $kube_controller_service_account_private_key_file = undef
   $kube_controller_service_cluster_ip_range = undef
-  $kube_controller_service_sync_period = '5m0s'
+  # $kube_controller_service_sync_period = '5m0s'
   $kube_controller_terminated_pod_gc_threshold = 0
   $kube_controller_unhealthy_zone_threshold = undef
   $kube_controller_use_service_account_credentials = undef
   $kube_controller_verbosity = 2
+  $kube_controller_controllers = '*'
   $kube_controller_extra_args = ''
 
   # scheduler config

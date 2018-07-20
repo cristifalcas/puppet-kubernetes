@@ -24,7 +24,6 @@
  --concurrent-namespace-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_namespace_syncs'] -%>
  --concurrent-replicaset-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_replicaset_syncs'] -%>
  --concurrent-resource-quota-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_resource_quota_syncs'] -%>
- --concurrent-rc-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_rc_syncs'] -%>
 <% if @concurrent_service_syncs then -%>
  --concurrent-service-syncs=<%= scope['kubernetes::master::controller_manager::concurrent_service_syncs'] -%>
 <% end -%>
@@ -130,13 +129,15 @@
 <% if @service_cluster_ip_range then -%>
  --service-cluster-ip-range=<%= scope['kubernetes::master::controller_manager::service_cluster_ip_range'] -%>
 <% end -%>
- --service-sync-period=<%= scope['kubernetes::master::controller_manager::service_sync_period'] -%>
  --terminated-pod-gc-threshold=<%= scope['kubernetes::master::controller_manager::terminated_pod_gc_threshold'] -%>
 <% if @unhealthy_zone_threshold then -%>
  --unhealthy-zone-threshold=<%= scope['kubernetes::master::controller_manager::unhealthy_zone_threshold'] -%>
 <% end -%>
 <% if @use_service_account_credentials then -%>
  --use-service-account-credentials=<%= scope['kubernetes::master::controller_manager::use_service_account_credentials'] -%>
+<% end -%>
+<% if @controllers then -%>
+ --controllers=<%= scope['kubernetes::master::controller_manager::controllers'] -%>
 <% end -%>
  --v=<%= scope['kubernetes::master::controller_manager::verbosity'] -%>
  <%= scope['kubernetes::master::controller_manager::extra_args'] -%>

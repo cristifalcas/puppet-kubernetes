@@ -1,6 +1,14 @@
+<% if @admission_control -%>
  --admission-control=<%= Array(scope['kubernetes::master::apiserver::admission_control']).join(',') -%>
+<% end -%>
 <% if @admission_control_config_file -%>
  --admission-control-config-file=<%= scope['kubernetes::master::apiserver::admission_control_config_file'] -%>
+<% end -%>
+<% if @enable_admission_plugins -%>
+ --enable-admission-plugins=<%= Array(scope['kubernetes::master::apiserver::enable_admission_plugins']).join(',') -%>
+<% end -%>
+<% if @disable_admission_plugins -%>
+ --disable-admission-plugins=<%= Array(scope['kubernetes::master::apiserver::disable_admission_plugins']).join(',') -%>
 <% end -%>
 <% if @advertise_address then -%>
  --advertise-address=<%= scope['kubernetes::master::apiserver::advertise_address'] -%>
@@ -176,9 +184,6 @@
 <% end -%>
 <% if @target_ram_mb -%>
  --target-ram-mb=<%= scope['kubernetes::master::apiserver::target_ram_mb'] -%>
-<% end -%>
-<% if @tls_ca_file -%>
- --tls-ca-file=<%= scope['kubernetes::master::apiserver::tls_ca_file'] -%>
 <% end -%>
 <% if @tls_cert_file -%>
  --tls-cert-file=<%= scope['kubernetes::master::apiserver::tls_cert_file'] -%>

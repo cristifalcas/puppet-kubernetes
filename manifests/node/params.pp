@@ -65,8 +65,8 @@ class kubernetes::node::params {
   $kubelet_host_pid_sources = undef
   $kubelet_hostname_override = $::fqdn
   $kubelet_http_check_frequency = undef
-  $kubelet_image_gc_high_threshold = 90
-  $kubelet_image_gc_low_threshold = 80
+  $kubelet_image_gc_high_threshold = undef
+  $kubelet_image_gc_low_threshold = undef
   $kubelet_image_service_endpoint = undef
   $kubelet_iptables_drop_bit = undef
   $kubelet_iptables_masquerade_bit = undef
@@ -82,12 +82,12 @@ class kubernetes::node::params {
   $kubelet_manifest_url = undef
   $kubelet_manifest_url_header = undef
   $kubelet_master_service_namespace = undef
-  $kubelet_max_open_files = 1000000
-  $kubelet_max_pods = 110
-  $kubelet_minimum_image_ttl_duration = '2m0s'
+  $kubelet_max_open_files = undef
+  $kubelet_max_pods = undef
+  $kubelet_minimum_image_ttl_duration = undef
   $kubelet_node_ip = undef
   $kubelet_node_labels = undef
-  $kubelet_node_status_update_frequency = '10s'
+  $kubelet_node_status_update_frequency = undef
   $kubelet_non_masquerade_cidr = undef
   $kubelet_oom_score_adj = undef
   #  $kubelet_outofdisk_transition_frequency = '5m0s'
@@ -97,7 +97,7 @@ class kubernetes::node::params {
   $kubelet_pods_per_core = undef
   $kubelet_port = 10250
   $kubelet_protect_kernel_defaults = undef
-  $kubelet_register_node = true
+  $kubelet_register_node = undef
   $kubelet_register_schedulable = undef
   $kubelet_registry_burst = undef
   $kubelet_registry_qps = undef
@@ -110,7 +110,7 @@ class kubernetes::node::params {
   $kubelet_runtime_cgroups = undef
   $kubelet_runtime_request_timeout = undef
   $kubelet_seccomp_profile_root = undef
-  $kubelet_serialize_image_pulls = true
+  $kubelet_serialize_image_pulls = undef
   $kubelet_streaming_connection_idle_timeout = undef
   $kubelet_sync_frequency = undef
   $kubelet_system_cgroups = undef
@@ -120,6 +120,9 @@ class kubernetes::node::params {
   $kubelet_volume_stats_agg_period = undef
   $kubelet_verbosity = 2
   $kubelet_extra_args = ''
+  $kubelet_cni_bin_dir = '/opt/cni/bin'
+  $kubelet_cni_conf_dir = '/etc/cni/net.d'
+  $kubelet_network_plugin = undef
 
   # proxy options
   $kube_proxy_service_ensure = 'running'

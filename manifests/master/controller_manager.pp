@@ -93,7 +93,7 @@
 #   but more CPU (and network) load
 #   Default 5
 #
-# [*concurrent_rc_syncs*]
+# [*concurrent_rc_syncs*] # DELETED
 #   The number of replication controllers that are allowed to sync concurrently. Larger number = more
 #      reponsive replica management, but more CPU (and network) load
 #   Defaults to 5
@@ -111,6 +111,11 @@
 # [*controller_start_interval*]
 #   Interval between starting controller managers.
 #   Defaults to undef.
+#
+# [*controllers*]
+# A list of controllers to enable. '*' enables all on-by-default controllers, 'foo' enables the controller named 'foo', '-foo' disables the controller named 'foo'.
+# All controllers: attachdetach, bootstrapsigner, clusterrole-aggregation, cronjob, csrapproving, csrcleaner, csrsigning, daemonset, deployment, disruption, endpoint, garbagecollector, horizontalpodautoscaling, job, namespace, nodeipam, nodelifecycle, persistentvolume-binder, persistentvolume-expander, podgc, pv-protection, pvc-protection, replicaset, replicationcontroller, resourcequota, route, service, serviceaccount, serviceaccount-token, statefulset, tokencleaner, ttl
+# Disabled-by-default controllers: bootstrapsigner, tokencleaner
 #
 # [*daemonset_lookup_cache_size*]
 #   The the size of lookup cache for daemonsets. Larger number = more responsive daemonsets, but more MEM load.
@@ -305,7 +310,7 @@
 #   CIDR Range for Services in cluster.
 #   Defaults to undef.
 #
-# [*service_sync_period*]
+# [*service_sync_period*] # DELETED
 #   The period for syncing services with their external load balancers
 #   Defaults to 5m0s
 #
@@ -352,7 +357,6 @@ class kubernetes::master::controller_manager (
   $concurrent_namespace_syncs                 = $kubernetes::master::params::kube_controller_concurrent_namespace_syncs,
   $concurrent_replicaset_syncs                = $kubernetes::master::params::kube_controller_concurrent_replicaset_syncs,
   $concurrent_resource_quota_syncs            = $kubernetes::master::params::kube_controller_concurrent_resource_quota_syncs,
-  $concurrent_rc_syncs                        = $kubernetes::master::params::kube_controller_concurrent_rc_syncs,
   $concurrent_service_syncs                   = $kubernetes::master::params::kube_controller_concurrent_service_syncs,
   $concurrent_serviceaccount_token_syncs      = $kubernetes::master::params::kube_controller_concurrent_serviceaccount_token_syncs,
   $controller_start_interval                  = $kubernetes::master::params::kube_controller_controller_start_interval,
@@ -398,11 +402,11 @@ class kubernetes::master::controller_manager (
   $secondary_node_eviction_rate               = $kubernetes::master::params::kube_controller_secondary_node_eviction_rate,
   $service_account_private_key_file           = $kubernetes::master::params::kube_controller_service_account_private_key_file,
   $service_cluster_ip_range                   = $kubernetes::master::params::kube_controller_service_cluster_ip_range,
-  $service_sync_period                        = $kubernetes::master::params::kube_controller_service_sync_period,
   $terminated_pod_gc_threshold                = $kubernetes::master::params::kube_controller_terminated_pod_gc_threshold,
   $unhealthy_zone_threshold                   = $kubernetes::master::params::kube_controller_unhealthy_zone_threshold,
   $use_service_account_credentials            = $kubernetes::master::params::kube_controller_use_service_account_credentials,
   $verbosity                                  = $kubernetes::master::params::kube_controller_verbosity,
+  $controllers                                = $kubernetes::master::params::kube_controller_controllers,
   $extra_args                                 = $kubernetes::master::params::kube_controller_extra_args,
 ) inherits kubernetes::master::params {
   validate_re($ensure, '^(running|stopped)$')

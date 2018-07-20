@@ -2,10 +2,10 @@
 # kubernetes kubelet (minion) config
 
 # The address for the info server to serve on (set to 0.0.0.0 or "" for all interfaces)
-KUBELET_ADDRESS="--address=<%= scope['kubernetes::node::kubelet::address'] %>"
+# KUBELET_ADDRESS="--address=<%= scope['kubernetes::node::kubelet::address'] %>"
 
 # The port for the info server to serve on
-KUBELET_PORT="--port=<%= scope['kubernetes::node::kubelet::port'] %>"
+# KUBELET_PORT="--port=<%= scope['kubernetes::node::kubelet::port'] %>"
 
 # You may leave this blank to use the actual hostname
 KUBELET_HOSTNAME="--hostname-override=<%= scope['kubernetes::node::kubelet::hostname_override'] %>"
@@ -17,7 +17,7 @@ KUBELET_API_SERVER="--api-servers=<%= Array(scope['kubernetes::node::kubelet::ap
 
 # Add your own!
 KUBELET_ARGS="<% -%>
-<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::node::kubelet::allow_privileged')) -%>
+<% if @allow_privileged -%>
  --allow-privileged=<%= scope['kubernetes::node::kubelet::allow_privileged'] -%>
 <% end -%>
 <% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::node::kubelet::anonymous_auth')) -%>
@@ -179,8 +179,12 @@ KUBELET_ARGS="<% -%>
 <% if @http_check_frequency -%>
  --http-check-frequency=<%= scope['kubernetes::node::kubelet::http_check_frequency'] -%>
 <% end -%>
+<% if @image_gc_high_threshold -%>
  --image-gc-high-threshold=<%= scope['kubernetes::node::kubelet::image_gc_high_threshold'] -%>
+<% end -%>
+<% if @image_gc_low_threshold -%>
  --image-gc-low-threshold=<%= scope['kubernetes::node::kubelet::image_gc_low_threshold'] -%>
+<% end -%>
 <% if @image_service_endpoint -%>
  --image_service_endpoint=<%= scope['kubernetes::node::kubelet::image_service_endpoint'] -%>
 <% end -%>
@@ -226,17 +230,25 @@ KUBELET_ARGS="<% -%>
 <% if @master_service_namespace -%>
  --master-service-namespace=<%= scope['kubernetes::node::kubelet::master_service_namespace'] -%>
 <% end -%>
+<% if @max_open_files -%>
  --max-open-files=<%= scope['kubernetes::node::kubelet::max_open_files'] -%>
+<% end -%>
+<% if @max_pods -%>
  --max-pods=<%= scope['kubernetes::node::kubelet::max_pods'] -%>
+<% end -%>
+<% if @minimum_image_ttl_duration -%>
  --minimum-image-ttl-duration=<%= scope['kubernetes::node::kubelet::minimum_image_ttl_duration'] -%>
+<% end -%>
 <% if @node_ip -%>
  --node-ip=<%= scope['kubernetes::node::kubelet::node_ip'] -%>
 <% end -%>
 <% if @node_labels -%>
  --node-labels=<%= scope['kubernetes::node::kubelet::node_labels'] -%>
 <% end -%>
+<% if @node_status_update_frequency -%>
  --node-status-update-frequency=<%= scope['kubernetes::node::kubelet::node_status_update_frequency'] -%>
-<% if @non_masquerade_cidr -%>oom_score_adj
+<% end -%>
+<% if @non_masquerade_cidr -%>
  --non-masquerade-cidr=<%= scope['kubernetes::node::kubelet::non_masquerade_cidr'] -%>
 <% end -%>
 <% if @oom_score_adj -%>
@@ -260,7 +272,7 @@ KUBELET_ARGS="<% -%>
 <% if @protect_kernel_defaults -%>
  --protect-kernel-defaults=<%= scope['kubernetes::node::kubelet::protect_kernel_defaults'] -%>
 <% end -%>
-<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::node::kubelet::register_node')) -%>
+<% if @register_node -%>
  --register-node=<%= scope['kubernetes::node::kubelet::register_node'] -%>
 <% end -%>
 <% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::node::kubelet::register_schedulable')) -%>
@@ -299,7 +311,7 @@ KUBELET_ARGS="<% -%>
 <% if @seccomp_profile_root -%>
  --seccomp-profile-root=<%= scope['kubernetes::node::kubelet::seccomp_profile_root'] -%>
 <% end -%>
-<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::node::kubelet::serialize_image_pulls')) -%>
+<% if @serialize_image_pulls -%>
  --serialize-image-pulls=<%= scope['kubernetes::node::kubelet::serialize_image_pulls'] -%>
 <% end -%>
 <% if @streaming_connection_idle_timeout -%>
@@ -322,6 +334,15 @@ KUBELET_ARGS="<% -%>
 <% end -%>
 <% if @volume_stats_agg_period -%>
  --volume-stats-agg-period=<%= scope['kubernetes::node::kubelet::volume_stats_agg_period'] -%>
+<% end -%>
+<% if @cni_bin_dir -%>
+ --cni-bin-dir=<%= scope['kubernetes::node::kubelet::cni_bin_dir'] -%>
+<% end -%>
+<% if @cni_conf_dir -%>
+ --cni-conf-dir=<%= scope['kubernetes::node::kubelet::cni_conf_dir'] -%>
+<% end -%>
+<% if @network_plugin -%>
+ --network-plugin=<%= scope['kubernetes::node::kubelet::network_plugin'] -%>
 <% end -%>
  --v=<%= scope['kubernetes::node::kubelet::verbosity'] -%>
  <%= scope['kubernetes::node::kubelet::extra_args'] -%>
