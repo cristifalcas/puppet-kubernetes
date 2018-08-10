@@ -153,6 +153,12 @@
 <% if @requestheader_username_headers -%>
  --requestheader-username-headers=<%= scope['kubernetes::master::apiserver::requestheader_username_headers'] -%>
 <% end -%>
+<% if @requestheader_extra_headers_prefix -%>
+ --requestheader-extra-headers-prefix=<%= scope['kubernetes::master::apiserver::requestheader_extra_headers_prefix'] -%>
+<% end -%>
+<% if @requestheader_group_headers -%>
+ --requestheader-group-headers=<%= scope['kubernetes::master::apiserver::requestheader_group_headers'] -%>
+<% end -%>
 <% if @runtime_config -%>
  --runtime-config=<%= scope['kubernetes::master::apiserver::runtime_config'] -%>
 <% end -%>
@@ -202,6 +208,13 @@
 <% end -%>
 <% if @watch_cache_sizes -%>
  --watch-cache-sizes=<%= scope['kubernetes::master::apiserver::watch_cache_sizes'] -%>
+<% end -%>
+<% if @enable_aggregator_routing -%>
+ --enable-aggregator-routing=<%= scope['kubernetes::master::apiserver::enable_aggregator_routing'] -%>
+<% end -%>
+<% if @proxy_client_cert_file -%>
+ --proxy-client-cert-file=<%= scope['kubernetes::master::apiserver::proxy_client_cert_file'] -%>
+ --proxy-client-key-file=<%= scope['kubernetes::master::apiserver::proxy_client_key_file'] -%>
 <% end -%>
  --v=<%= scope['kubernetes::master::apiserver::verbosity'] -%>
  <%= scope['kubernetes::master::apiserver::extra_args'] -%>

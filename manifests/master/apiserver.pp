@@ -310,7 +310,13 @@
 # [*requestheader_username_headers*]
 #   List of request headers to inspect for usernames. X-Remote-User is common.
 #   Default undef
+# 
+# [*requestheader_extra_headers_prefix*]
+#   List of request header prefixes to inspect. X-Remote-Extra- is suggested.
 #
+# [*requestheader_group_headers*]
+#   List of request headers to inspect for groups. X-Remote-Group is suggested.
+# 
 # [*runtime_config*]
 #   A set of key=value pairs that describe runtime configuration that may be passed to apiserver.
 #      apis/<groupVersion> key can be used to turn on/off specific api versions. apis/<groupVersion>/<resource> can be used to turn
@@ -405,6 +411,9 @@
 #   Set the log verbosity
 #   Default 2
 #
+# [*enable_aggregator_routing*]
+#   Turns on aggregator routing requests to endoints IP rather than cluster IP.
+#
 # [*extra_args*]
 #   Set your own 
 #   Default undef
@@ -480,6 +489,8 @@ class kubernetes::master::apiserver (
   $requestheader_allowed_names                  = $kubernetes::master::params::kube_api_requestheader_allowed_names,
   $requestheader_client_ca_file                 = $kubernetes::master::params::kube_api_requestheader_client_ca_file,
   $requestheader_username_headers               = $kubernetes::master::params::kube_api_requestheader_username_headers,
+  $requestheader_extra_headers_prefix           = $kubernetes::master::params::kube_api_requestheader_extra_headers_prefix,
+  $requestheader_group_headers                  = $kubernetes::master::params::kube_api_requestheader_group_headers,
   $repair_malformed_updates                     = $kubernetes::master::params::kube_api_repair_malformed_updates,
   $runtime_config                               = $kubernetes::master::params::kube_api_runtime_config,
   $secure_port                                  = $kubernetes::master::params::kube_api_secure_port,
@@ -498,7 +509,10 @@ class kubernetes::master::apiserver (
   $token_auth_file                              = $kubernetes::master::params::kube_api_token_auth_file,
   $watch_cache                                  = $kubernetes::master::params::kube_api_watch_cache,
   $watch_cache_sizes                            = $kubernetes::master::params::kube_api_watch_cache_sizes,
+  $enable_aggregator_routing                    = $kubernetes::master::params::kube_api_enable_aggregator_routing,
   $verbosity                                    = $kubernetes::master::params::kube_api_verbosity,
+  $proxy_client_cert_file                       = $kubernetes::master::params::kube_api_proxy_client_cert_file,
+  $proxy_client_key_file                        = $kubernetes::master::params::kube_api_proxy_client_key_file,
   $extra_args                                   = $kubernetes::master::params::kube_api_extra_args,
 ) inherits kubernetes::master::params {
   validate_re($ensure, '^(running|stopped)$')

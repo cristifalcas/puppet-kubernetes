@@ -71,6 +71,8 @@ class kubernetes::master::params {
   $kube_api_requestheader_allowed_names = undef
   $kube_api_requestheader_client_ca_file = undef
   $kube_api_requestheader_username_headers = undef
+  $kube_api_requestheader_extra_headers_prefix = undef
+  $kube_api_requestheader_group_headers = undef
   $kube_api_runtime_config = undef
   $kube_api_secure_port = 6443
   $kube_api_service_account_key_file = undef
@@ -90,6 +92,9 @@ class kubernetes::master::params {
   $kube_api_watch_cache_sizes = undef
   $kube_api_kubernetes_service_node_port = 0
   $kube_api_verbosity = 2
+  $kube_api_enable_aggregator_routing = true
+  $kube_api_proxy_client_cert_file = undef
+  $kube_api_proxy_client_key_file = undef
   $kube_api_extra_args = ''
 
   # controller manager config
