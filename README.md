@@ -1,3 +1,5 @@
+# This module works with kubernetes 1.11 (tested in production) #
+
 # kubernetes #
 [![Build Status](https://travis-ci.org/cristifalcas/puppet-kubernetes.png?branch=master)](https://travis-ci.org/cristifalcas/puppet-kubernetes)
 
