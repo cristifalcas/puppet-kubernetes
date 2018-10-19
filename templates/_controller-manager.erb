@@ -67,7 +67,9 @@
  --leader-elect-renew-deadline=<%= scope['kubernetes::master::controller_manager::leader_elect_renew_deadline'] -%>
  --leader-elect-retry-period=<%= scope['kubernetes::master::controller_manager::leader_elect_retry_period'] -%>
 <% end -%>
+<% if scope['kubernetes::master::controller_manager::master'] then -%>
  --master=<%= scope['kubernetes::master::controller_manager::master'] -%>
+<% end -%>
 <% if @min_resync_period then -%>
  --min-resync-period=<%= scope['kubernetes::master::controller_manager::min_resync_period'] -%>
 <% end -%>

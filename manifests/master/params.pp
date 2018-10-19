@@ -53,7 +53,7 @@ class kubernetes::master::params {
   $kube_api_external_hostname = undef
   $kube_api_google_json_key = undef
   $kube_api_insecure_allow_any_token = undef
-  $kube_api_insecure_bind_address = '127.0.0.1'
+  $kube_api_insecure_bind_address = undef
   $kube_api_insecure_port = 8080
   $kube_api_kubelet_certificate_authority = undef
   $kube_api_kubelet_client_certificate = undef
@@ -138,7 +138,7 @@ class kubernetes::master::params {
   $kube_controller_leader_elect_lease_duration = '15s'
   $kube_controller_leader_elect_renew_deadline = '10s'
   $kube_controller_leader_elect_retry_period = '2s'
-  $kube_controller_master = 'http://127.0.0.1:8080'
+  $kube_controller_master = undef
   $kube_controller_min_resync_period = undef
   $kube_controller_namespace_sync_period = '5m0s'
   $kube_controller_node_cidr_mask_size = undef
@@ -194,7 +194,7 @@ class kubernetes::master::params {
   $kube_scheduler_leader_elect_renew_deadline = '10s'
   $kube_scheduler_leader_elect_retry_period = '2s'
   $kube_scheduler_log_flush_frequency = '5s'
-  $kube_scheduler_master = 'http://127.0.0.1:8080'
+  $kube_scheduler_master = undef
   $kube_scheduler_policy_config_file = undef
   $kube_scheduler_port = 10251
   $kube_scheduler_profiling = true

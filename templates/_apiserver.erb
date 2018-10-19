@@ -112,8 +112,10 @@
 <% if @insecure_allow_any_token -%>
  --insecure-allow-any-token=<%= scope['kubernetes::master::apiserver::insecure_allow_any_token'] -%>
 <% end -%>
+<% if scope['kubernetes::master::apiserver::insecure_bind_address'] -%>
  --insecure-bind-address=<%= scope['kubernetes::master::apiserver::insecure_bind_address'] -%>
  --insecure-port=<%= scope['kubernetes::master::apiserver::insecure_port'] -%>
+<% else -%> --insecure-port=0 <% end -%>
 <% if @kubelet_certificate_authority -%>
  --kubelet-certificate-authority=<%= scope['kubernetes::master::apiserver::kubelet_certificate_authority'] -%>
 <% end -%>

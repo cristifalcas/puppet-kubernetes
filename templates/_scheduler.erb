@@ -24,7 +24,9 @@
  --leader-elect-retry-period=<%= scope['kubernetes::master::scheduler::leader_elect_retry_period'] -%>
 <% end -%>
  --log-flush-frequency=<%= scope['kubernetes::master::scheduler::log_flush_frequency'] -%>
+<% if scope['kubernetes::master::scheduler::master'] then -%>
  --master=<%= scope['kubernetes::master::scheduler::master'] -%>
+<% end -%>
 <% if @policy_config_file then -%>
  --policy-config-file=<%= scope['kubernetes::master::scheduler::policy_config_file'] -%>
 <% end -%>
