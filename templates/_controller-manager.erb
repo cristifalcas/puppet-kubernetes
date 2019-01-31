@@ -141,5 +141,8 @@
 <% if @controllers then -%>
  --controllers=<%= scope['kubernetes::master::controller_manager::controllers'] -%>
 <% end -%>
+<% if @horizontal_pod_autoscaler_use_rest_clients then -%>
+ --horizontal-pod-autoscaler-use-rest-clients=<%= scope['kubernetes::master::controller_manager::horizontal_pod_autoscaler_use_rest_clients'] -%>
+<% end -%>
  --v=<%= scope['kubernetes::master::controller_manager::verbosity'] -%>
  <%= scope['kubernetes::master::controller_manager::extra_args'] -%>

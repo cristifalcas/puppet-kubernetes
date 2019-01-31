@@ -168,6 +168,7 @@ class kubernetes::master::params {
   $kube_controller_terminated_pod_gc_threshold = 0
   $kube_controller_unhealthy_zone_threshold = undef
   $kube_controller_use_service_account_credentials = undef
+  $kube_controller_horizontal_pod_autoscaler_use_rest_clients = undef
   $kube_controller_verbosity = 2
   $kube_controller_controllers = '*'
   $kube_controller_extra_args = ''

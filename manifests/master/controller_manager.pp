@@ -327,6 +327,12 @@
 #   If true, use individual service account credentials for each controller.
 #   Defaults to undef.
 #
+# [*horizontal_pod_autoscaler_use_rest_clients*]
+#   If set to true, causes the horizontal pod autoscaler controller to use REST clients through the kube-aggregator, 
+#      instead of using the legacy metrics client through the API server proxy.  
+#      This is required for custom metrics support in the horizontal pod autoscaler.
+#   Defaults to undef.
+#
 # [*verbosity*]
 #   Set log verbosity
 #   Defaults to 2
@@ -405,6 +411,7 @@ class kubernetes::master::controller_manager (
   $terminated_pod_gc_threshold                = $kubernetes::master::params::kube_controller_terminated_pod_gc_threshold,
   $unhealthy_zone_threshold                   = $kubernetes::master::params::kube_controller_unhealthy_zone_threshold,
   $use_service_account_credentials            = $kubernetes::master::params::kube_controller_use_service_account_credentials,
+  $horizontal_pod_autoscaler_use_rest_clients = $kubernetes::master::params::kube_controller_horizontal_pod_autoscaler_use_rest_clients,
   $verbosity                                  = $kubernetes::master::params::kube_controller_verbosity,
   $controllers                                = $kubernetes::master::params::kube_controller_controllers,
   $extra_args                                 = $kubernetes::master::params::kube_controller_extra_args,
@@ -455,15 +462,15 @@ class kubernetes::master::controller_manager (
           owner  => 'root',
           group  => 'root',
           mode   => '0755',
-        } ->
-        file { '/etc/systemd/system/kube-controller-manager.service.d/journald.conf':
+        }
+->      file { '/etc/systemd/system/kube-controller-manager.service.d/journald.conf':
           ensure  => file,
           owner   => 'root',
           group   => 'root',
           mode    => '0644',
           content => template("${module_name}/systemd/controller_manager_journald.conf.erb"),
-        } ~>
-        exec { 'reload systemctl daemon for kube-controller-manager':
+        }
+~>      exec { 'reload systemctl daemon for kube-controller-manager':
           command     => '/bin/systemctl daemon-reload',
           refreshonly => true,
         } ~> Service['kube-controller-manager']
