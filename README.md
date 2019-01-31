@@ -1,3 +1,6 @@
+This module works with kubernetes 1.13 (tested in production) #
+You can get rpm for this module by url https://gitlab.com/azalio/kubernetes-binary/ (see artifacts)
+
 # kubernetes #
 [![Build Status](https://travis-ci.org/cristifalcas/puppet-kubernetes.png?branch=master)](https://travis-ci.org/cristifalcas/puppet-kubernetes)
 
