@@ -1,4 +1,4 @@
-This module works with kubernetes 1.13 (tested in production) #
+# This module works with kubernetes 1.13 (tested in production) #
 You can get rpm for this module by url https://gitlab.com/azalio/kubernetes-binary/ (see artifacts)
 
 # kubernetes #

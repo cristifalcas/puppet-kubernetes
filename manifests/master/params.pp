@@ -21,6 +21,8 @@ class kubernetes::master::params {
   $kube_api_audit_log_maxbackup = undef
   $kube_api_audit_log_maxsize = undef
   $kube_api_audit_log_path = undef
+  $kube_api_audit_log_mode = 'blocking'
+  $kube_api_audit_policy_file = undef
   $kube_api_authentication_token_webhook_cache_ttl = undef
   $kube_api_authentication_token_webhook_config_file = undef
   $kube_api_authorization_mode = 'AlwaysAllow'
@@ -61,6 +63,9 @@ class kubernetes::master::params {
   $kube_api_kubelet_https = true
   $kube_api_kubelet_preferred_address_types = undef
   $kube_api_kubelet_timeout = '5s'
+  $kube_api_log_dir = undef
+  $kube_api_log_file = undef
+  $kube_api_logtostderr = true
   $kube_api_long_running_request_regexp = undef
   $kube_api_master_service_namespace = 'default'
   $kube_api_max_connection_bytes_per_sec = 0
@@ -87,6 +92,7 @@ class kubernetes::master::params {
   $kube_api_tls_cert_file = undef
   $kube_api_tls_private_key_file = undef
   $kube_api_tls_sni_cert_key = undef
+  $kube_api_tls_cipher_suites = undef
   $kube_api_token_auth_file = undef
   $kube_api_watch_cache = undef
   $kube_api_watch_cache_sizes = undef

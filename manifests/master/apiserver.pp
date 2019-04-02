@@ -83,6 +83,15 @@
 #   If set, all requests coming to the apiserver will be logged to this file.
 #   Defaults to undef.
 #
+# [*audit_log_mode*]
+#   Strategy for sending audit events. Blocking indicates sending events should block server responses.
+#   Batch causes the backend to buffer and write events asynchronously.
+#   Known modes are batch,blocking,blocking-strict.
+#   Defaults to blocking.
+#
+# [*audit_policy_file*] - string
+#  Path to the file that defines the audit policy configuration.
+#
 # [*authentication_token_webhook_cache_ttl*]
 #   The duration to cache responses from the webhook token authenticator.
 #   Defaults to undef. (default 2m0s)
@@ -263,6 +272,16 @@
 #   the value of the port. If zero, the Kubernetes master service will be of type ClusterIP.
 #   Default 0
 #
+# [*log_dir*] - string
+#  If non-empty, write log files in this directory
+#
+# [*log_file*] - string
+#  If non-empty, use this log file
+#
+# [*logtostderr*] - true/false
+#  log to standard error instead of files
+#  Default: true
+#
 # [*long_running_request_regexp*]
 #   A regular expression matching long running requests which should be excluded from maximum inflight request handling.
 #      Default to "(/|^)((watch|proxy)(/|$)|(logs?|portforward|exec|attach)/?$)"
@@ -394,6 +413,9 @@
 #   use the --tls-sni-cert-key multiple times. Examples: "example.key,example.crt" or "*.foo.com,foo.com:foo.key,foo.crt". (default [])
 #   Default undef
 #
+# [*tls_cipher_suites*] - string
+#   Comma-separated list of cipher suites for the server. If omitted, the default Go cipher suites will be use.  Possible values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_RC4_128_SHA,TLS_RSA_WITH_3DES_EDE_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_RC4_128_SHA
+#
 # [*token_auth_file*]
 #   If set, the file that will be used to secure the secure port of the API server via token authentication.
 #   Default undef
@@ -439,6 +461,8 @@ class kubernetes::master::apiserver (
   $audit_log_maxbackup                          = $kubernetes::master::params::kube_api_audit_log_maxbackup,
   $audit_log_maxsize                            = $kubernetes::master::params::kube_api_audit_log_maxsize,
   $audit_log_path                               = $kubernetes::master::params::kube_api_audit_log_path,
+  $audit_log_mode                               = $kubernetes::master::params::kube_api_audit_log_mode,
+  $audit_policy_file                            = $kubernetes::master::params::kube_api_audit_policy_file,
   $authentication_token_webhook_cache_ttl       = $kubernetes::master::params::kube_api_authentication_token_webhook_cache_ttl,
   $authentication_token_webhook_config_file     = $kubernetes::master::params::kube_api_authentication_token_webhook_config_file,
   $authorization_mode                           = $kubernetes::master::params::kube_api_authorization_mode,
@@ -480,6 +504,9 @@ class kubernetes::master::apiserver (
   $kubelet_preferred_address_types              = $kubernetes::master::params::kube_api_kubelet_preferred_address_types,
   $kubelet_timeout                              = $kubernetes::master::params::kube_api_kubelet_timeout,
   $kubernetes_service_node_port                 = $kubernetes::master::params::kube_api_kubernetes_service_node_port,
+  $log_dir                                      = $kubernetes::master::params::kube_api_log_dir,
+  $log_file                                     = $kubernetes::master::params::kube_api_log_file,
+  $logtostderr                                  = $kubernetes::master::params::kube_api_logtostderr,
   $long_running_request_regexp                  = $kubernetes::master::params::kube_api_long_running_request_regexp,
   $master_service_namespace                     = $kubernetes::master::params::kube_api_master_service_namespace,
   $max_connection_bytes_per_sec                 = $kubernetes::master::params::kube_api_max_connection_bytes_per_sec,
@@ -506,6 +533,7 @@ class kubernetes::master::apiserver (
   $tls_cert_file                                = $kubernetes::master::params::kube_api_tls_cert_file,
   $tls_private_key_file                         = $kubernetes::master::params::kube_api_tls_private_key_file,
   $tls_sni_cert_key                             = $kubernetes::master::params::kube_api_tls_sni_cert_key,
+  $tls_cipher_suites                            = $kubernetes::master::params::kube_api_tls_cipher_suites,
   $token_auth_file                              = $kubernetes::master::params::kube_api_token_auth_file,
   $watch_cache                                  = $kubernetes::master::params::kube_api_watch_cache,
   $watch_cache_sizes                            = $kubernetes::master::params::kube_api_watch_cache_sizes,
