@@ -5,7 +5,8 @@ ExecStart=-/bin/sh -c "/usr/bin/kubelet \
 	    $KUBELET_PORT \
 	    $KUBELET_HOSTNAME \
 	    $KUBELET_API_SERVER \
-	    $KUBELET_ARGS 2>&1 | /usr/bin/forward-journald -tag kubelet"
+            $KUBELET_ARGS 2>&1 | /usr/bin/forward-journald -tag kubelet"
+ExecReload=/bin/kill --signal HUP $MAINPID
 StandardOutput=null
 StandardError=null
 KillMode=control-group

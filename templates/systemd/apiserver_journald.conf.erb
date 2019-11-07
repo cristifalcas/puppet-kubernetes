@@ -3,11 +3,12 @@ NotifyAccess=all
 Type=notify
 ExecStart=
 ExecStart=-/bin/sh -c "/usr/bin/kube-apiserver \
-	    $KUBE_API_ADDRESS \
-	    $KUBE_API_PORT \
-	    $KUBE_SERVICE_ADDRESSES \
-	    $KUBE_ADMISSION_CONTROL \
-	    $KUBE_API_ARGS 2>&1 | /usr/bin/forward-journald -tag kube-apiserver"
+            $KUBE_API_ADDRESS \
+            $KUBE_API_PORT \
+            $KUBE_SERVICE_ADDRESSES \
+            $KUBE_ADMISSION_CONTROL \
+            $KUBE_API_ARGS 2>&1 | /usr/bin/forward-journald -tag kube-apiserver"
+ExecReload=/bin/kill --signal HUP $MAINPID
 StandardOutput=null
 StandardError=null
 KillMode=control-group
