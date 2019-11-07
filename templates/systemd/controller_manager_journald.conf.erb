@@ -1,7 +1,8 @@
 [Service]
 ExecStart=
 ExecStart=-/bin/sh -c "/usr/bin/kube-controller-manager \
-	    $KUBE_CONTROLLER_MANAGER_ARGS 2>&1 | /usr/bin/forward-journald -tag kube-controller-manager"
+    $KUBE_CONTROLLER_MANAGER_ARGS 2>&1 | /usr/bin/forward-journald -tag kube-controller-manager"
+ExecReload=/bin/kill --signal HUP $MAINPID
 StandardOutput=null
 StandardError=null
 KillMode=control-group
