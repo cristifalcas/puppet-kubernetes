@@ -71,7 +71,7 @@ class kubernetes::master::params {
   $kube_api_max_connection_bytes_per_sec = 0
   $kube_api_max_requests_inflight = 400
   $kube_api_min_request_timeout = 1800
-  $kube_api_profiling = true
+  $kube_api_profiling = false
   $kube_api_repair_malformed_updates = undef
   $kube_api_requestheader_allowed_names = undef
   $kube_api_requestheader_client_ca_file = undef
@@ -112,6 +112,7 @@ class kubernetes::master::params {
   $kube_controller_pod_memory = '200Mi'
   $kube_controller_service_enable = true
   $kube_controller_address = '127.0.0.1'
+  $kube_controller_bind_address = '0.0.0.0'
   $kube_controller_allocate_node_cidrs = false
   $kube_controller_cloud_config = undef
   $kube_controller_cloud_provider = undef
@@ -139,6 +140,8 @@ class kubernetes::master::params {
   $kube_controller_kube_api_content_type = undef
   $kube_controller_kube_api_qps = 20
   $kube_controller_kubeconfig = undef
+  $kube_controller_authentication_kubeconfig = undef
+  $kube_controller_authorization_kubeconfig = undef
   $kube_controller_large_cluster_size_threshold = undef
   $kube_controller_leader_elect = undef
   $kube_controller_leader_elect_lease_duration = '15s'
@@ -153,8 +156,9 @@ class kubernetes::master::params {
   $kube_controller_node_monitor_period = '5s'
   $kube_controller_node_startup_grace_period = '1m0s'
   $kube_controller_pod_eviction_timeout = '5m0s'
-  $kube_controller_port = 10252
-  $kube_controller_profiling = true
+  $kube_controller_port = 0
+  $kube_controller_secure_port = 10257
+  $kube_controller_profiling = false
   $kube_controller_pv_recycler_increment_timeout_nfs = undef
   $kube_controller_pv_recycler_minimum_timeout_hostpath = undef
   $kube_controller_pv_recycler_minimum_timeout_nfs = undef
@@ -175,6 +179,7 @@ class kubernetes::master::params {
   $kube_controller_unhealthy_zone_threshold = undef
   $kube_controller_use_service_account_credentials = undef
   $kube_controller_horizontal_pod_autoscaler_use_rest_clients = undef
+  $kube_controller_authorization_always_allow_path = '/healthz'
   $kube_controller_verbosity = 2
   $kube_controller_controllers = '*'
   $kube_controller_extra_args = ''
@@ -203,9 +208,11 @@ class kubernetes::master::params {
   $kube_scheduler_log_flush_frequency = '5s'
   $kube_scheduler_master = undef
   $kube_scheduler_policy_config_file = undef
-  $kube_scheduler_port = 10251
-  $kube_scheduler_profiling = true
+  $kube_scheduler_port = 0
+  $kube_scheduler_profiling = false
   $kube_scheduler_scheduler_name = undef
+  $kube_scheduler_authorization_kubeconfig = undef
+  $kube_scheduler_authorization_always_allow_paths = '/healthz'
   $kube_scheduler_verbosity = 2
   $kube_scheduler_extra_args = ''
 }

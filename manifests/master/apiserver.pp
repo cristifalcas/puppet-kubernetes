@@ -309,7 +309,7 @@
 #
 # [*profiling*]
 #   Enable profiling via web interface host:port/debug/pprof/
-#   Default true
+#   Default false
 #
 # [*repair_malformed_updates*]
 #   If true, server will do its best to fix the update request to pass the validation, e.g., setting empty UID in update request
