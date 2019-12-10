@@ -109,13 +109,23 @@
 #
 # [*profiling*]
 #   Enable profiling via web interface host:port/debug/pprof/
-#   Defaults to true
+#   Defaults to false
 #
 # [*scheduler_name*]
 #   Name of the scheduler, used to select which pods will be processed by this scheduler,
 #    based on pod's annotation with key 'scheduler.alpha.kubernetes.io/name'
 #    If not defined, defaults to default-scheduler
 #   Defaults to undef
+#
+# [*authorization_kubeconfig*]
+#   Kubeconfig file pointing at the 'core' kubernetes server with enough rights to create 
+#    subjectaccessreviews.authorization.k8s.io.
+#    This is optional. If empty, all requests not skipped by authorization are forbidden.
+#   Defaults to undef
+#
+# [*authorization_always_allow_paths*]
+#   A list of HTTP paths to skip during authorization, i.e. these are authorized without contacting the 'core' kubernetes server.
+#   Default '/healthz'
 #
 # [*verbosity*]
 #   Set logger verbosity
@@ -152,6 +162,8 @@ class kubernetes::master::scheduler (
   $port                               = $kubernetes::master::params::kube_scheduler_port,
   $profiling                          = $kubernetes::master::params::kube_scheduler_profiling,
   $scheduler_name                     = $kubernetes::master::params::kube_scheduler_scheduler_name,
+  $authorization_kubeconfig           = $kubernetes::master::params::kube_scheduler_authorization_kubeconfig,
+  $authorization_always_allow_paths   = $kubernetes::master::params::kube_scheduler_authorization_always_allow_paths,
   $verbosity                          = $kubernetes::master::params::kube_scheduler_verbosity,
   $extra_args                         = $kubernetes::master::params::kube_scheduler_extra_args,
 ) inherits kubernetes::master::params {

@@ -35,6 +35,13 @@
 # [*address*]
 #   The IP address to serve on (set to 0.0.0.0 for all interfaces)
 #   Defaults to 127.0.0.1
+#   Deprecated
+#
+# [*bind_address*]
+#   The IP address on which to listen for the --secure-port port. 
+#   The associated interface(s) must be reachable by the rest of the cluster, and by CLI/web clients. 
+#   If blank, all interfaces will be used (0.0.0.0 for all IPv4 interfaces and :: for all IPv6 interfaces).i
+#   (default 0.0.0.0)
 #
 # [*allocate_node_cidrs*]
 #   Should CIDRs for Pods be allocated and set on the cloud provider.
@@ -113,9 +120,15 @@
 #   Defaults to undef.
 #
 # [*controllers*]
-# A list of controllers to enable. '*' enables all on-by-default controllers, 'foo' enables the controller named 'foo', '-foo' disables the controller named 'foo'.
-# All controllers: attachdetach, bootstrapsigner, clusterrole-aggregation, cronjob, csrapproving, csrcleaner, csrsigning, daemonset, deployment, disruption, endpoint, garbagecollector, horizontalpodautoscaling, job, namespace, nodeipam, nodelifecycle, persistentvolume-binder, persistentvolume-expander, podgc, pv-protection, pvc-protection, replicaset, replicationcontroller, resourcequota, route, service, serviceaccount, serviceaccount-token, statefulset, tokencleaner, ttl
-# Disabled-by-default controllers: bootstrapsigner, tokencleaner
+#   A list of controllers to enable. '*' enables all on-by-default controllers, 
+#   'foo' enables the controller named 'foo', '-foo' disables the controller named 'foo'.
+#   All controllers: attachdetach, bootstrapsigner, clusterrole-aggregation, cronjob, 
+#   csrapproving, csrcleaner, csrsigning, daemonset, deployment, disruption, endpoint, 
+#   garbagecollector, horizontalpodautoscaling, job, namespace, nodeipam, nodelifecycle, 
+#   persistentvolume-binder, persistentvolume-expander, podgc, pv-protection, 
+#   pvc-protection, replicaset, replicationcontroller, resourcequota, route, service, 
+#   serviceaccount, serviceaccount-token, statefulset, tokencleaner, ttl
+#   Disabled-by-default controllers: bootstrapsigner, tokencleaner
 #
 # [*daemonset_lookup_cache_size*]
 #   The the size of lookup cache for daemonsets. Larger number = more responsive daemonsets, but more MEM load.
@@ -162,6 +175,18 @@
 # [*kubeconfig*]
 #   Path to kubeconfig file with authorization and master location information.
 #   Defaults to undef
+#
+# [*authentication_kubeconfig*]
+#   Kubeconfig file pointing at the 'core' kubernetes server with enough rights 
+#   to create tokenaccessreviews.authentication.k8s.io. This is optional. 
+#   If empty, all token requests are considered to be anonymous and no client CA is looked up in the cluster.
+#   Default undef
+#
+# [*authorization_kubeconfig*]
+#   Kubeconfig file pointing at the 'core' kubernetes server with enough rights to create 
+#   subjectaccessreviews.authorization.k8s.io. 
+#   This is optional. If empty, all requests not skipped by authorization are forbidden.
+#   Default undef
 #
 # [*large_cluster_size_threshold*]
 #   Number of nodes from which NodeController treats the cluster as large for the eviction logic purposes.
@@ -230,11 +255,15 @@
 #
 # [*port*]
 #   The port that the controller-manager's http service runs on
-#   Defaults to 10252
+#   Defaults to 0
+#
+# [*secure_port*]
+#   The port on which to serve HTTPS with authentication and authorization.If 0, don't serve HTTPS at all.
+#   (default 10257)
 #
 # [*profiling*]
 #   Enable profiling via web interface host:port/debug/pprof/
-#   Defaults to true
+#   Defaults to false
 #
 # [*pv_recycler_increment_timeout_nfs*]
 #   the increment of time added per Gi to ActiveDeadlineSeconds for an NFS scrubber pod
@@ -333,6 +362,10 @@
 #      This is required for custom metrics support in the horizontal pod autoscaler.
 #   Defaults to undef.
 #
+# [*authorization_always_allow_paths*]
+#   A list of HTTP paths to skip during authorization, i.e. these are authorized without contacting the 'core' kubernetes server. 
+#   Default [/healthz]
+#
 # [*verbosity*]
 #   Set log verbosity
 #   Defaults to 2
@@ -350,6 +383,7 @@ class kubernetes::master::controller_manager (
   $pod_cpu                                    = $kubernetes::master::params::kube_controller_pod_cpu,
   $pod_memory                                 = $kubernetes::master::params::kube_controller_pod_memory,
   $address                                    = $kubernetes::master::params::kube_controller_address,
+  $bind_address                               = $kubernetes::master::params::kube_controller_bind_address,
   $allocate_node_cidrs                        = $kubernetes::master::params::kube_controller_allocate_node_cidrs,
   $cloud_config                               = $kubernetes::master::params::kube_controller_cloud_config,
   $cloud_provider                             = $kubernetes::master::params::kube_controller_cloud_provider,
@@ -377,6 +411,8 @@ class kubernetes::master::controller_manager (
   $kube_api_content_type                      = $kubernetes::master::params::kube_controller_kube_api_content_type,
   $kube_api_qps                               = $kubernetes::master::params::kube_controller_kube_api_qps,
   $kubeconfig                                 = $kubernetes::master::params::kube_controller_kubeconfig,
+  $authentication_kubeconfig                  = $kubernetes::master::params::kube_controller_authentication_kubeconfig,
+  $authorization_kubeconfig                   = $kubernetes::master::params::kube_controller_authorization_kubeconfig,
   $large_cluster_size_threshold               = $kubernetes::master::params::kube_controller_large_cluster_size_threshold,
   $leader_elect                               = $kubernetes::master::params::kube_controller_leader_elect,
   $leader_elect_lease_duration                = $kubernetes::master::params::kube_controller_leader_elect_lease_duration,
@@ -392,6 +428,7 @@ class kubernetes::master::controller_manager (
   $node_startup_grace_period                  = $kubernetes::master::params::kube_controller_node_startup_grace_period,
   $pod_eviction_timeout                       = $kubernetes::master::params::kube_controller_pod_eviction_timeout,
   $port                                       = $kubernetes::master::params::kube_controller_port,
+  $secure_port                                = $kubernetes::master::params::kube_controller_secure_port,
   $profiling                                  = $kubernetes::master::params::kube_controller_profiling,
   $pv_recycler_increment_timeout_nfs          = $kubernetes::master::params::kube_controller_pv_recycler_increment_timeout_nfs,
   $pv_recycler_minimum_timeout_hostpath       = $kubernetes::master::params::kube_controller_pv_recycler_minimum_timeout_hostpath,
@@ -412,6 +449,7 @@ class kubernetes::master::controller_manager (
   $unhealthy_zone_threshold                   = $kubernetes::master::params::kube_controller_unhealthy_zone_threshold,
   $use_service_account_credentials            = $kubernetes::master::params::kube_controller_use_service_account_credentials,
   $horizontal_pod_autoscaler_use_rest_clients = $kubernetes::master::params::kube_controller_horizontal_pod_autoscaler_use_rest_clients,
+  $authorization_always_allow_paths           = $kubernetes::master::params::kube_controller_authorization_always_allow_paths,
   $verbosity                                  = $kubernetes::master::params::kube_controller_verbosity,
   $controllers                                = $kubernetes::master::params::kube_controller_controllers,
   $extra_args                                 = $kubernetes::master::params::kube_controller_extra_args,

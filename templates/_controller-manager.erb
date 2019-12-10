@@ -1,4 +1,13 @@
+<% if @address then -%>
  --address=<%= scope['kubernetes::master::controller_manager::address'] -%>
+<% end -%>
+<% if @port then -%>
+ --port=<%= scope['kubernetes::master::controller_manager::port'] -%>
+<% end -%>
+<% if @bind_address then -%>
+ --bind-address=<%= scope['kubernetes::master::controller_manager::bind_address'] -%>
+ --secure-port=<%= scope['kubernetes::master::controller_manager::secure_port'] -%>
+<% end -%>
  --allocate-node-cidrs=<%= scope['kubernetes::master::controller_manager::allocate_node_cidrs'] -%>
 <% if @cloud_config then -%>
  --cloud-config=<%= scope['kubernetes::master::controller_manager::cloud_config'] -%>
@@ -58,6 +67,12 @@
 <% if @kubeconfig then -%>
  --kubeconfig=<%= scope['kubernetes::master::controller_manager::kubeconfig'] -%>
 <% end -%>
+<% if @authentication_kubeconfig then -%>
+ --authentication-kubeconfig=<%= scope['kubernetes::master::controller_manager::authentication_kubeconfig'] -%>
+<% end -%>
+<% if @authorization_kubeconfig then -%>
+ --authorization-kubeconfig=<%= scope['kubernetes::master::controller_manager::authorization_kubeconfig'] -%>
+<% end -%>
 <% if @large_cluster_size_threshold then -%>
  --large-cluster-size-threshold=<%= scope['kubernetes::master::controller_manager::large_cluster_size_threshold'] -%>
 <% end -%>
@@ -84,7 +99,6 @@
  --node-monitor-period=<%= scope['kubernetes::master::controller_manager::node_monitor_period'] -%>
  --node-startup-grace-period=<%= scope['kubernetes::master::controller_manager::node_startup_grace_period'] -%>
  --pod-eviction-timeout=<%= scope['kubernetes::master::controller_manager::pod_eviction_timeout'] -%>
- --port=<%= scope['kubernetes::master::controller_manager::port'] -%>
 <% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::controller_manager::profiling')) -%>
  --profiling=<%= scope['kubernetes::master::controller_manager::profiling'] -%>
 <% end -%>
@@ -143,6 +157,9 @@
 <% end -%>
 <% if @horizontal_pod_autoscaler_use_rest_clients then -%>
  --horizontal-pod-autoscaler-use-rest-clients=<%= scope['kubernetes::master::controller_manager::horizontal_pod_autoscaler_use_rest_clients'] -%>
+<% end -%>
+<% if @authorization_always_allow_paths then -%>
+ --authorization-always-allow-paths=<%= scope['kubernetes::master::controller_manager::authorization_always_allow_paths'] -%>
 <% end -%>
  --v=<%= scope['kubernetes::master::controller_manager::verbosity'] -%>
  <%= scope['kubernetes::master::controller_manager::extra_args'] -%>
