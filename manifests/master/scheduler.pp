@@ -194,6 +194,8 @@ class kubernetes::master::scheduler (
       file { '/etc/kubernetes/scheduler':
         ensure  => 'file',
         force   => true,
+        owner   => 'root',
+        group   => 'root',
         content => template("${module_name}/etc/kubernetes/scheduler.erb"),
         notify  => Service['kube-scheduler'],
       }

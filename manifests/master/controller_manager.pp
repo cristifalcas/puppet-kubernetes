@@ -485,6 +485,8 @@ class kubernetes::master::controller_manager (
       file { '/etc/kubernetes/controller-manager':
         ensure  => 'file',
         force   => true,
+        owner   => 'root',
+        group   => 'root',
         content => template("${module_name}/etc/kubernetes/controller-manager.erb"),
         notify  => Service['kube-controller-manager'],
       }
