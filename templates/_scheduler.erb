@@ -38,6 +38,9 @@
 <% if @authorization_kubeconfig then -%>
  --authorization-kubeconfig=<%= scope['kubernetes::master::scheduler::authorization_kubeconfig'] -%>
 <% end -%>
+<% if @authentication_kubeconfig then -%>
+ --authentication-kubeconfig=<%= scope['kubernetes::master::scheduler::authentication_kubeconfig'] -%>
+<% end -%>
 <% if @authorization_always_allow_paths then -%>
  --authorization-always-allow-paths=<%= scope['kubernetes::master::scheduler::authorization_always_allow_paths'] -%>
 <% end -%>

@@ -211,6 +211,7 @@ class kubernetes::master::params {
   $kube_scheduler_port = 0
   $kube_scheduler_profiling = false
   $kube_scheduler_scheduler_name = undef
+  $kube_scheduler_authentication_kubeconfig = undef
   $kube_scheduler_authorization_kubeconfig = undef
   $kube_scheduler_authorization_always_allow_paths = '/healthz'
   $kube_scheduler_verbosity = 2
