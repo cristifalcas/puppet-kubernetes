@@ -122,6 +122,10 @@
 #    subjectaccessreviews.authorization.k8s.io.
 #    This is optional. If empty, all requests not skipped by authorization are forbidden.
 #   Defaults to undef
+# [*authentication_kubeconfig*]
+#   Kubeconfig file pointing at the 'core' kubernetes server with enough rights to create 
+#    tokenreviews.authentication.k8s.io. This is optional. If empty, all token requests are 
+#    considered to be anonymous and no client CA is looked up in the cluster.
 #
 # [*authorization_always_allow_paths*]
 #   A list of HTTP paths to skip during authorization, i.e. these are authorized without contacting the 'core' kubernetes server.
@@ -162,6 +166,7 @@ class kubernetes::master::scheduler (
   $port                               = $kubernetes::master::params::kube_scheduler_port,
   $profiling                          = $kubernetes::master::params::kube_scheduler_profiling,
   $scheduler_name                     = $kubernetes::master::params::kube_scheduler_scheduler_name,
+  $authentication_kubeconfig          = $kubernetes::master::params::kube_scheduler_authentication_kubeconfig,
   $authorization_kubeconfig           = $kubernetes::master::params::kube_scheduler_authorization_kubeconfig,
   $authorization_always_allow_paths   = $kubernetes::master::params::kube_scheduler_authorization_always_allow_paths,
   $verbosity                          = $kubernetes::master::params::kube_scheduler_verbosity,
