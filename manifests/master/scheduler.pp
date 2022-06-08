@@ -91,6 +91,18 @@
 #   if leader election is enabled.
 #   Defaults to '2s"
 #
+# [*log_dir*]
+#   If non-empty, write log files in this directory
+#
+# [*log_file*]
+#   If non-empty, use this log file
+# 
+# [*log_file_max_size*]
+#   Defines the maximum size a log file can grow to. Unit is megabytes. If the value is 0, the maximum file size is unlimited. (default 1800)
+#
+# [*logtostderr*]
+#   Log to standard error instead of files (default true)
+#
 # [*log_flush_frequency*]
 #   Maximum number of seconds between log flushes
 #   Defaults to 5s
@@ -160,6 +172,10 @@ class kubernetes::master::scheduler (
   $leader_elect_lease_duration        = $kubernetes::master::params::kube_scheduler_leader_elect_lease_duration,
   $leader_elect_renew_deadline        = $kubernetes::master::params::kube_scheduler_leader_elect_renew_deadline,
   $leader_elect_retry_period          = $kubernetes::master::params::kube_scheduler_leader_elect_retry_period,
+  $log_dir			      = $kubernetes::master::params::kube_scheduler_log_dir,
+  $log_file                           = $kubernetes::master::params::kube_scheduler_log_file,
+  $log_file_max_size                  = $kubernetes::master::params::kube_scheduler_log_file_max_size,
+  $logtostderr                        = $kubernetes::master::params::kube_scheduler_logtostderr,
   $log_flush_frequency                = $kubernetes::master::params::kube_scheduler_log_flush_frequency,
   $master                             = $kubernetes::master::params::kube_scheduler_master,
   $policy_config_file                 = $kubernetes::master::params::kube_scheduler_policy_config_file,
@@ -208,6 +224,12 @@ class kubernetes::master::scheduler (
       service { 'kube-scheduler':
         ensure => $ensure,
         enable => $enable,
+      }
+
+      if $log_dir {
+        file {"$log_dir":
+          ensure => 'directory',
+        }
       }
 
       if $journald_forward_enable and $::operatingsystemmajrelease == '7' {

@@ -370,6 +370,18 @@
 #   Set log verbosity
 #   Defaults to 2
 #
+# [*log_dir*]
+#   If non-empty, write log files in this directory
+#
+# [*log_file*]
+#   If non-empty, use this log file
+#
+# [*log_file_max_size*]
+#   Defines the maximum size a log file can grow to. Unit is megabytes. If the value is 0, the maximum file size is unlimited. (default 1800)
+#
+# [*logtostderr*]
+#   Log to standard error instead of files (default true)
+#
 # [*extra_args*]
 #   Add your own
 #   Defaults to undef.
@@ -452,6 +464,10 @@ class kubernetes::master::controller_manager (
   $authorization_always_allow_paths           = $kubernetes::master::params::kube_controller_authorization_always_allow_paths,
   $verbosity                                  = $kubernetes::master::params::kube_controller_verbosity,
   $controllers                                = $kubernetes::master::params::kube_controller_controllers,
+  $log_dir                                    = $kubernetes::master::params::kube_controller_manager_log_dir,
+  $log_file                                   = $kubernetes::master::params::kube_controller_manager_log_file,
+  $log_file_max_size                          = $kubernetes::master::params::kube_controller_manager_log_file_max_size,
+  $logtostderr                                = $kubernetes::master::params::kube_controller_manager_logtostderr,
   $extra_args                                 = $kubernetes::master::params::kube_controller_extra_args,
 ) inherits kubernetes::master::params {
   validate_re($ensure, '^(running|stopped)$')
@@ -494,6 +510,12 @@ class kubernetes::master::controller_manager (
       service { 'kube-controller-manager':
         ensure => $ensure,
         enable => $enable,
+      }
+
+      if $log_dir {
+        file {"$log_dir":
+          ensure => 'directory',
+        }
       }
 
       if $journald_forward_enable and $::operatingsystemmajrelease == '7' {

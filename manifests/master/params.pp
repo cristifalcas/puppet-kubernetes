@@ -181,6 +181,11 @@ class kubernetes::master::params {
   $kube_controller_horizontal_pod_autoscaler_use_rest_clients = undef
   $kube_controller_authorization_always_allow_path = '/healthz'
   $kube_controller_verbosity = 2
+  $kube_controller_log_dir = undef
+  $kube_controller_log_file = undef
+  $kube_controller_log_file_max_size = '1800'
+  $kube_controller_logtostderr = true
+  $kube_controller_log_flush_frequency = '5s'
   $kube_controller_controllers = '*'
   $kube_controller_extra_args = ''
 
@@ -205,6 +210,10 @@ class kubernetes::master::params {
   $kube_scheduler_leader_elect_lease_duration = '15s'
   $kube_scheduler_leader_elect_renew_deadline = '10s'
   $kube_scheduler_leader_elect_retry_period = '2s'
+  $kube_scheduler_log_dir = undef
+  $kube_scheduler_log_file = undef
+  $kube_scheduler_log_file_max_size = '1800'
+  $kube_scheduler_logtostderr = true
   $kube_scheduler_log_flush_frequency = '5s'
   $kube_scheduler_master = undef
   $kube_scheduler_policy_config_file = undef

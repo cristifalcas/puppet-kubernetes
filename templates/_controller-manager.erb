@@ -161,5 +161,20 @@
 <% if @authorization_always_allow_paths then -%>
  --authorization-always-allow-paths=<%= scope['kubernetes::master::controller_manager::authorization_always_allow_paths'] -%>
 <% end -%>
+<% if @log_dir -%>
+ --log-dir=<%= scope['kubernetes::master::controller_manager::log_dir'] -%>
+<% end -%>
+<% if @log_file -%>
+ --log-file=<%= scope['kubernetes::master::controller_manager::log_file'] -%>
+<% end -%>
+<% if @log_file_max_size -%>
+ --log-file-max-size=<%= scope['kubernetes::master::controller_manager::log_file_max_size'] -%>
+<% end -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::controller_manager::logtostderr')) -%>
+ --logtostderr=<%= scope['kubernetes::master::controller_manager::logtostderr'] -%>
+<% end -%>
+<% if @log_flush_frequency -%>
+ --log-flush-frequency=<%= scope['kubernetes::master::controller_manager::log_flush_frequency'] -%>
+<% end -%>
  --v=<%= scope['kubernetes::master::controller_manager::verbosity'] -%>
  <%= scope['kubernetes::master::controller_manager::extra_args'] -%>

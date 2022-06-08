@@ -23,7 +23,21 @@
  --leader-elect-renew-deadline=<%= scope['kubernetes::master::scheduler::leader_elect_renew_deadline'] -%>
  --leader-elect-retry-period=<%= scope['kubernetes::master::scheduler::leader_elect_retry_period'] -%>
 <% end -%>
+<% if @log_dir -%>
+ --log-dir=<%= scope['kubernetes::master::scheduler::log_dir'] -%>
+<% end -%>
+<% if @log_file -%>
+ --log-file=<%= scope['kubernetes::master::scheduler::log_file'] -%>
+<% end -%>
+<% if @log_file_max_size -%>
+ --log-file-max-size=<%= scope['kubernetes::master::scheduler::log_file_max_size'] -%>
+<% end -%>
+<% unless [nil, :undefined, :undef, ''].include?(scope.lookupvar('kubernetes::master::scheduler::logtostderr')) -%>
+ --logtostderr=<%= scope['kubernetes::master::scheduler::logtostderr'] -%>
+<% end -%>
+<% if @log_flush_frequency -%>
  --log-flush-frequency=<%= scope['kubernetes::master::scheduler::log_flush_frequency'] -%>
+<% end -%>
 <% if scope['kubernetes::master::scheduler::master'] then -%>
  --master=<%= scope['kubernetes::master::scheduler::master'] -%>
 <% end -%>
